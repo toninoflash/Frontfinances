@@ -1,0 +1,43 @@
+<header class="bg-white shadow-md">
+  <div class="container mx-auto flex items-center justify-between">
+    <!-- Logo (centro) -->
+    <div class="flex">
+      <a
+        href="/"
+        class="text-2xl font-bold text-gray-900 flex items-center space-x-2"
+      >
+        <svg
+          class="w-8 h-8 text-blue-600"
+          fill="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            d="M12 2L2 7l10 5 10-5-10-5zm0 6.8L5.6 7 12 4.2 18.4 7 12 8.8zM2 10l10 5 10-5v7l-10 5-10-5v-7z"
+          ></path>
+        </svg>
+        <span>MiApp</span>
+      </a>
+    </div>
+    <!-- Menú + Icono (derecha) -->
+    <div class="flex" *ngIf="login">
+      <button class="text-gray-700 hover:text-blue-600 p-4">
+        <i class="pi pi-user" style="font-size: 1rem"></i>
+      </button>
+      <button class="text-gray-700 hover:text-blue-600">
+        <i class="pi pi-cog" style="font-size: 1rem"></i>
+      </button>
+    </div>
+    <div class="flex" *ngIf="!login">
+      <button class="text-gray-700 hover:text-blue-600 p-4" routerLink="/login">
+        Iniciar sesión
+      </button>
+      <button class="text-blue-500 hover:text-blue-600">Registrarse</button>
+    </div>
+  </div>
+</header>
+<header class="bg-white shadow-md ">
+  <div class="container mx-auto">
+  <app-menu-top [items]="itemsSub"></app-menu-top>
+</div>
+</header>
+

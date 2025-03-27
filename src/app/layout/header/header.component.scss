@@ -1,0 +1,14 @@
+/* Asegura que el menú desplegable se alinee hacia la derecha */
+.p-menubar-root {
+  right: 0 !important; /* Alinea el menú desplegable al borde derecho */
+  left: auto !important; /* Elimina cualquier alineación hacia la izquierda */
+  transform: translateX(0) !important; /* Elimina cualquier desplazamiento horizontal */
+}
+.p-menubar {
+  height: 50px;
+
+  p-menubarsub {
+    position: absolute;
+    right: 40px;
+  }
+}

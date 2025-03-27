@@ -1,0 +1,149 @@
+<form [formGroup]="formGroup">
+  <div class="form-grid">
+    <ng-container *ngFor="let field of formData.data">
+      <!-- Render Input -->
+
+      <p-floatLabel *ngIf="field.type === 'input' && !field.hidden">
+        <input
+          pInputText
+          [formControlName]="field.name || ''"
+          [type]="field.currency ? 'number' : 'text'"
+          [required]="field.required || false"
+          [readonly]="field.readonly || false"
+          [attr.step]="field.currency ? '0.01' : null"
+          [attr.min]="field.currency ? '0' : null"
+          [style]="field.grid?'width:100%':''"
+          (keypress)="
+            (field.currency
+              ? ($event.charCode >= 48 && $event.charCode <= 57) ||
+                $event.charCode === 46
+              : true)
+          "
+        />
+        <label [for]="field.name || ''">
+          {{ field.label }} <span *ngIf="field.required">*</span>
+        </label>
+      </p-floatLabel>
+
+      <!-- Render Password Input -->
+      <div *ngIf="field.type === 'pass' && !field.hidden" class="py-4">
+        <p-password
+          [formControlName]="field.name || ''"
+          [feedback]="false"
+          [toggleMask]="true"
+          [placeholder]="field.label"
+          [disabled]="field.readonly || false"
+        ></p-password>
+      </div>
+
+<!-- Render Select Input -->
+      <p-floatLabel *ngIf="field.type === 'select' && !field.hidden">
+        <p-dropdown
+          [options]="field.option || []"
+          [formControlName]="field.name || ''"
+          placeholder="{{ field.label }}"
+          [disabled]="field.readonly || false"
+          optionLabel="label"
+          class="w-full"
+        ></p-dropdown>
+      </p-floatLabel>
+
+      <!-- Render Textarea -->
+
+      <p-iftalabel *ngIf="field.type === 'textarea' && !field.hidden">
+        <textarea
+          pTextarea
+          id="description"
+          rows="5"
+          cols="30"
+          style="resize: none"
+        ></textarea>
+        <label for="description">Description</label>
+      </p-iftalabel>
+
+      <!-- Render Radio Buttons -->
+      <p-floatLabel *ngIf="field.type === 'radio' && !field.hidden">
+        <p-radiobutton
+          [formControlName]="field.name || ''"
+          [required]="field.required || false"
+          inputId="ingredient1"
+        />
+        <label for="ingredient1" class="ml-2">{{ field.label }}</label>
+      </p-floatLabel>
+
+      <!-- Render Checkbox -->
+      <p-floatLabel *ngIf="field.type === 'check' && !field.hidden">
+        <label>
+          <input
+            type="checkbox"
+            [formControlName]="field.name || ''"
+            [required]="field.required || false"
+            [disabled]="field.readonly || false"
+          />
+          {{ field.label }}
+        </label>
+      </p-floatLabel>
+
+      <!-- Render Datepicker -->
+      <div *ngIf="field.type === 'date' && !field.hidden" class="form-group">
+        <p-datepicker
+          [formControlName]="field.name || ''"
+          type="date"
+          [required]="field.required || false"
+        />
+      </div>
+
+      <!-- Static Label -->
+      <div
+        *ngIf="field.type === 'label' && !field.hidden"
+        class="form-group label-container"
+      >
+        <div class="label">
+          <p>{{ field.label }}</p>
+        </div>
+      </div>
+      <!-- Static Label -->
+      <div
+        *ngIf="field.type === 'label4' && !field.hidden"
+        class="form-group label-container"
+      >
+        <div class="label">
+          <h4>{{ field.label }}</h4>
+        </div>
+      </div>
+      <!-- Static Label -->
+      <div
+        *ngIf="field.type === 'label5' && !field.hidden"
+        class="form-group label-container"
+      >
+        <div class="label5">
+          <h5>{{ field.label }}</h5>
+        </div>
+      </div>
+      <!-- Static Label -->
+      <div
+        *ngIf="field.type === 'label2' && !field.hidden"
+        class="form-group label-container"
+      >
+        <div class="label2">
+          <h2>{{ field.label }}</h2>
+        </div>
+      </div>
+      <!-- Button -->
+      <div *ngIf="field.type === 'button' && !field.hidden" class="form-group">
+        <button type="button" class="btn-primary" (click)="field.onClick()">
+          {{ field.label }}
+        </button>
+      </div>
+
+      <div
+        *ngIf="field.type === 'alert' && !field.hidden"
+        class="form-group alert-container"
+      >
+        <div class="alert">
+          <small>{{ field.label }}</small>
+        </div>
+      </div>
+    </ng-container>
+  </div>
+</form>
