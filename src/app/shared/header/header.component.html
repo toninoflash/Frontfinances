@@ -1,0 +1,19 @@
+<header class="bg-white shadow-md">
+  <div class="container mx-auto flex items-center justify-between ">
+    <!-- Logo (centro) -->
+    <a href="/" class="text-2xl font-bold text-gray-900 flex items-center space-x-2">
+      <svg class="w-8 h-8 text-blue-600" fill="currentColor" viewBox="0 0 24 24">
+        <path d="M12 2L2 7l10 5 10-5-10-5zm0 6.8L5.6 7 12 4.2 18.4 7 12 8.8zM2 10l10 5 10-5v7l-10 5-10-5v-7z"></path>
+      </svg>
+      <span>MiApp</span>
+    </a>
+
+    <!-- Menú + Icono (derecha) -->
+    <div class="flex">
+      <p-menubar [model]="items" [style]="{ 'border': 'none', display: 'flex' }" styleClass="p-4 bg-surface-0 dark:bg-surface-900"></p-menubar>
+      <button class="text-gray-700 hover:text-blue-600">
+        <i class="pi pi-home"></i>
+      </button>
+    </div>
+  </div>
+</header>
