@@ -93,3 +93,22 @@ export enum Type {
   update = 'update',
   aport='aport'
 }
+
+export interface Customer {
+  id: number;
+  name: string;
+  country: {
+    name: string;
+    code: string;
+  };
+  company: string;
+  date: Date;
+  status: string;
+  activity: number;
+  representative: Representative;
+}
+
+export interface Representative {
+  name: string;
+  image: string;
+}

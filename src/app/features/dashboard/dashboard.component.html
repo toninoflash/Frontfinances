@@ -1,14 +1,13 @@
-<div class="flex h-screen">
+<div class="flex h-screen ">
   <!-- Menú a la izquierda -->
-  <div class="hidden md:block md:w-1/6 lg:w-1/8 shadow-md">
+  <div class="hidden md:block md:w-1/6 lg:w-1/8 shadow-md px-2">
     <app-menu-left [items]="items"></app-menu-left>
   </div>
   <!-- Contenido principal a la derecha -->
-  <div class="flex-1 px-6">
+  <div class="flex-1 px-6  container mx-auto">
     <app-menu-top [items]="items" class="block md:hidden"></app-menu-top>
     <div class="card" >
-      <app-finances *ngIf="page === 0"></app-finances>
-      <app-incomes-bills *ngIf="page === 1"></app-incomes-bills>
+      <router-outlet></router-outlet>
 
     </div>
   </div>

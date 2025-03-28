@@ -1,0 +1,34 @@
+<div class="card">
+  <p-table
+      [value]="customers"
+      [paginator]="true"
+      [rows]="5"
+      [tableStyle]="{ 'min-width': '50rem' }"
+      [rowsPerPageOptions]="[5, 10, 20]"
+  >
+  <ng-template #header>
+    <tr >
+        <th pSortableColumn="date" style="width:20%">
+            Fecha <p-sortIcon field="date" />
+        </th>
+        <th pSortableColumn="name" style="width:20%">
+            Nombre <p-sortIcon field="name" />
+        </th>
+        <th pSortableColumn="category" style="width:20%">
+            Categoría <p-sortIcon field="category" />
+        </th>
+        <th pSortableColumn="quantity" style="width:20%">
+            Cantidad <p-sortIcon field="quantity" />
+        </th>
+    </tr>
+</ng-template>
+<ng-template #body let-product>
+  <tr>
+      <td>{{ product.date | date}}</td>
+      <td>{{ product.name }}</td>
+      <td>{{ product.category }}</td>
+      <td>{{ product.quantity | currency : 'EUR' }}</td>
+  </tr>
+</ng-template>
+  </p-table>
+</div>

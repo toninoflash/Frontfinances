@@ -41,3 +41,9 @@
   text-align: center;
   padding: 10px;
 }
+
+.custom-panelmenu .p-menuitem-link.router-link-active {
+  background-color: #007ad9; /* Color de fondo para el elemento activo */
+  color: white; /* Color del texto */
+  font-weight: bold; /* Texto en negrita */
+}

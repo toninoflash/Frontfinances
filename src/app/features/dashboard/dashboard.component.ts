@@ -3,60 +3,58 @@ import { Component, OnInit } from '@angular/core';
 import { MenuLeftComponent } from '../../shared/components/menu-left/menu-left.component';
 import { MenuTopComponent } from '../../shared/components/menu-top/menu-top.component';
 import { CommonModule } from '@angular/common';
-import { FinancesComponent } from "./pages/finances/finances.component";
-import { IncomesBillsComponent } from "./pages/incomes-bills/incomes-bills.component";
+import { ActivatedRoute, RouterOutlet } from '@angular/router';
 @Component({
   selector: 'app-dashboard',
   templateUrl: './dashboard.component.html',
-  imports: [MenuLeftComponent, MenuTopComponent, CommonModule, FinancesComponent, IncomesBillsComponent],
+  imports: [RouterOutlet ,MenuLeftComponent, MenuTopComponent, CommonModule, ],
   styleUrls: ['./dashboard.component.scss'],
 })
 export class DashboardComponent implements OnInit {
+  title: string = '';
   items: MenuItem[] | undefined;
   isMenuVisible: boolean = false;
   page:number=0;
+  constructor(private route: ActivatedRoute) {}
   ngOnInit() {
     this.items = [
       {
         label: 'Mis finanzas',
         icon: 'pi pi-file',
-        command: () => {
-          this.page = 0;
-          console.log('Página actual:', this.page);
-        },
+        route: 'finances',
       },
       {
         label: 'Ingresos y gastos',
         icon: 'pi pi-money-bill',
         items: [
           {
-            label: 'Ir a',
+            label: 'Listado',
             icon: 'pi pi-eye',
-            command: () => {
-              this.page = 1;
-              console.log('Página actual:', this.page);
-            },
+            route: 'incomes-bills',
+
           },
           {
-            label: 'Añadir',
-            icon: 'pi pi-plus',
-            command: () => {
-              this.page = 2;
-              console.log('Página actual:', this.page);
-            },
+            label: 'Calendario',
+            icon: 'pi pi-calendar',
+            route: 'calendar',
+
+          },
+          {
+            label: 'Evolución',
+            icon: 'pi pi-chart-line',
+        route: 'evolution',
+
+            // command: () => {
+            //   this.page = 2;
+            //   console.log('Página actual:', this.page);
+            // },
           },
         ],
       },
       {
         label: 'Mis productos',
         icon: 'pi pi-shopping-cart',
-        command: () => {
-          this.page = 3;
-          console.log('Página actual:', this.page);
-        },
-      },
-      {
-        separator: true,
+        route: 'products',
       },
       {
         label: 'Tarjetas',
@@ -65,24 +63,21 @@ export class DashboardComponent implements OnInit {
           {
             label: 'Ir a',
             icon: 'pi pi-eye',
-            command: () => {
-              this.page = 4;
-              console.log('Página actual:', this.page);
-            },
+            route: 'card',
+
           },
           {
             label: 'Añadir',
             icon: 'pi pi-plus',
-            command: () => {
-              this.page = 5;
-              console.log('Página actual:', this.page);
-            },
+            route: 'add',
+
           },
         ],
       },
     ];
-  }
-  toggleMenu() {
-    this.isMenuVisible = !this.isMenuVisible;
+    this.route.data.subscribe((data) => {
+      this.title = data['title'];
+      console.log('Título de la ruta:', this.title);
+    });
   }
 }
