@@ -6,5 +6,6 @@ export class Income {
       public category: string,
       public createAt: string,
       public amount: string,
+      public event: string,
   ){}
 }

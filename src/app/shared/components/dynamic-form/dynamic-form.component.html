@@ -51,16 +51,21 @@
         [class]="field.grid ? 'form-item full-width' : 'form-item'"
         *ngIf="field.type === 'select' && !field.hidden"
       >
-        <p-floatLabel>
-          <p-dropdown
+        <p-floatLabel variant="on">
+          <p-select
             [options]="field.option || []"
             [formControlName]="field.name || ''"
             placeholder="{{ field.label }}"
             [disabled]="field.readonly || false"
+            [readonly]="field.readonly || false"
+            [inputId]="field.label"
             optionLabel="label"
             optionValue="value"
             appendTo="body"
-          ></p-dropdown>
+          ></p-select>
+          <label [for]="field.name">
+            {{ field.label }} <span *ngIf="field.required">*</span>
+          </label>
         </p-floatLabel>
       </div>
 
@@ -104,13 +109,16 @@
         [class]="field.grid ? 'form-item full-width' : 'form-item'"
         *ngIf="field.type === 'date' && !field.hidden"
       >
-        <p-floatLabel>
+        <p-floatLabel variant="on">
           <p-datepicker
             [formControlName]="field.name || ''"
             type="date"
             [required]="field.required || false"
-            class="w-full"
+            [disabled]="field.readonly || false"
+            [dateFormat]="'dd/mm/yy'"
+            appendTo="body"
           ></p-datepicker>
+          <label [for]="field.name || ''">{{ field.label }}</label>
         </p-floatLabel>
       </div>
 

@@ -46,6 +46,7 @@ export class IncomesBillsComponent implements OnInit {
   categories: MegaMenuItem[] | undefined;
   periodos: MegaMenuItem[] | undefined;
   dynamicGroup: any = FormsIncomesBills.createGroup;
+  dynamicUpdateGroup: any = FormsIncomesBills.updateGroup;
 
   dataSource: any[] = [];
   selectedItems: any[] = [];//filtro

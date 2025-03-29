@@ -53,7 +53,7 @@ export const IncomesBillsConstans = {
   },
   date: {
     label: 'Fecha',
-    name: 'date',
+    name: 'createAt',
   },
   description: {
     label: 'Descripcion',

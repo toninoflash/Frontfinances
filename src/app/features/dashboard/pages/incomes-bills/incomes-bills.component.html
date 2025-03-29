@@ -72,5 +72,5 @@
 <p-card [style]="{'margin-top': '1rem'}" class="text-end">
   <app-dialog-button [dynamicGroup]="dynamicGroup" title="Nuevo" (onSubmit)="submitForm($event)" class="text-start"></app-dialog-button>
   <p-toast />
-  <app-table [dataSource]="filteredDataSource"></app-table>
+  <app-table [dataSource]="filteredDataSource" [dynamicGroup]="dynamicUpdateGroup"></app-table>
 </p-card>
