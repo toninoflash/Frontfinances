@@ -13,6 +13,7 @@ import { DropdownModule } from 'primeng/dropdown';
 import { DatePickerModule } from 'primeng/datepicker';
 import { RadioButton } from 'primeng/radiobutton';
 import { CheckboxModule } from 'primeng/checkbox';
+import { InputNumberModule } from 'primeng/inputnumber';
 @Component({
   selector: 'app-dynamic-form',
   templateUrl: './dynamic-form.component.html',
@@ -26,10 +27,10 @@ import { CheckboxModule } from 'primeng/checkbox';
     FloatLabelModule,
     PasswordModule,
     SelectModule,
-    RadioButton,
     DropdownModule,
     DatePickerModule,
-    CheckboxModule
+    CheckboxModule,
+    InputNumberModule
   ],
 })
 export class DynamicFormComponent {

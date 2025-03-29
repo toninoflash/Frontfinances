@@ -1,0 +1,10 @@
+.table-row {
+  background-color: white; /* Color de fondo por defecto */
+  transition: background-color 0.3s ease; /* Transición suave */
+}
+
+.hovered-row {
+  background-color: #ecfdf5; /* Verde claro */
+  color: #155724; /* Texto verde oscuro */
+  cursor: pointer; /* Cambia el cursor a pointer */
+}

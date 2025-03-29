@@ -1,0 +1,7 @@
+.dynamic-form .form-grid {
+  display: flex; /* Cambia a Flexbox */
+  flex-wrap: wrap; /* Permite que los elementos se ajusten a la siguiente línea si no hay espacio */
+  gap: 5px; /* Espaciado uniforme entre los elementos */
+  padding: 5px;
+}
+

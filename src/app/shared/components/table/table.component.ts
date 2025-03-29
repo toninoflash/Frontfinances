@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { Table } from 'primeng/table';
 import { TagModule } from 'primeng/tag';
 import { IconFieldModule } from 'primeng/iconfield';
@@ -11,13 +11,36 @@ import { CommonModule } from '@angular/common';
 import { TableModule } from 'primeng/table';
 import { CustomerService } from '../../../core/services/customerservice';
 import { Customer, Representative } from '../../../core/interfaces';
+import { CustomDatePipe } from '../../../core/pipes/custom-date-pipe';
+import { ValueToLabelPipe } from '../../../core/pipes/value-to-label';
+import { IncomesBillsConstans } from '../../../features/dashboard/pages/incomes-bills/models/constans';
+import { NumberFormatPipe } from '../../../core/pipes/number-formt';
+import { Dialog } from 'primeng/dialog';
 @Component({
   selector: 'app-table',
-  imports: [TableModule, TagModule, IconFieldModule, InputTextModule, InputIconModule, MultiSelectModule, SelectModule, HttpClientModule, CommonModule],
+  imports: [
+    TableModule,
+    TagModule,
+    IconFieldModule,
+    InputTextModule,
+    InputIconModule,
+    MultiSelectModule,
+    SelectModule,
+    HttpClientModule,
+    CommonModule,
+    CustomDatePipe,
+    ValueToLabelPipe,
+    NumberFormatPipe,
+    Dialog
+  ],
   templateUrl: './table.component.html',
-  styleUrl: './table.component.scss'
+  styleUrl: './table.component.scss',
 })
 export class TableComponent implements OnInit {
+  hoveredRow: any = null;
+  visible: boolean = false;
+  public incomesBillsConstans = IncomesBillsConstans;
+  @Input() dataSource: any[] = [];
   customers!: Customer[];
 
   representatives!: Representative[];
@@ -31,39 +54,26 @@ export class TableComponent implements OnInit {
   constructor(private customerService: CustomerService) {}
 
   ngOnInit() {
-      this.customerService.getCustomersLarge().then((customers) => {
-          this.customers = customers;
-          this.loading = false;
+    // Suscribirse a los cambios en dataSource
+    this.customerService.dataSource$.subscribe((customers) => {
+      this.customers = customers;
+      this.loading = false;
 
-          this.customers.forEach((customer) => (customer.date = new Date(<Date>customer.date)));
-      });
-
-      this.representatives = [
-          { name: 'Amy Elsner', image: 'amyelsner.png' },
-          { name: 'Anna Fali', image: 'annafali.png' },
-          { name: 'Asiya Javayant', image: 'asiyajavayant.png' },
-          { name: 'Bernardo Dominic', image: 'bernardodominic.png' },
-          { name: 'Elwin Sharvill', image: 'elwinsharvill.png' },
-          { name: 'Ioni Bowcher', image: 'ionibowcher.png' },
-          { name: 'Ivan Magalhaes', image: 'ivanmagalhaes.png' },
-          { name: 'Onyama Limba', image: 'onyamalimba.png' },
-          { name: 'Stephen Shaw', image: 'stephenshaw.png' },
-          { name: 'Xuxue Feng', image: 'xuxuefeng.png' }
-      ];
-
-      this.statuses = [
-          { label: 'Unqualified', value: 'unqualified' },
-          { label: 'Qualified', value: 'qualified' },
-          { label: 'New', value: 'new' },
-          { label: 'Negotiation', value: 'negotiation' },
-          { label: 'Renewal', value: 'renewal' },
-          { label: 'Proposal', value: 'proposal' }
-      ];
+      // Formatear las fechas
+      this.customers.forEach(
+        (customer) => (customer.createAt = new Date(<Date>customer.createAt))
+      );
+    });
   }
 
   clear(table: Table) {
-      table.clear();
+    table.clear();
   }
-
-
+  onRowSelect(event: any) {
+    this.visible = true;
+    console.log(event);
+  }
+  rowClass(product: any): string {
+    return this.hoveredRow === product ? 'hovered-row' : 'table-row';
+  }
 }

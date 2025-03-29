@@ -91,21 +91,19 @@ export interface FormData {
 }
 export enum Type {
   update = 'update',
+  create = 'create',
   aport='aport'
 }
 
 export interface Customer {
-  id: number;
+  id: string;
   name: string;
-  country: {
-    name: string;
-    code: string;
-  };
-  company: string;
-  date: Date;
-  status: string;
-  activity: number;
-  representative: Representative;
+  tipe: string;
+  uid: string;
+  amount: number;
+  category: string;
+  active:boolean;
+  createAt:Date
 }
 
 export interface Representative {
