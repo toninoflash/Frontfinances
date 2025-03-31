@@ -110,3 +110,15 @@ export interface Representative {
   name: string;
   image: string;
 }
+export interface Product {
+  id: string;
+  name: string;
+  code: string;
+  description: string;
+  price: number;
+  category: string;
+  quantity: number;
+  inventoryStatus: string; // Ejemplo: 'INSTOCK', 'LOWSTOCK', 'OUTOFSTOCK'
+  image: string;
+  rating: number;
+}

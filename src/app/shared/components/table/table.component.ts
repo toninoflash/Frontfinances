@@ -24,6 +24,16 @@ import { DynamicFormComponent } from '../dynamic-form/dynamic-form.component';
 import { FormsAuth } from '../../../features/auth/models/forms';
 
 import { TabsModule } from 'primeng/tabs';
+import { DoughnutComponent } from "../charts/doughnut/doughnut.component";
+import { BasicComponent } from '../charts/basic/basic.component';
+import { BaseServiceService } from '../../../core/services/base-service.service';
+import { environment } from '../../../../enviroments/environment';
+import { Utils } from '../../../core/utils';
+
+const endpoint: any = environment.baseUrl;
+const url = `${endpoint}/`;
+
+
 @Component({
   selector: 'app-table',
   imports: [
@@ -41,10 +51,9 @@ import { TabsModule } from 'primeng/tabs';
     NumberFormatPipe,
     Dialog,
     FormsModule,
-    NumberFormatPipe,
     DynamicFormComponent,
-    TabsModule
-  ],
+    TabsModule,
+],
   templateUrl: './table.component.html',
   styleUrl: './table.component.scss',
 })
@@ -55,10 +64,13 @@ export class TableComponent implements OnInit {
   @Input() title: any = '';
   @Output() onSubmit = new EventEmitter<any>();
   dynamicForm: any;
+  dynamicFormMov: any;
 
   public incomesBillsConstans = IncomesBillsConstans;
   @Input() dataSource: any[] = [];
+  dataSourceSub: any[] = [];
   customers!: Customer[];
+  customersSub!: Customer[];
 
   representatives!: Representative[];
 
@@ -68,7 +80,9 @@ export class TableComponent implements OnInit {
 
   activityValues: number[] = [0, 100];
 
-  constructor(private customerService: CustomerService) {}
+  constructor(private customerService: CustomerService,
+    private baseService:BaseServiceService
+  ) {}
 
   ngOnInit() {
     // Suscribirse a los cambios en dataSource
@@ -78,6 +92,16 @@ export class TableComponent implements OnInit {
 
       // Formatear las fechas
       this.customers.forEach(
+        (customer) => (customer.createAt = new Date(<Date>customer.createAt))
+      );
+    });
+    // Suscribirse a los cambios en dataSource
+    this.customerService.dataSourceSub$.subscribe((customers) => {
+      this.customersSub = customers;
+      this.loading = false;
+
+      // Formatear las fechas
+      this.customersSub.forEach(
         (customer) => (customer.createAt = new Date(<Date>customer.createAt))
       );
     });
@@ -91,13 +115,14 @@ export class TableComponent implements OnInit {
     console.log(event);
     // Asignar los valores del evento a los controles de dynamicForm
     if (this.dynamicForm && this.dynamicForm.controls) {
+      this.getCustomerSub(event.trasactionId)
       Object.keys(event).forEach((key) => {
         if (this.dynamicForm.controls[key]) {
           this.dynamicForm.controls[key].setValue(event[key]);
         }
         if(key === 'createAt')
         {
-          this.dynamicForm.controls[key].disable();
+          this.dynamicForm.controls[key].setValue(Utils.formatDate(event[key]));
         }
       });
     }
@@ -126,5 +151,14 @@ export class TableComponent implements OnInit {
     this.onSubmit.emit(this.dynamicForm.value);
     this.visible = false;
     this.dynamicForm.reset();
+  }
+
+  getCustomerSub(trasactionId:any) {
+    const baseUrl = url + 'movement/trans/' + trasactionId;
+    this.baseService.getItems(baseUrl).subscribe((resp:any) => {
+      this.customerService.dataSourceSub = resp.movements;
+      this.customersSub = resp.movements
+      this.ngOnInit()
+    })
   }
 }

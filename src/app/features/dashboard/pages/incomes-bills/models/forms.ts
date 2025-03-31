@@ -58,6 +58,16 @@ export namespace FormsIncomesBills {
             grid
         }
     }
+    const createAtTime = (grid?:any, readonly:boolean = false) => {
+      return {
+          type:'input',
+          label:IncomesBillsConstans.date.label,
+          name:IncomesBillsConstans.date.name,
+          required:true,
+          readonly,
+          grid
+      }
+  }
     const amount = (grid?:any, readonly:boolean = false) => {
         return {
             type:'number',
@@ -80,13 +90,12 @@ export namespace FormsIncomesBills {
     };
 
     export const updateGroup: FormData = {
-      type: Type.create,
+      type: Type.update,
       data: [
         tipo(null,true),
         name(null,true),
-        eventual(null,true),
         amount(null,true),
-        createAt(null,true)
+        createAtTime(null,true)
       ],
   };
 

@@ -1,0 +1,159 @@
+<div class="flex justify-between items-center">
+  <h2 class="text-2xl font-bold mb-4">{{ title }}</h2>
+  <p-button
+    icon="pi pi-plus"
+    class="ml-auto"
+    severity="secondary"
+    [outlined]="true"
+    size="small"
+    (onClick)="openDialog('new')"
+  ></p-button>
+</div>
+
+<app-carrusel
+  [dataSource]="dataSource"
+  (onButton)="openDialog($event)"
+></app-carrusel>
+<p-toast />
+
+<div class="card" *ngIf="account.id">
+  <p-tabs value="0">
+    <p-tablist>
+      <p-tab value="0">Movimientos</p-tab>
+      <p-tab value="3">Transanciones</p-tab>
+      <p-tab value="1">Registrar nueva transanción</p-tab>
+      <p-tab value="2">Hacer transferencía</p-tab>
+    </p-tablist>
+    <p-tabpanels>
+      <p-tabpanel value="0">
+        <p-card
+          class="summary-card savings-card"
+          [style]="{ 'margin-top': '1rem' }"
+        >
+          <p-multiselect
+            [options]="itemsMov"
+            [(ngModel)]="selectedItems"
+            optionLabel="label"
+            optionValue="value"
+            [maxSelectedLabels]="3"
+            styleClass="w-full md:w-80 me-6"
+            size="small"
+            placeholder="Movimientos"
+          ></p-multiselect>
+
+          <p-multiselect
+            [options]="categories"
+            [(ngModel)]="selectedCategories"
+            optionLabel="label"
+            optionValue="value"
+            [maxSelectedLabels]="3"
+            styleClass="w-full md:w-80 me-6"
+            size="small"
+            placeholder="Categorias"
+          ></p-multiselect>
+
+          <p-multiselect
+            [options]="periodos"
+            [(ngModel)]="selectedPeriodos"
+            optionLabel="label"
+            optionValue="value"
+            [maxSelectedLabels]="3"
+            styleClass="w-full md:w-80 me-6"
+            size="small"
+            placeholder="Periodos"
+          ></p-multiselect>
+
+          <div class="text-end">
+            <p-button
+              label="Filtrar"
+              size="small"
+              (click)="filterDataSource()"
+            ></p-button>
+          </div>
+        </p-card>
+
+        <p-card [style]="{ 'margin-top': '1rem' }" class="text-end">
+          <p-toast />
+          <app-table
+            [dataSource]="filteredDataSource"
+            [dynamicGroup]="dynamicUpdateGroup"
+          ></app-table>
+        </p-card>
+      </p-tabpanel>
+      <p-tabpanel value="1">
+        <p-card [style]="{ 'margin-top': '1rem' }" *ngIf="!isCreated">
+          <p-message severity="success"
+            >Planifica una nueva transacción recurrente para asociarla a la
+            cuenta, ya sea como ingreso o gasto, y automatiza su ejecución
+            periódica.</p-message
+          >
+
+          <p class="mt-4">
+            <app-dynamic-form
+              [formData]="dynamicTransGroup"
+              (formGroupChange)="onFormGroupChange($event)"
+            ></app-dynamic-form>
+          </p>
+          <ng-template #footer>
+            <div class="flex gap-4 mt-1 justify-end items-end">
+              <p-button
+                label="Cancelar"
+                severity="secondary"
+                [outlined]="true"
+                size="small"
+              />
+              <p-button
+                label="Aceptar"
+                styleClass="w-full"
+                (click)="submitForm()"
+                [disabled]="dynamicForm.invalid"
+                size="small"
+              />
+            </div>
+          </ng-template>
+        </p-card>
+        <p-card [style]="{ 'margin-top': '1rem' }" *ngIf="isCreated">
+          Registro realizado con éxito.
+          <div class="flex gap-4 mt-1 justify-end items-end">
+            <p-button
+              icon="pi pi-angle-left"
+              (click)="isCreated ? (isCreated = false) : (isCreated = true)"
+            />
+          </div>
+        </p-card>
+      </p-tabpanel>
+      <p-tabpanel value="2"> formulario </p-tabpanel>
+      <p-tabpanel value="3"> formulario2 </p-tabpanel>
+    </p-tabpanels>
+  </p-tabs>
+</div>
+
+<p-dialog
+  header="Crear nueva cuenta"
+  [modal]="true"
+  [(visible)]="visible"
+  [breakpoints]="{ '1199px': '75vw', '575px': '90vw' }"
+  [maximizable]="true"
+>
+  <app-dynamic-form
+    [formData]="dynamicGroup"
+    (formGroupChange)="onFormGroupChange($event)"
+  ></app-dynamic-form>
+  <div class="mt-6">
+    <small><b>Titular:</b> {{ userLogin.name }} {{ userLogin.lastname }}</small>
+  </div>
+  <ng-template #footer>
+    <p-button
+      label="Cancelar"
+      [text]="true"
+      severity="secondary"
+      (click)="visible = false"
+    />
+    <p-button
+      label="Aceptar"
+      [outlined]="true"
+      severity="secondary"
+      (click)="onSubmitForm()"
+    />
+  </ng-template>
+</p-dialog>

@@ -52,31 +52,35 @@ export class DynamicFormComponent {
   }
 
   private buildForm(): void {
-    this.formData.data.forEach((field) => {
-      if (!field.name) return;
+    if (this.formData && Array.isArray(this.formData.data)) {
+      this.formData.data.forEach((field) => {
+        if (!field.name) return;
 
-      // Inicialización del valor
-      const value =
-        field.type === 'checkbox' ? field.value || false : field.value || '';
-      const disabled = field.disabled || false;
+        // Inicialización del valor
+        const value =
+          field.type === 'checkbox' ? field.value || false : field.value || '';
+        const disabled = field.disabled || false;
 
-      // Configuración de validadores
-      const validators = field.required ? [Validators.required] : [];
+        // Configuración de validadores
+        const validators = field.required ? [Validators.required] : [];
 
-      // Añadir el control al formGroup
-      this.formGroup.addControl(
-        field.name,
-        this.fb.control({ value, disabled }, validators)
-      );
+        // Añadir el control al formGroup
+        this.formGroup.addControl(
+          field.name,
+          this.fb.control({ value, disabled }, validators)
+        );
 
-      // Configurar visibilidad condicional (showWen)
-      this.handleConditionalVisibility(field);
+        // Configurar visibilidad condicional (showWen)
+        this.handleConditionalVisibility(field);
 
-      // Aplicar configuraciones específicas
-      if (field.grid) {
-        field.fullWidth = true; // Marcar para CSS dinámico
-      }
-    });
+        // Aplicar configuraciones específicas
+        if (field.grid) {
+          field.fullWidth = true; // Marcar para CSS dinámico
+        }
+      });
+    } else {
+      console.error('formData.data is undefined or not an array');
+    }
   }
 
   private handleConditionalVisibility(field: any): void {

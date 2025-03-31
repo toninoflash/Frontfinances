@@ -24,6 +24,11 @@ export class DashboardComponent implements OnInit {
         route: 'finances',
       },
       {
+        label: 'Mis productos',
+        icon: 'pi pi-shopping-cart',
+        route: 'products',
+      },
+      {
         label: 'Ingresos y gastos',
         icon: 'pi pi-money-bill',
         items: [
@@ -50,11 +55,6 @@ export class DashboardComponent implements OnInit {
             // },
           },
         ],
-      },
-      {
-        label: 'Mis productos',
-        icon: 'pi pi-shopping-cart',
-        route: 'products',
       },
       {
         label: 'Tarjetas',

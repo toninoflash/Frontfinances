@@ -1,4 +1,4 @@
-import { Component, OnInit, PLATFORM_ID, ChangeDetectorRef, inject, effect } from '@angular/core';
+import { Component, OnInit, PLATFORM_ID, ChangeDetectorRef, inject, effect, Input } from '@angular/core';
 import { ChartModule } from 'primeng/chart';
 import { AppConfigService } from '../../../../core/services/appconfigservice';
 import { isPlatformBrowser } from '@angular/common';
@@ -9,6 +9,20 @@ import { isPlatformBrowser } from '@angular/common';
   styleUrl: './doughnut.component.scss'
 })
 export class DoughnutComponent implements OnInit {
+  private _dataSource: any = {};
+
+  @Input()
+  set dataSource(value: any) {
+    this._dataSource = value;
+    this.initChart(); // Ejecuta initChart cuando dataSource cambie
+  }
+
+  get dataSource(): any {
+    return this._dataSource;
+  }
+  @Input() labels: any[] = [];
+  @Input() label: any[] = [];
+
   data: any;
 
   options: any;
@@ -36,12 +50,12 @@ export class DoughnutComponent implements OnInit {
           const textColor = documentStyle.getPropertyValue('--p-text-color');
 
           this.data = {
-              labels: ['A', 'B', 'C'],
+              labels: this.labels,
               datasets: [
                   {
-                      data: [300, 50, 100],
-                      backgroundColor: [documentStyle.getPropertyValue('--p-cyan-500'), documentStyle.getPropertyValue('--p-orange-500'), documentStyle.getPropertyValue('--p-gray-500')],
-                      hoverBackgroundColor: [documentStyle.getPropertyValue('--p-cyan-400'), documentStyle.getPropertyValue('--p-orange-400'), documentStyle.getPropertyValue('--p-gray-400')]
+                      data: [this.dataSource.totalMovementPer, this.dataSource.totalBillsPer],
+                      backgroundColor: [documentStyle.getPropertyValue('--p-yellow-200'), documentStyle.getPropertyValue('--p-green-600')],
+                      hoverBackgroundColor: [documentStyle.getPropertyValue('--p-yellow-300'), documentStyle.getPropertyValue('--p-green-800')]
                   }
               ]
           };

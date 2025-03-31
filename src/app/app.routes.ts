@@ -7,6 +7,8 @@ import { FeaturesComponent } from './features/features.component';
 import { DashboardComponent } from './features/dashboard/dashboard.component';
 import { IncomesBillsComponent } from './features/dashboard/pages/incomes-bills/incomes-bills.component';
 import { FinancesComponent } from './features/dashboard/pages/finances/finances.component';
+import { AccountComponent } from './features/account/account.component';
+import { MyaccountsComponent } from './features/account/pages/myaccounts/myaccounts.component';
 
 export const routes: Routes = [
   {
@@ -39,6 +41,35 @@ export const routes: Routes = [
             path: 'incomes-bills',
             component: IncomesBillsComponent,
             data: { title: 'Ingresos y gastos' },
+          },
+        ],
+      },
+
+    ],
+  },
+  {
+    path: 'account',
+    component: FeaturesComponent,
+    children: [
+      {
+        path: '',
+        redirectTo: 'myac', // Redirige automáticamente a 'finances'
+        pathMatch: 'full',
+      },
+      {
+        path: '',
+        component: AccountComponent,
+        data: { title: 'Mis cuentas' },
+        children: [
+          {
+            path: 'myac',
+            component: MyaccountsComponent,
+            data: { title: 'Mis cuentas' },
+          },
+          {
+            path: 'myaccounts',
+            component: MyaccountsComponent,
+            data: { title: 'Mis cuentas' },
           },
         ],
       },

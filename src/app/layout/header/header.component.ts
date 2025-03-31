@@ -37,12 +37,12 @@ constructor(
                   url:'/dashboard'
               },
               {
-                  label: 'Ingresos y gastos',
+                  label: 'Cuentas',
                   icon: 'pi pi-server',
-                  url:'/dashboard'
+                  url:'/account'
               },
               {
-                  label: 'Mis productos',
+                  label: 'Transferencias',
                   icon: 'pi pi-pencil',
                   url:'/dashboard'
               },
@@ -56,71 +56,21 @@ constructor(
         {
             label: 'Prestamos e Hipotecas',
             icon: 'pi pi-home',
-            items: [
-              {
-                  label: 'Components',
-                  icon: 'pi pi-bolt'
-              },
-              {
-                  label: 'Blocks',
-                  icon: 'pi pi-server'
-              },
-              {
-                  label: 'UI Kit',
-                  icon: 'pi pi-pencil'
-              },
-              {
-                  label: 'Templates',
-                  icon: 'pi pi-palette',
-                  items: [
-                      {
-                          label: 'Apollo',
-                          icon: 'pi pi-palette'
-                      },
-                      {
-                          label: 'Ultima',
-                          icon: 'pi pi-palette'
-                      }
-                  ]
-              }
-          ]
         },
         {
             label: 'Ahorros e inversiones',
             icon: 'pi pi-chart-line',
             items: [
                 {
-                    label: 'Components',
+                    label: 'Ahorro',
                     icon: 'pi pi-bolt'
                 },
                 {
-                    label: 'Blocks',
+                    label: 'Inversión',
                     icon: 'pi pi-server'
                 },
-                {
-                    label: 'UI Kit',
-                    icon: 'pi pi-pencil'
-                },
-                {
-                    label: 'Templates',
-                    icon: 'pi pi-palette',
-                    items: [
-                        {
-                            label: 'Apollo',
-                            icon: 'pi pi-palette'
-                        },
-                        {
-                            label: 'Ultima',
-                            icon: 'pi pi-palette'
-                        }
-                    ]
-                }
             ]
         },
-        {
-            label: 'Contact',
-            icon: 'pi pi-envelope'
-        }
     ]
 }
 }

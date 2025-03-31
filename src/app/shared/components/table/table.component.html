@@ -45,43 +45,84 @@
     </ng-template>
   </p-table>
 </div>
-<p-dialog header="Ahh" [modal]="true" [(visible)]="visible"  [breakpoints]="{ '1199px': '75vw', '575px': '90vw' }" [maximizable]="true">
+<p-dialog
+  header="Movimiento"
+  [modal]="true"
+  [(visible)]="visible"
+  [breakpoints]="{ '1199px': '75vw', '575px': '90vw' }"
+  [maximizable]="true"
+>
   <p-tabs value="0">
     <p-tablist>
-        <p-tab value="0">Header I</p-tab>
-        <p-tab value="1">Header II</p-tab>
-        <p-tab value="2">Header III</p-tab>
+      <p-tab value="0">Descripción</p-tab>
+      <p-tab value="1">Historial</p-tab>
     </p-tablist>
     <p-tabpanels>
-        <p-tabpanel value="0">
-            <p class="m-0">
-              <app-dynamic-form
-              [formData]="dynamicGroup"
-              (formGroupChange)="onFormGroupChange($event)"
-            ></app-dynamic-form>
-            </p>
-        </p-tabpanel>
-        <p-tabpanel value="1">
-            <p class="m-0">
-                Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem
-                aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo.
-                Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni
-                dolores eos qui ratione voluptatem sequi nesciunt. Consectetur, adipisci velit, sed quia non numquam eius
-                modi.
-            </p>
-        </p-tabpanel>
-        <p-tabpanel value="2">
-            <p class="m-0">
-                At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti
-                atque corrupti quos dolores et quas molestias excepturi sint occaecati cupiditate non provident, similique
-                sunt in culpa qui officia deserunt mollitia animi, id est laborum et dolorum fuga. Et harum quidem rerum
-                facilis est et expedita distinctio. Nam libero tempore, cum soluta nobis est eligendi optio cumque nihil
-                impedit quo minus.
-            </p>
-        </p-tabpanel>
+      <p-tabpanel value="0">
+        <p class="m-0">
+          <app-dynamic-form
+            [formData]="dynamicGroup"
+            (formGroupChange)="onFormGroupChange($event)"
+          ></app-dynamic-form>
+        </p>
+      </p-tabpanel>
+      <p-tabpanel value="1">
+
+
+
+
+
+
+
+
+
+
+
+        <p-table
+          [value]="customersSub"
+          [paginator]="true"
+          [rows]="5"
+          [tableStyle]="{ 'min-width': '50rem' }"
+          [rowsPerPageOptions]="[5, 10, 20]"
+        >
+          <ng-template #header>
+            <tr>
+              <th pSortableColumn="createAt" style="width: 20%">
+                Fecha <p-sortIcon field="createAt" />
+              </th>
+              <th pSortableColumn="name" style="width: 20%">
+                Nombre <p-sortIcon field="name" />
+              </th>
+              <th pSortableColumn="category" style="width: 20%">
+                Categoría <p-sortIcon field="category" />
+              </th>
+              <th pSortableColumn="amount" style="width: 20%">
+                Cantidad <p-sortIcon field="amount" />
+              </th>
+            </tr>
+          </ng-template>
+          <ng-template #body let-product>
+            <tr
+              [pSelectableRow]="product"
+              [pSelectableRowIndex]="product.id"
+              [ngClass]="rowClass(product)"
+              [ngClass]="rowClass(product)"
+              (mouseover)="hoveredRow = product"
+              (mouseleave)="hoveredRow = null"
+            >
+              <td>{{ product.createAt | customDate }}</td>
+              <td>{{ product.name }}</td>
+              <td>
+                {{
+                  product.category
+                    | valueToLabel : incomesBillsConstans.category.option
+                }}
+              </td>
+              <td>€{{ product.amount | numberFormat }}</td>
+            </tr>
+          </ng-template>
+        </p-table>
+      </p-tabpanel>
     </p-tabpanels>
-</p-tabs>
-
-
-
+  </p-tabs>
 </p-dialog>

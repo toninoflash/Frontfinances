@@ -1,0 +1,49 @@
+<div class="card">
+  <p-carousel
+    [value]="dataSource"
+    [numVisible]="1"
+    [numScroll]="1"
+    [circular]="false"
+    [style]="{ 'margin-left': '10rem', 'margin-right': '10rem' }"
+    *ngIf="empty !== 0"
+    (onPage)="onProductChange($event)"
+  >
+    <ng-template let-product #item>
+      <div class="border border-gray-300 rounded-md m-2 p-4">
+        <div class="flex justify-between items-center mx-9">
+          <!-- Contenido alineado a la izquierda -->
+          <div>
+            <div class="mb-4 font-medium text-green-600 text-xl">
+              {{ product.iban || product.name }}
+            </div>
+            <div class="mb-4 font-medium text-green-600 text-xs">
+              {{ product.iban ? product.name : null }}
+            </div>
+          </div>
+
+          <!-- Contenido alineado a la derecha -->
+          <div class="text-right">
+            <small class="block">Saldo actual</small>
+            <h2 class="text-2xl font-semibold">€{{ product.balance | numberFormat }}</h2>
+          </div>
+        </div>
+
+      </div>
+    </ng-template>
+  </p-carousel>
+
+  <div
+    class="border border-gray-300 rounded-md m-2 p-4"
+    [style]="{ 'margin-left': '13.3rem', 'margin-right': '13.3rem' }"
+    *ngIf="empty === 0"
+  >
+    <div class="mb-4 font-medium">Crear nueva cuenta</div>
+    <div class="text-center">
+      <p-button
+        label="Crear una cuenta"
+        icon="pi pi-plus"
+        (onClick)="runEmmiter('new')"
+      ></p-button>
+    </div>
+  </div>
+</div>

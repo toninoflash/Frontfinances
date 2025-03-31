@@ -1,3 +1,4 @@
+import { HttpClientModule } from '@angular/common/http';
 import { BaseServiceService } from './../../../../core/services/base-service.service';
 import { UserService } from './../../../../core/services/users/users.service';
 import { MegaMenuItem, MessageService } from 'primeng/api';
@@ -33,6 +34,7 @@ interface City {
     ButtonModule,
     TableComponent,
     DialogButtonComponent,
+    HttpClientModule,
     Toast,
     FormsModule,
     NumberFormatPipe
