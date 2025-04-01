@@ -9,6 +9,10 @@ import { IncomesBillsComponent } from './features/dashboard/pages/incomes-bills/
 import { FinancesComponent } from './features/dashboard/pages/finances/finances.component';
 import { AccountComponent } from './features/account/account.component';
 import { MyaccountsComponent } from './features/account/pages/myaccounts/myaccounts.component';
+import { AuthGuard } from './core/guards/auth.guard';
+import { ProductComponent } from './features/dashboard/pages/product/product.component';
+import { CreditsAndMortagageComponent } from './features/credits-and-mortagage/credits-and-mortagage.component';
+import { AllComponent } from './features/credits-and-mortagage/pages/all/all.component';
 
 export const routes: Routes = [
   {
@@ -21,6 +25,7 @@ export const routes: Routes = [
   {
     path: 'dashboard',
     component: FeaturesComponent,
+    // canActivate:[AuthGuard],
     children: [
       {
         path: '',
@@ -44,12 +49,24 @@ export const routes: Routes = [
           },
         ],
       },
-
+      {
+        path: '',
+        component: DashboardComponent,
+        data: { title: 'Dashboard' },
+        children: [
+          {
+            path: 'product',
+            component: ProductComponent,
+            data: { title: 'Mis productos' },
+          },
+        ],
+      },
     ],
   },
   {
     path: 'account',
     component: FeaturesComponent,
+    // canActivate:[AuthGuard],
     children: [
       {
         path: '',
@@ -65,6 +82,36 @@ export const routes: Routes = [
             path: 'myac',
             component: MyaccountsComponent,
             data: { title: 'Mis cuentas' },
+          },
+          {
+            path: 'myaccounts',
+            component: MyaccountsComponent,
+            data: { title: 'Mis cuentas' },
+          },
+        ],
+      },
+
+    ],
+  },
+  {
+    path: 'craditall',
+    component: FeaturesComponent,
+    // canActivate:[AuthGuard],
+    children: [
+      {
+        path: '',
+        redirectTo: 'all', // Redirige automáticamente a 'finances'
+        pathMatch: 'full',
+      },
+      {
+        path: '',
+        component: CreditsAndMortagageComponent,
+        data: { title: 'Mis cuentas' },
+        children: [
+          {
+            path: 'all',
+            component: AllComponent,
+            data: { title: 'Mis préstamos e hipotecas' },
           },
           {
             path: 'myaccounts',

@@ -1,9 +1,9 @@
-import { Injectable, NgZone } from '@angular/core';
+import { Inject, Injectable, NgZone, PLATFORM_ID } from '@angular/core';
 import { BehaviorSubject, Observable, catchError, delay, map, of, tap, throwError } from 'rxjs';
-import { HttpClient } from '@angular/common/http';
-import { Router } from '@angular/router';
 import { User } from '../../models/user';
 import { environment } from '../../../../enviroments/environment';
+import { HttpClient } from '@angular/common/http';
+import { isPlatformBrowser } from '@angular/common';
 const endpoint: any = environment.baseUrl;
 
 @Injectable({
@@ -12,13 +12,13 @@ const endpoint: any = environment.baseUrl;
 export class UserService {
   private _userSubject: BehaviorSubject<User | null> = new BehaviorSubject<User | null>(null);
 
-  constructor(
-    private http: HttpClient,
-    private router: Router,
-    private ngZone: NgZone
-  ) {
-    const storedUser = sessionStorage.getItem("us") ? JSON.parse(sessionStorage.getItem("us")!) : null;
-    this._userSubject.next(storedUser);
+  constructor(private http: HttpClient, @Inject(PLATFORM_ID) private platformId: Object) {
+    if (isPlatformBrowser(this.platformId)) {
+      const storedUser = sessionStorage.getItem('us') ? JSON.parse(sessionStorage.getItem('us')!) : null;
+      this._userSubject.next(storedUser);
+    } else {
+      this._userSubject.next(null); // Si no está en el navegador, inicializa con null
+    }
   }
 
   get token(): string {

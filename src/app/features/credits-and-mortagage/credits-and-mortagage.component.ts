@@ -1,16 +1,19 @@
-import { MenuItem } from 'primeng/api';
-import { Component, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { Component } from '@angular/core';
+import { ActivatedRoute, RouterOutlet } from '@angular/router';
+import { CardModule } from 'primeng/card';
 import { MenuLeftComponent } from '../../shared/components/menu-left/menu-left.component';
 import { MenuTopComponent } from '../../shared/components/menu-top/menu-top.component';
-import { CommonModule } from '@angular/common';
-import { ActivatedRoute, RouterOutlet } from '@angular/router';
+import { MenuItem } from 'primeng/api';
+
 @Component({
-  selector: 'app-dashboard',
-  templateUrl: './dashboard.component.html',
+  selector: 'app-credits-and-mortagage',
   imports: [RouterOutlet ,MenuLeftComponent, MenuTopComponent, CommonModule, ],
-  styleUrls: ['./dashboard.component.scss'],
+
+  templateUrl: './credits-and-mortagage.component.html',
+  styleUrl: './credits-and-mortagage.component.scss'
 })
-export class DashboardComponent implements OnInit {
+export class CreditsAndMortagageComponent {
   title: string = '';
   items: MenuItem[] | undefined;
   isMenuVisible: boolean = false;
@@ -80,4 +83,5 @@ export class DashboardComponent implements OnInit {
       console.log('Título de la ruta:', this.title);
     });
   }
+
 }

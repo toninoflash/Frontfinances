@@ -1,44 +1,36 @@
 import { HttpClientModule } from '@angular/common/http';
-import { BaseServiceService } from './../../../../core/services/base-service.service';
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { Component } from '@angular/core';
 import { CardModule } from 'primeng/card';
-import { DoughnutComponent } from '../../../../shared/components/charts/doughnut/doughnut.component';
-import { TableComponent } from '../../../../shared/components/table/table.component';
-import { ActivatedRoute } from '@angular/router';
+import { environment } from '../../../../../enviroments/environment';
 import { CarruselComponent } from '../../../../shared/components/carrusel/carrusel.component';
-
 import { Dialog } from 'primeng/dialog';
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
-import { DynamicFormComponent } from '../../../../shared/components/dynamic-form/dynamic-form.component';
-import { FormGroup, FormsModule } from '@angular/forms';
-import { FormsAccount } from '../../models/forms';
-import { User } from '../../../../core/models/user';
-import { Account } from '../../../../core/models/account';
-import { Utils } from '../../../../core/utils';
-import { MegaMenuItem, MessageService } from 'primeng/api';
-import { environment } from '../../../../../enviroments/environment';
 import { Toast } from 'primeng/toast';
-import { ProductService } from '../../../../core/services/product.service';
-import { UserService } from '../../../../core/services/users/users.service';
-import { MenuBigComponent } from '../../../../shared/components/menu-big/menu-big.component';
-import { MenuTopComponent } from '../../../../shared/components/menu-top/menu-top.component';
+import { DynamicFormComponent } from '../../../../shared/components/dynamic-form/dynamic-form.component';
 import { TabsModule } from 'primeng/tabs';
-import { CustomerService } from '../../../../core/services/customerservice';
-import { NumberFormatPipe } from '../../../../core/pipes/number-formt';
-import { IncomesBillsConstans } from '../../../dashboard/pages/incomes-bills/models/constans';
+import { FormGroup, FormsModule } from '@angular/forms';
 import { MultiSelectModule } from 'primeng/multiselect';
-import { DialogButtonComponent } from '../../../../shared/components/dialog-button/dialog-button.component';
-import { FormsIncomesBills } from '../../../dashboard/pages/incomes-bills/models/forms';
-import { Table, TableModule } from 'primeng/table';
-import { Income } from '../../../../core/models/income';
-import { CommonModule } from '@angular/common';
+import { TableComponent } from '../../../../shared/components/table/table.component';
 import { Message } from 'primeng/message';
+import { UserService } from '../../../../core/services/users/users.service';
+import { BaseServiceService } from '../../../../core/services/base-service.service';
+import { ProductService } from '../../../../core/services/product.service';
+import { MegaMenuItem, MessageService } from 'primeng/api';
+import { Utils } from '../../../../core/utils';
 import { Trasanction } from '../../../../core/models/transaction';
+import { Income } from '../../../../core/models/income';
+import { FormsIncomesBills } from '../../../dashboard/pages/incomes-bills/models/forms';
+import { ActivatedRoute } from '@angular/router';
+import { CustomerService } from '../../../../core/services/customerservice';
+import { FormsAccount } from '../../../account/models/forms';
+import { IncomesBillsConstans } from '../../../dashboard/pages/incomes-bills/models/constans';
+import { Account } from '../../../../core/models/account';
 const endpoint: any = environment.baseUrl;
 const url = `${endpoint}/`;
 @Component({
-  selector: 'app-myaccounts',
+  selector: 'app-all',
   imports: [
     CardModule,
     CarruselComponent,
@@ -57,10 +49,10 @@ const url = `${endpoint}/`;
     Message,
   ],
   providers: [UserService, BaseServiceService, MessageService, ProductService],
-  templateUrl: './myaccounts.component.html',
-  styleUrl: './myaccounts.component.scss',
+  templateUrl: './all.component.html',
+  styleUrl: './all.component.scss'
 })
-export class MyaccountsComponent {
+export class AllComponent {
   title: string = '';
   visible: boolean = false;
   account: any = true;
@@ -69,13 +61,17 @@ export class MyaccountsComponent {
   dynamicForm: any;
   dynamicGroup: any = 0;
   dynamicUpdateGroup: any = FormsIncomesBills.updateGroup;
+  dynamicTransGroup: any = FormsIncomesBills.createGroup;
+  dynamicTransUpdateGroup: any = FormsIncomesBills.updateGroup;
   dataSource: any[] = [];
   dataSourceMov: any[] = [];
+  dataSourceTrans: any[] = [];
 
   selectedItems: any[] = []; //filtro
   selectedCategories: any[] = []; //filtro
   selectedPeriodos: any[] = []; //filtro
   filteredDataSource: any[] = []; // Para almacenar los datos filtrados
+  filteredDataSourceTrans: any[] = []; // Para almacenar los datos filtrados
   fixedIncomes: number = 0;
   extraIncomes: number = 0;
   fixedBills: number = 0;
@@ -206,15 +202,48 @@ export class MyaccountsComponent {
         console.log('Data:', resp);
         this.dataSourceMov = resp.movements;
         this.customerService.dataSource = this.dataSourceMov;
+        this.getDataSourceTrans()
       },
       error: (err: any) => {
         console.error('Error:', err);
       },
     });
   }
+  getDataSourceTrans() {
+    let baseUrl = url + 'transaction/' + this.account.id;
+    this.baseService.getItems(baseUrl).subscribe({
+      next: (resp: any) => {
+        console.log('Data:', resp);
+        this.dataSourceTrans = resp.trasantions;
+        this.customerService.dataSourceSecond = this.dataSourceTrans;
+      },
+      error: (err: any) => {
+        console.error('Error:', err);
+      },
+    });
+  }
+
+  filterDataSourceTrans() {
+    this.customerService.dataSourceSecond = this.dataSourceTrans;
+    this.filteredDataSourceTrans = this.customerService.dataSourceSecond.filter((item:any) => {
+      const matchesItems =
+        this.selectedItems.length === 0 ||
+        this.selectedItems.includes(item.tipe);
+      const matchesCategories =
+        this.selectedCategories.length === 0 ||
+        this.selectedCategories.includes(item.category);
+
+      const matchesPeriodos =
+        this.selectedPeriodos.length === 0 ||
+        this.isWithinPeriod(item.createAt);
+
+      return matchesItems && matchesCategories && matchesPeriodos;
+    });
+    this.customerService.dataSourceSecond = this.filteredDataSourceTrans;
+  }
   filterDataSourceMov() {
     this.customerService.dataSource = this.dataSourceMov;
-    this.filteredDataSource = this.customerService.dataSource.filter((item) => {
+    this.filteredDataSource = this.customerService.dataSource.filter((item:any) => {
       const matchesItems =
         this.selectedItems.length === 0 ||
         this.selectedItems.includes(item.tipe);

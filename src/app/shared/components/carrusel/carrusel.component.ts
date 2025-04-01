@@ -7,6 +7,7 @@ import { ProductService } from '../../../core/services/product.service';
 import { CommonModule } from '@angular/common';
 import { FormsAccount } from '../../../features/account/models/forms';
 import { NumberFormatPipe } from '../../../core/pipes/number-formt';
+import { Card } from 'primeng/card';
 
 @Component({
   selector: 'app-carrusel',
@@ -16,6 +17,7 @@ import { NumberFormatPipe } from '../../../core/pipes/number-formt';
     TagModule,
     CommonModule,
     NumberFormatPipe,
+    Card
   ],
   templateUrl: './carrusel.component.html',
   styleUrl: './carrusel.component.scss',

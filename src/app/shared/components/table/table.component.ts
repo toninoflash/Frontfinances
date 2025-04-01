@@ -71,6 +71,7 @@ export class TableComponent implements OnInit {
   dataSourceSub: any[] = [];
   customers!: Customer[];
   customersSub!: Customer[];
+  customersSecond!: Customer[];
 
   representatives!: Representative[];
 
@@ -105,8 +106,20 @@ export class TableComponent implements OnInit {
         (customer) => (customer.createAt = new Date(<Date>customer.createAt))
       );
     });
-  }
+    // Suscribirse a los cambios en dataSource
+    this.customerService.dataSourceSecond$.subscribe((customers) => {
+      this.customersSecond = customers;
+      this.loading = false;
 
+      // Formatear las fechas
+      this.customersSecond.forEach(
+        (customer) => (customer.createAt = new Date(<Date>customer.createAt))
+      );
+    });
+  }
+  ngOnChanges() {
+    console.log('DataSource actualizado:', this.dataSource);
+  }
   clear(table: Table) {
     table.clear();
   }

@@ -1,5 +1,5 @@
 <div class="flex justify-between items-center">
-  <h2 class="text-2xl font-bold mb-4">{{ title }}</h2>
+  <h2 class="text-2xl font-bold mb-4 text-gray-700">{{ title }}</h2>
   <p-button
     icon="pi pi-plus"
     class="ml-auto"
@@ -67,7 +67,7 @@
             <p-button
               label="Filtrar"
               size="small"
-              (click)="filterDataSource()"
+              (click)="filterDataSourceMov()"
             ></p-button>
           </div>
         </p-card>
@@ -90,7 +90,7 @@
 
           <p class="mt-4">
             <app-dynamic-form
-              [formData]="dynamicTransGroup"
+              [formData]="dynamicGroup"
               (formGroupChange)="onFormGroupChange($event)"
             ></app-dynamic-form>
           </p>
@@ -123,7 +123,9 @@
         </p-card>
       </p-tabpanel>
       <p-tabpanel value="2"> formulario </p-tabpanel>
-      <p-tabpanel value="3"> formulario2 </p-tabpanel>
+      <p-tabpanel value="3">
+
+      </p-tabpanel>
     </p-tabpanels>
   </p-tabs>
 </div>

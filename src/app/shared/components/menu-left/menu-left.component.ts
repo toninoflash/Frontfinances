@@ -19,7 +19,4 @@ constructor(private router: Router) {}
 
   }
 
-  isActive(routerLink: string): boolean {
-    return this.router.url === routerLink;
-  }
 }

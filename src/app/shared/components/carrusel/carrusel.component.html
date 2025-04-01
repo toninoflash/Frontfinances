@@ -1,4 +1,4 @@
-<div class="card">
+<p-card  class="summary-card savings-card">
   <p-carousel
     [value]="dataSource"
     [numVisible]="1"
@@ -13,16 +13,16 @@
         <div class="flex justify-between items-center mx-9">
           <!-- Contenido alineado a la izquierda -->
           <div>
-            <div class="mb-4 font-medium text-green-600 text-xl">
+            <div class="mb-4 font-medium text-green text-xl">
               {{ product.iban || product.name }}
             </div>
-            <div class="mb-4 font-medium text-green-600 text-xs">
+            <div class="mb-4 font-medium text-green text-xs">
               {{ product.iban ? product.name : null }}
             </div>
           </div>
 
           <!-- Contenido alineado a la derecha -->
-          <div class="text-right">
+          <div class="text-right ">
             <small class="block">Saldo actual</small>
             <h2 class="text-2xl font-semibold">€{{ product.balance | numberFormat }}</h2>
           </div>
@@ -46,4 +46,4 @@
       ></p-button>
     </div>
   </div>
-</div>
+</p-card>

@@ -38,6 +38,27 @@ export class CustomerService {
   get dataSourceSub(): any[] {
     return this._dataSourceSub.getValue();
   }
+
+
+  private _dataSourceSecond = new BehaviorSubject<any[]>([]); // BehaviorSubject para emitir cambios
+
+  // Getter para obtener el observable del dataSource
+  get dataSourceSecond$() {
+    return this._dataSourceSub.asObservable();
+  }
+
+  // Setter para actualizar el valor de dataSource
+  set dataSourceSecond(value: any[]) {
+    this._dataSourceSub.next(value); // Emite el nuevo valor
+  }
+
+  // Método para obtener el valor actual de dataSource
+  get dataSourceSecond(): any[] {
+    return this._dataSourceSub.getValue();
+  }
+
+
+
   constructor() {}
 
   // Simula la obtención de datos de clientes

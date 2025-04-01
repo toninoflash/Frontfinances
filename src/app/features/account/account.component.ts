@@ -21,7 +21,7 @@ export class AccountComponent  implements OnInit {
       {
         label: 'Mis cuentas',
         icon: 'pi pi-file',
-        route: 'account',
+        route: 'myac',
       },
       {
         label: 'Transferencias',
