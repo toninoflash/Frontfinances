@@ -66,9 +66,11 @@ export class MyaccountsComponent {
   account: any = true;
   userLogin: any;
   border: boolean = true;
-  dynamicForm: any;
-  dynamicGroup: any = 0;
-  dynamicUpdateGroup: any = FormsIncomesBills.updateGroup;
+  dynamicAccountForm: any;
+  dynamicTransForm: any;
+  dynamicAccountGroup: any = FormsAccount.createGroup;;
+  dynamicTransCreateGroup: any = FormsIncomesBills.createGroup;;
+  dynamicTransUpdateGroup: any = FormsIncomesBills.updateGroup;
   dataSource: any[] = [];
   dataSourceMov: any[] = [];
 
@@ -114,7 +116,6 @@ export class MyaccountsComponent {
   ) {}
 
   ngOnInit() {
-    this.dynamicGroup = FormsAccount.createGroup;
     this.userLogin = this.userService.user;
     this.route.data.subscribe((data) => {
       this.title = data['title'];
@@ -140,8 +141,11 @@ export class MyaccountsComponent {
     }
   }
 
-  onFormGroupChange(formGroup: FormGroup) {
-    this.dynamicForm = formGroup;
+  onFormGroupAccountChange(formGroup: FormGroup) {
+    this.dynamicAccountForm = formGroup;
+  }
+  onFormGroupTransChange(formGroup: FormGroup) {
+    this.dynamicTransForm = formGroup;
   }
   onFormCreated = (form: any) => {
     this.ifValueChange(form);
@@ -158,7 +162,7 @@ export class MyaccountsComponent {
     const controls = form.controls;
   }
   onSubmitForm() {
-    let account: Account = this.dynamicForm.value as Account;
+    let account: Account = this.dynamicAccountForm.value as Account;
     let baseUrl = url+'account'
 
     account.uid = this.userService.user?.uid as string;
@@ -183,7 +187,7 @@ export class MyaccountsComponent {
       },
     });
     this.visible = false;
-    this.dynamicForm.reset();
+    this.dynamicAccountForm.reset();
   }
 
   getDataSource() {
@@ -283,7 +287,7 @@ export class MyaccountsComponent {
   }
 
   submitForm() {
-    let event = this.dynamicForm.value as Income
+    let event = this.dynamicTransForm.value as Income
     let baseUrl = url+'transaction'
     console.log('Formulario enviado:', event);
 
@@ -311,7 +315,7 @@ export class MyaccountsComponent {
         );
         this.ngOnInit();
         setTimeout(() => {
-          this.dynamicForm.reset()
+          this.dynamicTransForm.reset()
           this.isCreated = false;
         }, 3000);
       },

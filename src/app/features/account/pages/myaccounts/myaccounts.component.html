@@ -76,7 +76,7 @@
           <p-toast />
           <app-table
             [dataSource]="filteredDataSource"
-            [dynamicGroup]="dynamicUpdateGroup"
+            [dynamicGroup]="dynamicTransUpdateGroup"
           ></app-table>
         </p-card>
       </p-tabpanel>
@@ -90,8 +90,8 @@
 
           <p class="mt-4">
             <app-dynamic-form
-              [formData]="dynamicGroup"
-              (formGroupChange)="onFormGroupChange($event)"
+              [formData]="dynamicTransCreateGroup"
+              (formGroupChange)="onFormGroupTransChange($event)"
             ></app-dynamic-form>
           </p>
           <ng-template #footer>
@@ -106,7 +106,7 @@
                 label="Aceptar"
                 styleClass="w-full"
                 (click)="submitForm()"
-                [disabled]="dynamicForm.invalid"
+                [disabled]="dynamicTransForm.invalid"
                 size="small"
               />
             </div>
@@ -138,8 +138,8 @@
   [maximizable]="true"
 >
   <app-dynamic-form
-    [formData]="dynamicGroup"
-    (formGroupChange)="onFormGroupChange($event)"
+    [formData]="dynamicAccountGroup"
+    (formGroupChange)="onFormGroupAccountChange($event)"
   ></app-dynamic-form>
   <div class="mt-6">
     <small><b>Titular:</b> {{ userLogin.name }} {{ userLogin.lastname }}</small>

@@ -46,7 +46,7 @@
           ></p-password>
         </div>
       </div>
-            <!-- Render Select Input -->
+      <!-- Render Select Input -->
       <div
         [class]="field.grid ? 'form-item full-width' : 'form-item'"
         *ngIf="field.type === 'select' && !field.hidden"
@@ -121,7 +121,12 @@
           <label [for]="field.name || ''">{{ field.label }}</label>
         </p-floatLabel>
       </div>
-
+      <div
+  class="form-item full-width divider-container"
+  *ngIf="field.type === 'divider' && !field.hidden"
+>
+  <p-divider [style]="{ 'width': '100%' }"></p-divider>
+</div>
       <!-- Render Button -->
       <div
         [class]="field.grid ? 'form-item full-width' : 'form-item'"

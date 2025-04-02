@@ -1,48 +1,221 @@
 <h2 class="text-2xl font-bold mb-4 text-gray-600">{{ title }}</h2>
 
-<div class=" mt-4">
+<div class="mt-4">
   <p-card>
-
-    <p-card class="summary-card savings-card" [style]="{'margin-top': '1rem'}">
+    <p-card
+      class="summary-card savings-card"
+      [style]="{ 'margin-top': '1rem' }"
+    >
+      <p-multiselect
+        [options]="items"
+        [(ngModel)]="selectedItems"
+        optionLabel="label"
+        optionValue="value"
+        [maxSelectedLabels]="3"
+        styleClass="w-full md:w-80 me-6"
+        size="small"
+        placeholder="Movimientos"
+      ></p-multiselect>
 
       <p-multiselect
-      [options]="items"
-      [(ngModel)]="selectedItems"
-      optionLabel="label"
-      optionValue="value"
-      [maxSelectedLabels]="3"
-      styleClass="w-full md:w-80 me-6"
-      size="small"
-      placeholder="Movimientos"
-    ></p-multiselect>
+        [options]="categories"
+        [(ngModel)]="selectedCategories"
+        optionLabel="label"
+        optionValue="value"
+        [maxSelectedLabels]="3"
+        styleClass="w-full md:w-80 me-6"
+        size="small"
+        placeholder="Categorias"
+      ></p-multiselect>
 
-    <p-multiselect
-      [options]="categories"
-      [(ngModel)]="selectedCategories"
-      optionLabel="label"
-      optionValue="value"
-      [maxSelectedLabels]="3"
-      styleClass="w-full md:w-80 me-6"
-      size="small"
-      placeholder="Categorias"
-    ></p-multiselect>
+      <p-multiselect
+        [options]="periodos"
+        [(ngModel)]="selectedPeriodos"
+        optionLabel="label"
+        optionValue="value"
+        [maxSelectedLabels]="3"
+        styleClass="w-full md:w-80 me-6"
+        size="small"
+        placeholder="Periodos"
+      ></p-multiselect>
 
-    <p-multiselect
-      [options]="periodos"
-      [(ngModel)]="selectedPeriodos"
-      optionLabel="label"
-      optionValue="value"
-      [maxSelectedLabels]="3"
-      styleClass="w-full md:w-80 me-6"
-      size="small"
-      placeholder="Periodos"
-    ></p-multiselect>
-
-    <p-button label="Filtrar" size="small" (click)="filterDataSourceMov()" class="text-end"></p-button>
+      <p-button
+        label="Filtrar"
+        size="small"
+        (click)="filterDataSource()"
+        class="text-end"
+      ></p-button>
     </p-card>
 
-    <p-card [style]="{'margin-top': '1rem'}" class="text-end">
+    <p-card [style]="{ 'margin-top': '1rem' }" class="text-end">
       <p-toast />
-      <app-table [dataSource]="filteredDataSource" [dynamicGroup]="dynamicUpdateGroup"></app-table>
+      <app-table
+        [dataSource]="filteredDataSource"
+        [dynamicGroup]="dynamicUpdateGroup"
+      ></app-table>
     </p-card>
-  </p-card></div>
+  </p-card>
+</div>
+<div class="mt-4">
+  <p-card>
+    <h2 class="text-2xl font-bold mb-4 text-gray-600">Préstamo</h2>
+    <p>Antonio, simular la adquisición de un prestamo</p>
+    <div
+      class="text-center my-4"
+      [style]="{ 'margin-left': '10rem', 'margin-right': '10rem' }"
+    >
+      <!-- Componente de pasos -->
+      <p-steps
+        [model]="items"
+        [activeIndex]="activeIndex"
+        [readonly]="true"
+      ></p-steps>
+
+      <div *ngIf="activeIndex === 0">
+        <h2 class="text-xl font-bold my-4">¿Cúanto dinero necesitas?</h2>
+        <div class="card flex justify-center">
+          <!-- Input para el valor -->
+          <p-inputnumber
+            inputId="value"
+            [(ngModel)]="value"
+            (ngModelChange)="onValueChange($event)"
+            mode="currency"
+            currency="EUR"
+            locale="de-DE"
+            [min]="1000"
+            [max]="20000"
+            class="mx-3"
+          ></p-inputnumber>
+
+          <!-- Input para el interés -->
+          <p-inputnumber
+            inputId="interest"
+            [(ngModel)]="interest"
+            (ngModelChange)="onInterestChange($event)"
+            suffix="%"
+            [minFractionDigits]="2"
+            [min]="0"
+            [max]="20"
+            class="mx-3"
+          ></p-inputnumber>
+        </div>
+
+        <div class="card flex justify-center my-4">
+          <!-- Slider para el valor -->
+          <p-slider
+            [(ngModel)]="value"
+            (ngModelChange)="onValueChange($event)"
+            styleClass="w-56"
+            [min]="1000"
+            [max]="20000"
+            class="mx-1"
+          ></p-slider>
+
+          <!-- Slider para el interés -->
+          <p-slider
+            [(ngModel)]="interest"
+            (ngModelChange)="onInterestChange($event)"
+            styleClass="w-56"
+            [min]="0"
+            [max]="20"
+            class="mx-1"
+          ></p-slider>
+        </div>
+        <div *ngIf="spinner && value !== undefined">
+          <div class="card flex justify-center">
+            <p-progress-spinner
+              strokeWidth="8"
+              fill="transparent"
+              animationDuration=".9s"
+              [style]="{ width: '50px', height: '50px' }"
+            />
+          </div>
+        </div>
+        <div *ngIf="!spinner && value !== undefined && activeIndex === 0">
+          <h2 class="text-xl font-bold my-4">
+            Selecciona la cuota que más se adapte a tus necesidades
+          </h2>
+          <div [style]="{ 'margin-top': '1rem' }" class="text-center">
+            <table class="table-auto w-full">
+              <thead>
+                <tr>
+                  <th class="px-4 py-2"></th>
+                  <th class="px-4 py-2">6 meses</th>
+                  <th class="px-4 py-2">9 meses</th>
+                  <th class="px-4 py-2">12 meses</th>
+                  <th class="px-4 py-2">18 meses</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="px-4 py-2">{{ value | numberFormat }}</td>
+                  <td
+                    class="border border-gray-300 px-4 py-2 cursor-pointer hover:text-green-600"
+                    [ngClass]="{
+                      'font-bold text-green-600': selectedCuota === 'six'
+                    }"
+                    (click)="selectCuota(data.six, 'six')"
+                  >
+                    {{ this.data.six | numberFormat }}
+                  </td>
+                  <td
+                    class="border border-gray-300 px-4 py-2 cursor-pointer hover:text-green-600"
+                    [ngClass]="{
+                      'font-bold text-green-600': selectedCuota === 'nine'
+                    }"
+                    (click)="selectCuota(data.nine, 'nine')"
+                  >
+                    {{ this.data.nine | numberFormat }}
+                  </td>
+                  <td
+                    class="border border-gray-300 px-4 py-2 cursor-pointer hover:text-green-600"
+                    [ngClass]="{
+                      'font-bold text-green-600': selectedCuota === 'twelve'
+                    }"
+                    (click)="selectCuota(data.twelve, 'twelve')"
+                  >
+                    {{ this.data.twelve | numberFormat }}
+                  </td>
+                  <td
+                    class="border border-gray-300 px-4 py-2 cursor-pointer hover:text-green-600"
+                    [ngClass]="{
+                      'font-bold text-green-600': selectedCuota === 'eighteen'
+                    }"
+                    (click)="selectCuota(data.eighteen, 'eighteen')"
+                  >
+                    {{ this.data.eighteen | numberFormat }}
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div *ngIf="!spinner && cuota !== undefined">
+            <div class="my-4">
+              <small>
+                La cantidad a devolver despues de calcular lo intereses es
+                <b>{{ data.total | numberFormat }} €</b></small
+              >
+            </div>
+            <div class="card flex justify-center">
+              <p-selectbutton [options]="stateOptions" [(ngModel)]="accountAsigned" optionLabel="label" optionValue="value" aria-labelledby="basic" />
+            </div>
+          </div>
+          <div class="card flex justify-center my-4">
+            <p-button
+            label="Continuar"
+            icon="pi pi-user"
+            (onClick)="submitCredit()"
+          ></p-button>
+          </div>
+        </div>
+      </div>
+      <div *ngIf="activeIndex === 1">
+        <app-dynamic-form
+        [formData]="dynamicGroup"
+        (formGroupChange)="onFormGroupChange($event)"
+      ></app-dynamic-form>
+      </div>
+    </div>
+  </p-card>
+</div>

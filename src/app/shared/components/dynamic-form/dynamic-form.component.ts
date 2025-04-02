@@ -14,6 +14,7 @@ import { DatePickerModule } from 'primeng/datepicker';
 import { RadioButton } from 'primeng/radiobutton';
 import { CheckboxModule } from 'primeng/checkbox';
 import { InputNumberModule } from 'primeng/inputnumber';
+import { DividerModule } from 'primeng/divider';
 @Component({
   selector: 'app-dynamic-form',
   templateUrl: './dynamic-form.component.html',
@@ -30,7 +31,8 @@ import { InputNumberModule } from 'primeng/inputnumber';
     DropdownModule,
     DatePickerModule,
     CheckboxModule,
-    InputNumberModule
+    InputNumberModule,
+    DividerModule
   ],
 })
 export class DynamicFormComponent {
@@ -48,6 +50,7 @@ export class DynamicFormComponent {
 
   ngOnInit() {
     this.buildForm();
+    console.log('Formulario inicializado:', this.formGroup.value);
     this.formGroupChange.emit(this.formGroup);
   }
 

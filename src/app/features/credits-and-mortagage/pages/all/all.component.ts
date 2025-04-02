@@ -10,14 +10,14 @@ import { InputTextModule } from 'primeng/inputtext';
 import { Toast } from 'primeng/toast';
 import { DynamicFormComponent } from '../../../../shared/components/dynamic-form/dynamic-form.component';
 import { TabsModule } from 'primeng/tabs';
-import { FormGroup, FormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { TableComponent } from '../../../../shared/components/table/table.component';
 import { Message } from 'primeng/message';
 import { UserService } from '../../../../core/services/users/users.service';
 import { BaseServiceService } from '../../../../core/services/base-service.service';
 import { ProductService } from '../../../../core/services/product.service';
-import { MegaMenuItem, MessageService } from 'primeng/api';
+import { MegaMenuItem, MenuItem, MessageService } from 'primeng/api';
 import { Utils } from '../../../../core/utils';
 import { Trasanction } from '../../../../core/models/transaction';
 import { Income } from '../../../../core/models/income';
@@ -25,16 +25,20 @@ import { FormsIncomesBills } from '../../../dashboard/pages/incomes-bills/models
 import { ActivatedRoute } from '@angular/router';
 import { CustomerService } from '../../../../core/services/customerservice';
 import { FormsAccount } from '../../../account/models/forms';
-import { IncomesBillsConstans } from '../../../dashboard/pages/incomes-bills/models/constans';
-import { Account } from '../../../../core/models/account';
+import { StepsModule } from 'primeng/steps';
+import { Slider } from 'primeng/slider';
+import { InputNumber } from 'primeng/inputnumber';
+import { NumberFormatPipe } from '../../../../core/pipes/number-formt';
+import { debounceTime, Subject } from 'rxjs';
+import { ProgressSpinner } from 'primeng/progressspinner';
+import { FormsCredit } from '../../models/forms';
+import { SelectButton } from 'primeng/selectbutton';
 const endpoint: any = environment.baseUrl;
 const url = `${endpoint}/`;
 @Component({
   selector: 'app-all',
   imports: [
     CardModule,
-    CarruselComponent,
-    Dialog,
     ButtonModule,
     InputTextModule,
     Toast,
@@ -46,7 +50,14 @@ const url = `${endpoint}/`;
     MultiSelectModule,
     TableComponent,
     CommonModule,
-    Message,
+    StepsModule,
+    Slider,
+    InputNumber,
+    ReactiveFormsModule,
+    NumberFormatPipe,
+    ProgressSpinner,
+    SelectButton
+
   ],
   providers: [UserService, BaseServiceService, MessageService, ProductService],
   templateUrl: './all.component.html',
@@ -57,50 +68,36 @@ export class AllComponent {
   visible: boolean = false;
   account: any = true;
   userLogin: any;
+  items: MenuItem[] | undefined;
+
+
   border: boolean = true;
   dynamicForm: any;
   dynamicGroup: any = 0;
   dynamicUpdateGroup: any = FormsIncomesBills.updateGroup;
-  dynamicTransGroup: any = FormsIncomesBills.createGroup;
-  dynamicTransUpdateGroup: any = FormsIncomesBills.updateGroup;
   dataSource: any[] = [];
-  dataSourceMov: any[] = [];
-  dataSourceTrans: any[] = [];
 
   selectedItems: any[] = []; //filtro
   selectedCategories: any[] = []; //filtro
   selectedPeriodos: any[] = []; //filtro
   filteredDataSource: any[] = []; // Para almacenar los datos filtrados
-  filteredDataSourceTrans: any[] = []; // Para almacenar los datos filtrados
-  fixedIncomes: number = 0;
-  extraIncomes: number = 0;
-  fixedBills: number = 0;
-  extraBills: number = 0;
-  totalIncome: number = 0;
-  totalBills: number = 0;
   categories: MegaMenuItem[] | undefined;
   periodos: MegaMenuItem[] | undefined;
-  itemsMov: MegaMenuItem[] | undefined;
 
   isCreated:boolean= false;
-  items = [
-    {
-      label: 'Registrar nueva transanción',
-      icon: 'pi pi-calendar',
-      route: 'account',
-    },
-    {
-      label: 'Ver movmientos',
-      icon: 'pi pi-arrow-right-arrow-left',
-      route: 'account',
-    },
-    {
-      label: 'Hacer transferencía',
-      icon: 'pi pi-cart-arrow-down ',
-      route: 'products',
-    },
-  ];
+  value!: number; //Formulario
+  interest: number = 0; //Formulario
+  cuota!: number; //Formulario
+  spinner:boolean = true
+  data:any = {}
+  private valueChangeSubject: Subject<number> = new Subject<number>(); // Subject para manejar los cambios del slider de valor
+  private interestChangeSubject: Subject<number> = new Subject<number>(); // Subject para manejar los cambios del slider de interés
+  selectedCuota: string | null = null;
+  activeIndex: number = 0;
+  stateOptions: any[] = [];
+  accountAsigned: any[] = []
   constructor(
+    private fb: FormBuilder,
     private route: ActivatedRoute,
     private userService: UserService,
     private baseService: BaseServiceService,
@@ -110,32 +107,96 @@ export class AllComponent {
   ) {}
 
   ngOnInit() {
-    this.dynamicGroup = FormsAccount.createGroup;
+    this.dynamicGroup = FormsCredit.createGroup;
     this.userLogin = this.userService.user;
     this.route.data.subscribe((data) => {
       this.title = data['title'];
       console.log('Título de la ruta:', this.title);
     });
-    this.itemsMov = IncomesBillsConstans.tipo.option;
-    this.categories = IncomesBillsConstans.category.option;
-    this.periodos = IncomesBillsConstans.periody.option;
 
-    this.getDataSource();
-    this.getDataSourceMov();
+    this.items = [
+      {
+          label: 'Simular',
+      },
+      {
+          label: 'Solicitar',
+      },
+      {
+          label: 'Confirmar',
+      },
+  ];
+  // Configura el debounce para el Subject de 'value'
+  this.valueChangeSubject.pipe(debounceTime(1000)).subscribe((newValue) => {
+    this.makeApiCall(newValue, this.interest);
+  });
 
+  // Configura el debounce para el Subject de 'interest'
+  this.interestChangeSubject.pipe(debounceTime(1000)).subscribe((newInterest) => {
+    this.makeApiCall(this.value, newInterest);
+  });
+  this.onStateOptions()
   }
 
-  openDialog(event: any) {
-    console.log('Formulario enviado:', event);
-    if (event === 'new') {
-      this.visible = true;
-    } else {
-      this.account = event;
-      this.getDataSourceMov();
+  // Método que se llama cuando el slider cambia
+  onValueChange(newValue: number) {
+    this.spinner = true; // Activa el spinner
+    this.value = newValue; // Actualiza el valor local
+    this.valueChangeSubject.next(newValue); // Emite el nuevo valor al Subject
+  }
+// Método que se llama cuando el slider o input de 'interest' cambia
+onInterestChange(newInterest: number) {
+  this.spinner = true; // Activa el spinner
+  this.interest = newInterest; // Actualiza el interés local
+  this.interestChangeSubject.next(newInterest); // Emite el nuevo interés al Subject
+}
+  // Lógica para realizar la llamada al servidor
+  private makeApiCall(value: number, interest: number) {
+    const urlBase = url + 'credit/calculate';
+    const item = { value, interest };
+    this.spinner = true; // Activa el spinner
 
-    }
+    this.baseService.postItem(urlBase, item).subscribe({
+      next: (resp: any) => {
+        console.log('Respuesta del servidor:', resp);
+         // Desactiva el spinner
+        setTimeout(() => {
+          this.spinner = false;
+          this.data.six = resp.data.six
+          this.data.nine = resp.data.nine
+          this.data.twelve = resp.data.twelve
+          this.data.eighteen = resp.data.eighteen
+          this.data.total = resp.data.total
+        }, 1000);
+      },
+      error: (err: any) => {
+        console.error('Error en la llamada al servidor:', err);
+        setTimeout(() => {
+          this.spinner = false;
+        }, 1000);
+      },
+    });
   }
 
+  onStateOptions() {
+    const urlBase = url + 'account/'+ this.userLogin.uid;
+    this.baseService.getItems(urlBase).subscribe((resp:any) => {
+      resp.accounts.forEach((element:any) => {
+        this.stateOptions.push({label:element.name,value:element.id})
+      });
+
+    });
+  }
+  // Método para seleccionar una cuota
+  selectCuota(cuota: number, cuotaKey: string) {
+    this.cuota = cuota;
+    this.selectedCuota = cuotaKey; // Guarda la celda seleccionada
+  }
+// Método para avanzar al siguiente paso
+nextStep() {
+  if (this.activeIndex < this.items!.length - 1) {
+    this.activeIndex++;
+  }
+}
   onFormGroupChange(formGroup: FormGroup) {
     this.dynamicForm = formGroup;
   }
@@ -154,32 +215,7 @@ export class AllComponent {
     const controls = form.controls;
   }
   onSubmitForm() {
-    let account: Account = this.dynamicForm.value as Account;
-    let baseUrl = url+'account'
 
-    account.uid = this.userService.user?.uid as string;
-    this.baseService.postItem(baseUrl, account).subscribe({
-      next: (resp: any) => {
-        Utils.showMessage(
-          this.messageService,
-          'success',
-          'Perfecto!!',
-          'El registrado con éxito.'
-        );
-        this.ngOnInit();
-      },
-      error: (err: any) => {
-        console.error('Error al registrar el ingreso:', err);
-        Utils.showMessage(
-          this.messageService,
-          'error',
-          'Error',
-          'Error en el registro. Inténtalo de nuevo.'
-        );
-      },
-    });
-    this.visible = false;
-    this.dynamicForm.reset();
   }
 
   getDataSource() {
@@ -195,54 +231,9 @@ export class AllComponent {
       },
     });
   }
-  getDataSourceMov() {
-    let baseUrl = url + 'movement/' + this.account.id;
-    this.baseService.getItems(baseUrl).subscribe({
-      next: (resp: any) => {
-        console.log('Data:', resp);
-        this.dataSourceMov = resp.movements;
-        this.customerService.dataSource = this.dataSourceMov;
-        this.getDataSourceTrans()
-      },
-      error: (err: any) => {
-        console.error('Error:', err);
-      },
-    });
-  }
-  getDataSourceTrans() {
-    let baseUrl = url + 'transaction/' + this.account.id;
-    this.baseService.getItems(baseUrl).subscribe({
-      next: (resp: any) => {
-        console.log('Data:', resp);
-        this.dataSourceTrans = resp.trasantions;
-        this.customerService.dataSourceSecond = this.dataSourceTrans;
-      },
-      error: (err: any) => {
-        console.error('Error:', err);
-      },
-    });
-  }
 
-  filterDataSourceTrans() {
-    this.customerService.dataSourceSecond = this.dataSourceTrans;
-    this.filteredDataSourceTrans = this.customerService.dataSourceSecond.filter((item:any) => {
-      const matchesItems =
-        this.selectedItems.length === 0 ||
-        this.selectedItems.includes(item.tipe);
-      const matchesCategories =
-        this.selectedCategories.length === 0 ||
-        this.selectedCategories.includes(item.category);
-
-      const matchesPeriodos =
-        this.selectedPeriodos.length === 0 ||
-        this.isWithinPeriod(item.createAt);
-
-      return matchesItems && matchesCategories && matchesPeriodos;
-    });
-    this.customerService.dataSourceSecond = this.filteredDataSourceTrans;
-  }
-  filterDataSourceMov() {
-    this.customerService.dataSource = this.dataSourceMov;
+  filterDataSource() {
+    this.customerService.dataSource = this.dataSource;
     this.filteredDataSource = this.customerService.dataSource.filter((item:any) => {
       const matchesItems =
         this.selectedItems.length === 0 ||
@@ -310,7 +301,23 @@ export class AllComponent {
 
     return false; // Si no coincide con ningún periodo, devuelve false
   }
+  submitCredit() {
+    this.nextStep()
+    let baseUrl = url+'credit/paintCredit'
 
+    const item = {balance:this.value,interest:this.interest,amount:this.cuota, uid: this.userLogin.uid, accountId: this.accountAsigned}
+    // Aquí puedes realizar la lógica para enviar el formulario
+
+    this.baseService.postItem(baseUrl, item).subscribe({
+      next: (resp: any) => {
+        this.setValuesDefault(resp);
+      },
+      error: (err: any) => {
+        console.error('Error al registrar el ingreso:', err);
+
+      },
+    });
+  }
   submitForm() {
     let event = this.dynamicForm.value as Income
     let baseUrl = url+'transaction'
