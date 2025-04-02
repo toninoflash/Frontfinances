@@ -10,14 +10,14 @@ import { InputTextModule } from 'primeng/inputtext';
 import { Toast } from 'primeng/toast';
 import { DynamicFormComponent } from '../../../../shared/components/dynamic-form/dynamic-form.component';
 import { TabsModule } from 'primeng/tabs';
-import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { TableComponent } from '../../../../shared/components/table/table.component';
 import { Message } from 'primeng/message';
 import { UserService } from '../../../../core/services/users/users.service';
 import { BaseServiceService } from '../../../../core/services/base-service.service';
 import { ProductService } from '../../../../core/services/product.service';
-import { MegaMenuItem, MenuItem, MessageService } from 'primeng/api';
+import { ConfirmationService, MegaMenuItem, MenuItem, MessageService } from 'primeng/api';
 import { Utils } from '../../../../core/utils';
 import { Trasanction } from '../../../../core/models/transaction';
 import { Income } from '../../../../core/models/income';
@@ -33,6 +33,9 @@ import { debounceTime, Subject } from 'rxjs';
 import { ProgressSpinner } from 'primeng/progressspinner';
 import { FormsCredit } from '../../models/forms';
 import { SelectButton } from 'primeng/selectbutton';
+
+import { ToastModule } from 'primeng/toast';
+import { ConfirmPopupModule } from 'primeng/confirmpopup';
 const endpoint: any = environment.baseUrl;
 const url = `${endpoint}/`;
 @Component({
@@ -56,10 +59,12 @@ const url = `${endpoint}/`;
     ReactiveFormsModule,
     NumberFormatPipe,
     ProgressSpinner,
-    SelectButton
+    SelectButton,
+    ToastModule,
+    ConfirmPopupModule
 
   ],
-  providers: [UserService, BaseServiceService, MessageService, ProductService],
+  providers: [UserService, BaseServiceService, MessageService, ProductService, ConfirmationService],
   templateUrl: './all.component.html',
   styleUrl: './all.component.scss'
 })
@@ -85,7 +90,7 @@ export class AllComponent {
   periodos: MegaMenuItem[] | undefined;
 
   isCreated:boolean= false;
-  value!: number; //Formulario
+  value: number = 0; //Formulario
   interest: number = 0; //Formulario
   cuota!: number; //Formulario
   spinner:boolean = true
@@ -96,6 +101,7 @@ export class AllComponent {
   activeIndex: number = 0;
   stateOptions: any[] = [];
   accountAsigned: any[] = []
+  lastPay:any
   constructor(
     private fb: FormBuilder,
     private route: ActivatedRoute,
@@ -103,7 +109,8 @@ export class AllComponent {
     private baseService: BaseServiceService,
     private messageService: MessageService,
     private productService: ProductService,
-    private customerService: CustomerService
+    private customerService: CustomerService,
+    private confirmationService: ConfirmationService,
   ) {}
 
   ngOnInit() {
@@ -208,8 +215,15 @@ nextStep() {
   setValidatorFormsStatic(form: FormGroup) {
     const controls = form.controls;
   }
-  setValuesDefault(form: FormGroup) {
+  setValuesDefault(form: FormGroup, tipe?: string, value?:any) {
     const controls = form.controls;
+    if (tipe) {
+      switch (tipe) {
+        case 'credit':
+          this.setDataCredit(controls,value); // Llama a setDataCredit para establecer valores predeterminados
+          break;
+      }
+    }
   }
   ifValueChange(form: FormGroup) {
     const controls = form.controls;
@@ -305,12 +319,13 @@ nextStep() {
     this.nextStep()
     let baseUrl = url+'credit/paintCredit'
 
-    const item = {balance:this.value,interest:this.interest,amount:this.cuota, uid: this.userLogin.uid, accountId: this.accountAsigned}
+    const item = {balance:this.data.total,interest:this.interest,amount:this.cuota, uid: this.userLogin.uid, accountId: this.accountAsigned, titular:this.userLogin.name +' '+this.userLogin.lastname, moth: this.data}
     // Aquí puedes realizar la lógica para enviar el formulario
 
     this.baseService.postItem(baseUrl, item).subscribe({
       next: (resp: any) => {
-        this.setValuesDefault(resp);
+          this.setValuesDefault(this.dynamicForm, 'credit', resp);
+          this.lastPay = resp.lastPay
       },
       error: (err: any) => {
         console.error('Error al registrar el ingreso:', err);
@@ -350,6 +365,100 @@ nextStep() {
           this.dynamicForm.reset()
           this.isCreated = false;
         }, 3000);
+      },
+      error: (err: any) => {
+        console.error('Error al registrar el ingreso:', err);
+        Utils.showMessage(
+          this.messageService,
+          'error',
+          'Error',
+          'Error en el registro. Inténtalo de nuevo.'
+        );
+      },
+    });
+  }
+
+  setDataCredit(controls: { [key: string]: any }, value?: any) {
+    if (controls) {
+      if (controls['accountId']) {
+        controls['accountId'].setValue(value?.accountId || null);
+      }
+      if (controls['amount']) {
+        controls['amount'].setValue(value?.amount || 0);
+      }
+      if (controls['balance']) {
+        controls['balance'].setValue(value?.balance || 0);
+      }
+      if (controls['balancePending']) {
+        controls['balancePending'].setValue(value?.balancePending || 0);
+      }
+      if (controls['createAt']) {
+        controls['createAt'].setValue(Utils.formatDate(new Date(value.createAt)));
+      }
+      if (controls['endAt']) {
+        controls['endAt'].setValue(Utils.formatDate(new Date(value.endAt)));
+      }
+      if (controls['interest']) {
+        controls['interest'].setValue(value?.interest || 0);
+      }
+
+      if (controls['recivePending']) {
+        controls['recivePending'].setValue(value?.recivePending || 0);
+      }
+      if (controls['titular']) {
+        controls['titular'].setValue(this.userLogin.name + ' ' + this.userLogin.lastname);
+      }
+    }
+  }
+
+  confirm1(event: Event) {
+    this.confirmationService.confirm({
+        target: event.target as EventTarget,
+        message: 'Esta seguro de crear este crédito?',
+        icon: 'pi pi-exclamation-triangle',
+        rejectButtonProps: {
+            label: 'Mejor no',
+            severity: 'secondary',
+            outlined: true
+        },
+        acceptButtonProps: {
+            label: 'Si, por favor'
+        },
+        accept: () => {
+            this.createCredit()
+        },
+        reject: () => {
+            this.messageService.add({ severity: 'error', summary: 'Rejected', detail: 'You have rejected', life: 3000 });
+        }
+    });
+}
+
+  createCredit(){
+    let baseUrl = url+'credit'
+
+    const item = this.dynamicForm.value
+    // Aquí puedes realizar la lógica para enviar el formulario
+    item.accountId = this.accountAsigned
+    item.uid = this.userLogin.uid
+    item.createAt = Utils.parseSpanishDate(item.createAt)
+    item.endAt = Utils.parseSpanishDate(item.endAt)
+    this.baseService.postItem(baseUrl, item).subscribe({
+      next: (resp: any) => {
+        this.nextStep()
+        Utils.showMessage(
+          this.messageService,
+          'success',
+          'Bien',
+          'Registrado con exito.'
+        );
+        this.ngOnInit();
+        setTimeout(() => {
+          this.dynamicForm.reset()
+          this.value=0
+          this.interest= 0
+          this.cuota = 0
+          this.activeIndex = 0;
+        }, 5000);
       },
       error: (err: any) => {
         console.error('Error al registrar el ingreso:', err);

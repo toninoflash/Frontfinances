@@ -20,6 +20,21 @@ static formatDate(date: Date): string {
     day: '2-digit', // Día del mes con dos dígitos
     month: 'short', // Mes abreviado (ene, feb, mar, etc.)
     year: 'numeric', // Año completo
+  });
+
+  // Formatear la fecha
+  const formattedDate = formatter.format(date);
+
+  // Capitalizar la primera letra del mes
+  return formattedDate.replace(/\b\w/g, (char) => char.toUpperCase());
+}
+
+static formatDateAndTime(date: Date): string {
+  const formatter = new Intl.DateTimeFormat('es-ES', {
+    weekday: 'short', // Día de la semana abreviado (Lun, Mar, etc.)
+    day: '2-digit', // Día del mes con dos dígitos
+    month: 'short', // Mes abreviado (ene, feb, mar, etc.)
+    year: 'numeric', // Año completo
     hour: '2-digit', // Hora con dos dígitos
     minute: '2-digit', // Minutos con dos dígitos
   });
@@ -30,7 +45,6 @@ static formatDate(date: Date): string {
   // Capitalizar la primera letra del mes
   return formattedDate.replace(/\b\w/g, (char) => char.toUpperCase());
 }
-
 static paintMothActuallity(passData?: boolean): string {
   // Obtener la fecha actual
   const date = new Date();
@@ -47,6 +61,42 @@ static paintMothActuallity(passData?: boolean): string {
   return new Intl.DateTimeFormat('es-ES', { month: 'long' })
     .format(date)
     .replace(/^\w/, (c) => c.toUpperCase());
+}
+
+static parseSpanishDate(dateString: string): Date | null {
+  // Mapea los nombres de los meses en español a índices (0 = enero, 11 = diciembre)
+  const monthsMap: { [key: string]: number } = {
+    'Ene': 0,
+    'Feb': 1,
+    'Mar': 2,
+    'Abr': 3,
+    'May': 4,
+    'Jun': 5,
+    'Jul': 6,
+    'Ago': 7,
+    'Sep': 8,
+    'Oct': 9,
+    'Nov': 10,
+    'Dic': 11,
+  };
+
+  // Elimina el nombre del día (por ejemplo, "Mié, ")
+  const cleanDateString = dateString.split(', ')[1]; // "02 Abr 2025"
+
+  // Divide el string en partes (día, mes, año)
+  const [day, month, year] = cleanDateString.split(' ');
+
+  // Obtén el índice del mes usando el mapa
+  const monthIndex = monthsMap[month];
+
+  // Si el mes no es válido, devuelve null
+  if (monthIndex === undefined) {
+    console.error('Mes no válido:', month);
+    return null;
+  }
+
+  // Crea un objeto Date usando los valores procesados
+  return new Date(Number(year), monthIndex, Number(day));
 }
 
 }

@@ -28,6 +28,7 @@
             inputId="locale-user"
             [formControlName]="field.name || ''"
             [required]="field.required || false"
+            [readonly]="field.readonly || false"
           />
           <label [for]="field.name || ''">
             {{ field.label }} <span *ngIf="field.required">*</span>

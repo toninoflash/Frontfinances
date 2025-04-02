@@ -113,7 +113,7 @@ export namespace FormsCredit {
           titular(null,true),
           accountId(null,true),
           createAt(null,true),
-          balance(),
+          balance(null,true),
           interest(null,true),
 
         ],

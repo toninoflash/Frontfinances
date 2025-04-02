@@ -121,7 +121,7 @@
             class="mx-1"
           ></p-slider>
         </div>
-        <div *ngIf="spinner && value !== undefined">
+        <div *ngIf="spinner && value > 0">
           <div class="card flex justify-center">
             <p-progress-spinner
               strokeWidth="8"
@@ -131,7 +131,7 @@
             />
           </div>
         </div>
-        <div *ngIf="!spinner && value !== undefined && activeIndex === 0">
+        <div *ngIf="!spinner && value > 0 && activeIndex === 0">
           <h2 class="text-xl font-bold my-4">
             Selecciona la cuota que más se adapte a tus necesidades
           </h2>
@@ -198,23 +198,59 @@
               >
             </div>
             <div class="card flex justify-center">
-              <p-selectbutton [options]="stateOptions" [(ngModel)]="accountAsigned" optionLabel="label" optionValue="value" aria-labelledby="basic" />
+              <h2 class="text-xl font-bold my-4">
+                Selecciona la cuenta asociada
+              </h2>
+            </div>
+            <div class="card flex justify-center">
+              <p-selectbutton
+                [options]="stateOptions"
+                [(ngModel)]="accountAsigned"
+                optionLabel="label"
+                optionValue="value"
+                aria-labelledby="basic"
+              />
             </div>
           </div>
-          <div class="card flex justify-center my-4">
+          <div
+            class="card flex justify-center my-4"
+            *ngIf="accountAsigned.length > 0"
+          >
             <p-button
-            label="Continuar"
-            icon="pi pi-user"
-            (onClick)="submitCredit()"
-          ></p-button>
+              label="Continuar"
+              icon="pi pi-user"
+              (onClick)="submitCredit()"
+            ></p-button>
           </div>
         </div>
       </div>
       <div *ngIf="activeIndex === 1">
         <app-dynamic-form
-        [formData]="dynamicGroup"
-        (formGroupChange)="onFormGroupChange($event)"
-      ></app-dynamic-form>
+          [formData]="dynamicGroup"
+          (formGroupChange)="onFormGroupChange($event)"
+        ></app-dynamic-form>
+        <div class="card flex justify-center my-4">
+          <small
+            >*A sumar un último recibo de: {{ lastPay | numberFormat }} €</small
+          >
+        </div>
+        <div
+          class="card flex justify-center my-4"
+          *ngIf="accountAsigned.length > 0"
+        >
+          <p-toast />
+          <p-confirmpopup />
+          <p-button
+            label="Continuar"
+            icon="pi pi-user"
+            (onClick)="confirm1($event)"
+            [disabled]="dynamicForm.controls.name.invalid"
+          />
+        </div>
+      </div>
+      <div class="card flex justify-center my-4" *ngIf="activeIndex === 2">
+        Credito creado correctamente.
+
       </div>
     </div>
   </p-card>
