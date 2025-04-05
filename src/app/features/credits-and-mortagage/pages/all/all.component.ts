@@ -149,25 +149,9 @@ export class AllComponent {
       {
         label: 'Nuevo',
         icon: 'pi pi-money-bill',
-        items: [
-          {
-            label: 'Prestamo personal',
-            icon: 'pi pi-bolt',
-            command: () => {
-              this.itemPage = 1;
-            },
-          },
-          {
-            label: 'Prestamo hipotecario',
-            icon: 'pi pi-server',
-            command: () => {
-              this.itemPage = 2;
-            },
-          },
-        ],
       },
       {
-        label: 'Simulación prestamos rapido',
+        label: 'Simulación prestamo rapido',
         icon: 'pi pi-home',
         command: () => {
           this.itemPage = 0;
@@ -374,12 +358,14 @@ export class AllComponent {
 
     return false; // Si no coincide con ningún periodo, devuelve false
   }
-  submitCreditFast() {
+  submitCreditFast(fast:boolean = false) {
     this.nextStep();
     this.spinner = true;
-    let baseUrl = url + 'credit/paintCredit';
-
-    const item = {
+    let baseUrl = url + 'credit/paintCredit';;
+    let item
+    let items
+    if(fast){
+    item = {
       balance: this.data.total,
       interest: this.interest,
       amount: this.cuota,
@@ -388,6 +374,19 @@ export class AllComponent {
       titular: this.userLogin.name + ' ' + this.userLogin.lastname,
       moth: this.data,
     };
+    } else {
+      baseUrl = url + 'credit/calculate';
+      items = this.dynamicForm.value;
+      item = {
+        uid: this.userLogin.uid,
+        name: items.name,
+        balance: items.balance,
+        interest: items.interest,
+        moth: items.numCuotas,
+        accountId: this.accountAsigned,
+      };
+    }
+
     // Aquí puedes realizar la lógica para enviar el formulario
 
     this.baseService.postItem(baseUrl, item).subscribe({
@@ -402,31 +401,33 @@ export class AllComponent {
     });
   }
 
-  calculateCredit() {
-    this.spinner = true;
-    let baseUrl = url + 'credit/calculate';
+  // calculateCredit() {
+  //   this.nextStep();
+  //   this.spinner = true;
+  //   let baseUrl = url + 'credit/calculate';
 
-    const items = this.dynamicForm.value;
+  //   const items = this.dynamicForm.value;
 
-    const item = {
-      balance: items.balance,
-      interest: items.interest,
-      moth: items.numCuotas,
-      amortizacion: items.amortiCuota || null,
-    };
-    // Aquí puedes realizar la lógica para enviar el formulario
+  //   const item = {
+  //     balance: items.balance,
+  //     interest: items.interest,
+  //     moth: items.numCuotas,
+  //     amortizacion: items.amortiCuota || null,
 
-    this.baseService.postItem(baseUrl, item).subscribe({
-      next: (resp: any) => {
-        this.cuota = resp.amount;
-        this.endAt = resp.endAt;
-        this.spinner = false;
-      },
-      error: (err: any) => {
-        console.error('Error al registrar el ingreso:', err);
-      },
-    });
-  }
+  //   };
+  //   // Aquí puedes realizar la lógica para enviar el formulario
+
+  //   this.baseService.postItem(baseUrl, item).subscribe({
+  //     next: (resp: any) => {
+  //       this.cuota = resp.amount;
+  //       this.endAt = resp.endAt;
+  //       this.spinner = false;
+  //     },
+  //     error: (err: any) => {
+  //       console.error('Error al registrar el ingreso:', err);
+  //     },
+  //   });
+  // }
   submitForm() {
     let event = this.dynamicForm.value as Income;
     let baseUrl = url + 'transaction';
@@ -506,6 +507,11 @@ export class AllComponent {
           this.userLogin.name + ' ' + this.userLogin.lastname
         );
       }
+      if (controls['name']) {
+        controls['name'].setValue(
+          value?.name
+        );
+      }
     }
   }
 
@@ -574,4 +580,5 @@ export class AllComponent {
       },
     });
   }
+
 }

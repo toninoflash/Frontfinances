@@ -234,6 +234,7 @@ export namespace FormsCredit {
     data: [
       name(false, true),
       titular(true, true),
+      divider(),
       balance(false, true),
       interest(false, true),
       numCuotas(false, true),
