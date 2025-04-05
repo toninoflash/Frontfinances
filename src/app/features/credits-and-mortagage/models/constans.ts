@@ -14,7 +14,7 @@ export const CreditConstans = {
     name: 'endAt',
   },
   recivePending: {
-    label: 'Recivos pendientes de vencer',
+    label: 'Recibos pendientes de vencer',
     name: 'recivePending',
   },
   name: {
@@ -28,6 +28,30 @@ export const CreditConstans = {
   accountId: {
     label: 'Cuenta',
     name: 'accountId',
+  },
+  cuota: {
+    label: 'Cuota',
+    name: 'cuota',
+    option: [
+      { value: '1', label: 'Número' },
+      { value: '2', label: 'Amortización' },
+    ],
+  },
+  numCuotas: {
+    label: 'Numero de cuotas',
+    name: 'numCuotas',
+    option: [
+      { value: '1', label: 'Número' },
+      { value: '2', label: 'Amortización' },
+    ],
+  },
+  amortiCuota: {
+    label: 'Amortización por cuota',
+    name: 'amortiCuota',
+    option: [
+      { value: '1', label: 'Número' },
+      { value: '2', label: 'Amortización' },
+    ],
   },
   createAt: {
     label: 'Fecha constitución',

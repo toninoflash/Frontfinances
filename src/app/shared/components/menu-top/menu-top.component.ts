@@ -1,5 +1,5 @@
 import { CommonModule, NgStyle } from '@angular/common';
-import { Component, Input } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { MenuItem } from 'primeng/api';
 import { Menubar } from 'primeng/menubar';
 
@@ -9,7 +9,12 @@ import { Menubar } from 'primeng/menubar';
   templateUrl: './menu-top.component.html',
   styleUrl: './menu-top.component.scss'
 })
-export class MenuTopComponent {
+export class MenuTopComponent implements OnInit{
+
   @Input() items: MenuItem[] | undefined;
   @Input() border:boolean = false
+
+  ngOnInit(): void {
+  }
+
 }

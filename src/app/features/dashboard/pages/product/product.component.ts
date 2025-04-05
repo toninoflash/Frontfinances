@@ -2,9 +2,6 @@ import { HttpClientModule } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { CardModule } from 'primeng/card';
-import { CustomDatePipe } from '../../../../core/pipes/custom-date-pipe';
-import { ValueToLabelPipe } from '../../../../core/pipes/value-to-label';
-import { NumberFormatPipe } from '../../../../core/pipes/number-formt';
 import { ActivatedRoute } from '@angular/router';
 import { UserService } from '../../../../core/services/users/users.service';
 import { BaseServiceService } from '../../../../core/services/base-service.service';
@@ -19,9 +16,6 @@ import { AccordionModule } from 'primeng/accordion';
   imports: [
     CardModule,
     CommonModule,
-    CustomDatePipe,
-    ValueToLabelPipe,
-    NumberFormatPipe,
     HttpClientModule,
     AccordionModule,
     DoughnutComponent
@@ -53,7 +47,6 @@ export class ProductComponent {
   ngOnInit() {
     this.route.data.subscribe((data) => {
       this.title = data['title'];
-      console.log('Título de la ruta:', this.title);
     });
   }
 }

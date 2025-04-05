@@ -25,7 +25,7 @@ export const routes: Routes = [
   {
     path: 'dashboard',
     component: FeaturesComponent,
-    // canActivate:[AuthGuard],
+    canActivate:[AuthGuard],
     children: [
       {
         path: '',
@@ -66,7 +66,7 @@ export const routes: Routes = [
   {
     path: 'account',
     component: FeaturesComponent,
-    // canActivate:[AuthGuard],
+    canActivate:[AuthGuard],
     children: [
       {
         path: '',
@@ -96,7 +96,7 @@ export const routes: Routes = [
   {
     path: 'craditall',
     component: FeaturesComponent,
-    // canActivate:[AuthGuard],
+    canActivate:[AuthGuard],
     children: [
       {
         path: '',

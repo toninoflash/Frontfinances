@@ -1,9 +1,3 @@
-<p-menubar
-  [model]="items"
-   *ngIf="border"
-   >
-</p-menubar>
-<p-menubar
-  [model]="items"
-  [style]="{ 'border': 'none', }" *ngIf="!border">
+<p-menubar [model]="items" *ngIf="border" appendTo="body"> </p-menubar>
+<p-menubar [model]="items" [style]="{ 'border': 'none' }" *ngIf="!border" appendTo="body">
 </p-menubar>

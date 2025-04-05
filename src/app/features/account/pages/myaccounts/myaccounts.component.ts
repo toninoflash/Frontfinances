@@ -119,7 +119,6 @@ export class MyaccountsComponent {
     this.userLogin = this.userService.user;
     this.route.data.subscribe((data) => {
       this.title = data['title'];
-      console.log('Título de la ruta:', this.title);
     });
     this.itemsMov = IncomesBillsConstans.tipo.option;
     this.categories = IncomesBillsConstans.category.option;

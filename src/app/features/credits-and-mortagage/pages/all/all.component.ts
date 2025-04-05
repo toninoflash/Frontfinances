@@ -1,3 +1,4 @@
+import { Validator } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
@@ -10,14 +11,26 @@ import { InputTextModule } from 'primeng/inputtext';
 import { Toast } from 'primeng/toast';
 import { DynamicFormComponent } from '../../../../shared/components/dynamic-form/dynamic-form.component';
 import { TabsModule } from 'primeng/tabs';
-import { FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import {
+  FormBuilder,
+  FormControl,
+  FormGroup,
+  FormsModule,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { TableComponent } from '../../../../shared/components/table/table.component';
 import { Message } from 'primeng/message';
 import { UserService } from '../../../../core/services/users/users.service';
 import { BaseServiceService } from '../../../../core/services/base-service.service';
 import { ProductService } from '../../../../core/services/product.service';
-import { ConfirmationService, MegaMenuItem, MenuItem, MessageService } from 'primeng/api';
+import {
+  ConfirmationService,
+  MegaMenuItem,
+  MenuItem,
+  MessageService,
+} from 'primeng/api';
 import { Utils } from '../../../../core/utils';
 import { Trasanction } from '../../../../core/models/transaction';
 import { Income } from '../../../../core/models/income';
@@ -36,6 +49,8 @@ import { SelectButton } from 'primeng/selectbutton';
 
 import { ToastModule } from 'primeng/toast';
 import { ConfirmPopupModule } from 'primeng/confirmpopup';
+import { MenuTopComponent } from '../../../../shared/components/menu-top/menu-top.component';
+import { CustomDatePipe } from '../../../../core/pipes/custom-date-pipe';
 const endpoint: any = environment.baseUrl;
 const url = `${endpoint}/`;
 @Component({
@@ -61,12 +76,19 @@ const url = `${endpoint}/`;
     ProgressSpinner,
     SelectButton,
     ToastModule,
-    ConfirmPopupModule
-
+    ConfirmPopupModule,
+    MenuTopComponent,
+    CustomDatePipe
   ],
-  providers: [UserService, BaseServiceService, MessageService, ProductService, ConfirmationService],
+  providers: [
+    UserService,
+    BaseServiceService,
+    MessageService,
+    ProductService,
+    ConfirmationService,
+  ],
   templateUrl: './all.component.html',
-  styleUrl: './all.component.scss'
+  styleUrl: './all.component.scss',
 })
 export class AllComponent {
   title: string = '';
@@ -74,12 +96,14 @@ export class AllComponent {
   account: any = true;
   userLogin: any;
   items: MenuItem[] | undefined;
-
+  itemsTop: MenuItem[] | undefined;
 
   border: boolean = true;
   dynamicForm: any;
   dynamicGroup: any = 0;
-  dynamicUpdateGroup: any = FormsIncomesBills.updateGroup;
+  dynamicCreateCreditGroup: any = FormsCredit.createCreditGroup;
+  dynamicResultCreateCreditGroup: any = FormsCredit.resultCreditGroup;
+  dynamicUpdateCreditGroup: any = FormsCredit.updateCreditGroup;
   dataSource: any[] = [];
 
   selectedItems: any[] = []; //filtro
@@ -89,19 +113,21 @@ export class AllComponent {
   categories: MegaMenuItem[] | undefined;
   periodos: MegaMenuItem[] | undefined;
 
-  isCreated:boolean= false;
+  isCreated: boolean = false;
   value: number = 0; //Formulario
   interest: number = 0; //Formulario
   cuota!: number; //Formulario
-  spinner:boolean = true
-  data:any = {}
+  endAt!: string; //Formulario
+  spinner: boolean = false;
+  data: any = {};
   private valueChangeSubject: Subject<number> = new Subject<number>(); // Subject para manejar los cambios del slider de valor
   private interestChangeSubject: Subject<number> = new Subject<number>(); // Subject para manejar los cambios del slider de interés
   selectedCuota: string | null = null;
   activeIndex: number = 0;
   stateOptions: any[] = [];
-  accountAsigned: any[] = []
-  lastPay:any
+  accountAsigned: any[] = [];
+  lastPay: any;
+  itemPage: any = 0;
   constructor(
     private fb: FormBuilder,
     private route: ActivatedRoute,
@@ -110,7 +136,7 @@ export class AllComponent {
     private messageService: MessageService,
     private productService: ProductService,
     private customerService: CustomerService,
-    private confirmationService: ConfirmationService,
+    private confirmationService: ConfirmationService
   ) {}
 
   ngOnInit() {
@@ -118,30 +144,59 @@ export class AllComponent {
     this.userLogin = this.userService.user;
     this.route.data.subscribe((data) => {
       this.title = data['title'];
-      console.log('Título de la ruta:', this.title);
     });
-
+    this.itemsTop = [
+      {
+        label: 'Nuevo',
+        icon: 'pi pi-money-bill',
+        items: [
+          {
+            label: 'Prestamo personal',
+            icon: 'pi pi-bolt',
+            command: () => {
+              this.itemPage = 1;
+            },
+          },
+          {
+            label: 'Prestamo hipotecario',
+            icon: 'pi pi-server',
+            command: () => {
+              this.itemPage = 2;
+            },
+          },
+        ],
+      },
+      {
+        label: 'Simulación prestamos rapido',
+        icon: 'pi pi-home',
+        command: () => {
+          this.itemPage = 0;
+        },
+      },
+    ];
     this.items = [
       {
-          label: 'Simular',
+        label: 'Simular',
       },
       {
-          label: 'Solicitar',
+        label: 'Solicitar',
       },
       {
-          label: 'Confirmar',
+        label: 'Confirmar',
       },
-  ];
-  // Configura el debounce para el Subject de 'value'
-  this.valueChangeSubject.pipe(debounceTime(1000)).subscribe((newValue) => {
-    this.makeApiCall(newValue, this.interest);
-  });
+    ];
+    // Configura el debounce para el Subject de 'value'
+    this.valueChangeSubject.pipe(debounceTime(1000)).subscribe((newValue) => {
+      this.makeApiCall(newValue, this.interest);
+    });
 
-  // Configura el debounce para el Subject de 'interest'
-  this.interestChangeSubject.pipe(debounceTime(1000)).subscribe((newInterest) => {
-    this.makeApiCall(this.value, newInterest);
-  });
-  this.onStateOptions()
+    // Configura el debounce para el Subject de 'interest'
+    this.interestChangeSubject
+      .pipe(debounceTime(1000))
+      .subscribe((newInterest) => {
+        this.makeApiCall(this.value, newInterest);
+      });
+    this.onStateOptions();
   }
 
   // Método que se llama cuando el slider cambia
@@ -150,29 +205,29 @@ export class AllComponent {
     this.value = newValue; // Actualiza el valor local
     this.valueChangeSubject.next(newValue); // Emite el nuevo valor al Subject
   }
-// Método que se llama cuando el slider o input de 'interest' cambia
-onInterestChange(newInterest: number) {
-  this.spinner = true; // Activa el spinner
-  this.interest = newInterest; // Actualiza el interés local
-  this.interestChangeSubject.next(newInterest); // Emite el nuevo interés al Subject
-}
+  // Método que se llama cuando el slider o input de 'interest' cambia
+  onInterestChange(newInterest: number) {
+    this.spinner = true; // Activa el spinner
+    this.interest = newInterest; // Actualiza el interés local
+    this.interestChangeSubject.next(newInterest); // Emite el nuevo interés al Subject
+  }
   // Lógica para realizar la llamada al servidor
   private makeApiCall(value: number, interest: number) {
-    const urlBase = url + 'credit/calculate';
+    const urlBase = url + 'credit/calculatefast';
     const item = { value, interest };
     this.spinner = true; // Activa el spinner
 
     this.baseService.postItem(urlBase, item).subscribe({
       next: (resp: any) => {
         console.log('Respuesta del servidor:', resp);
-         // Desactiva el spinner
+        // Desactiva el spinner
         setTimeout(() => {
           this.spinner = false;
-          this.data.six = resp.data.six
-          this.data.nine = resp.data.nine
-          this.data.twelve = resp.data.twelve
-          this.data.eighteen = resp.data.eighteen
-          this.data.total = resp.data.total
+          this.data.six = resp.data.six;
+          this.data.nine = resp.data.nine;
+          this.data.twelve = resp.data.twelve;
+          this.data.eighteen = resp.data.eighteen;
+          this.data.total = resp.data.total;
         }, 1000);
       },
       error: (err: any) => {
@@ -185,12 +240,11 @@ onInterestChange(newInterest: number) {
   }
 
   onStateOptions() {
-    const urlBase = url + 'account/'+ this.userLogin.uid;
-    this.baseService.getItems(urlBase).subscribe((resp:any) => {
-      resp.accounts.forEach((element:any) => {
-        this.stateOptions.push({label:element.name,value:element.id})
+    const urlBase = url + 'account/' + this.userLogin.uid;
+    this.baseService.getItems(urlBase).subscribe((resp: any) => {
+      resp.accounts.forEach((element: any) => {
+        this.stateOptions.push({ label: element.name, value: element.id });
       });
-
     });
   }
   // Método para seleccionar una cuota
@@ -198,14 +252,15 @@ onInterestChange(newInterest: number) {
     this.cuota = cuota;
     this.selectedCuota = cuotaKey; // Guarda la celda seleccionada
   }
-// Método para avanzar al siguiente paso
-nextStep() {
-  if (this.activeIndex < this.items!.length - 1) {
-    this.activeIndex++;
+  // Método para avanzar al siguiente paso
+  nextStep() {
+    if (this.activeIndex < this.items!.length - 1) {
+      this.activeIndex++;
+    }
   }
-}
   onFormGroupChange(formGroup: FormGroup) {
     this.dynamicForm = formGroup;
+    this.onFormCreated(this.dynamicForm);
   }
   onFormCreated = (form: any) => {
     this.ifValueChange(form);
@@ -215,22 +270,24 @@ nextStep() {
   setValidatorFormsStatic(form: FormGroup) {
     const controls = form.controls;
   }
-  setValuesDefault(form: FormGroup, tipe?: string, value?:any) {
+  setValuesDefault(form: FormGroup, tipe?: string, value?: any) {
     const controls = form.controls;
     if (tipe) {
       switch (tipe) {
         case 'credit':
-          this.setDataCredit(controls,value); // Llama a setDataCredit para establecer valores predeterminados
+          this.setDataCreditFast(controls, value); // Llama a setDataCredit para establecer valores predeterminados
           break;
       }
+    } else {
+      controls['titular'].setValue(
+        this.userLogin.name + ' ' + this.userLogin.lastname || null
+      );
     }
   }
   ifValueChange(form: FormGroup) {
     const controls = form.controls;
   }
-  onSubmitForm() {
-
-  }
+  onSubmitForm() {}
 
   getDataSource() {
     let baseUrl = url + 'account/' + this.userLogin.uid;
@@ -248,20 +305,22 @@ nextStep() {
 
   filterDataSource() {
     this.customerService.dataSource = this.dataSource;
-    this.filteredDataSource = this.customerService.dataSource.filter((item:any) => {
-      const matchesItems =
-        this.selectedItems.length === 0 ||
-        this.selectedItems.includes(item.tipe);
-      const matchesCategories =
-        this.selectedCategories.length === 0 ||
-        this.selectedCategories.includes(item.category);
+    this.filteredDataSource = this.customerService.dataSource.filter(
+      (item: any) => {
+        const matchesItems =
+          this.selectedItems.length === 0 ||
+          this.selectedItems.includes(item.tipe);
+        const matchesCategories =
+          this.selectedCategories.length === 0 ||
+          this.selectedCategories.includes(item.category);
 
-      const matchesPeriodos =
-        this.selectedPeriodos.length === 0 ||
-        this.isWithinPeriod(item.createAt);
+        const matchesPeriodos =
+          this.selectedPeriodos.length === 0 ||
+          this.isWithinPeriod(item.createAt);
 
-      return matchesItems && matchesCategories && matchesPeriodos;
-    });
+        return matchesItems && matchesCategories && matchesPeriodos;
+      }
+    );
     this.customerService.dataSource = this.filteredDataSource;
   }
 
@@ -315,27 +374,62 @@ nextStep() {
 
     return false; // Si no coincide con ningún periodo, devuelve false
   }
-  submitCredit() {
-    this.nextStep()
-    let baseUrl = url+'credit/paintCredit'
+  submitCreditFast() {
+    this.nextStep();
+    this.spinner = true;
+    let baseUrl = url + 'credit/paintCredit';
 
-    const item = {balance:this.data.total,interest:this.interest,amount:this.cuota, uid: this.userLogin.uid, accountId: this.accountAsigned, titular:this.userLogin.name +' '+this.userLogin.lastname, moth: this.data}
+    const item = {
+      balance: this.data.total,
+      interest: this.interest,
+      amount: this.cuota,
+      uid: this.userLogin.uid,
+      accountId: this.accountAsigned,
+      titular: this.userLogin.name + ' ' + this.userLogin.lastname,
+      moth: this.data,
+    };
     // Aquí puedes realizar la lógica para enviar el formulario
 
     this.baseService.postItem(baseUrl, item).subscribe({
       next: (resp: any) => {
-          this.setValuesDefault(this.dynamicForm, 'credit', resp);
-          this.lastPay = resp.lastPay
+        this.setValuesDefault(this.dynamicForm, 'credit', resp);
+        this.lastPay = resp.lastPay;
+        this.spinner = false;
       },
       error: (err: any) => {
         console.error('Error al registrar el ingreso:', err);
+      },
+    });
+  }
 
+  calculateCredit() {
+    this.spinner = true;
+    let baseUrl = url + 'credit/calculate';
+
+    const items = this.dynamicForm.value;
+
+    const item = {
+      balance: items.balance,
+      interest: items.interest,
+      moth: items.numCuotas,
+      amortizacion: items.amortiCuota || null,
+    };
+    // Aquí puedes realizar la lógica para enviar el formulario
+
+    this.baseService.postItem(baseUrl, item).subscribe({
+      next: (resp: any) => {
+        this.cuota = resp.amount;
+        this.endAt = resp.endAt;
+        this.spinner = false;
+      },
+      error: (err: any) => {
+        console.error('Error al registrar el ingreso:', err);
       },
     });
   }
   submitForm() {
-    let event = this.dynamicForm.value as Income
-    let baseUrl = url+'transaction'
+    let event = this.dynamicForm.value as Income;
+    let baseUrl = url + 'transaction';
     console.log('Formulario enviado:', event);
 
     // Aquí puedes realizar la lógica para enviar el formulario
@@ -353,7 +447,7 @@ nextStep() {
     }
     this.baseService.postItem(baseUrl, trasanction).subscribe({
       next: (resp: any) => {
-        this.isCreated = true
+        this.isCreated = true;
         Utils.showMessage(
           this.messageService,
           'success',
@@ -362,7 +456,7 @@ nextStep() {
         );
         this.ngOnInit();
         setTimeout(() => {
-          this.dynamicForm.reset()
+          this.dynamicForm.reset();
           this.isCreated = false;
         }, 3000);
       },
@@ -378,7 +472,7 @@ nextStep() {
     });
   }
 
-  setDataCredit(controls: { [key: string]: any }, value?: any) {
+  setDataCreditFast(controls: { [key: string]: any }, value?: any) {
     if (controls) {
       if (controls['accountId']) {
         controls['accountId'].setValue(value?.accountId || null);
@@ -393,7 +487,9 @@ nextStep() {
         controls['balancePending'].setValue(value?.balancePending || 0);
       }
       if (controls['createAt']) {
-        controls['createAt'].setValue(Utils.formatDate(new Date(value.createAt)));
+        controls['createAt'].setValue(
+          Utils.formatDate(new Date(value.createAt))
+        );
       }
       if (controls['endAt']) {
         controls['endAt'].setValue(Utils.formatDate(new Date(value.endAt)));
@@ -406,45 +502,52 @@ nextStep() {
         controls['recivePending'].setValue(value?.recivePending || 0);
       }
       if (controls['titular']) {
-        controls['titular'].setValue(this.userLogin.name + ' ' + this.userLogin.lastname);
+        controls['titular'].setValue(
+          this.userLogin.name + ' ' + this.userLogin.lastname
+        );
       }
     }
   }
 
   confirm1(event: Event) {
     this.confirmationService.confirm({
-        target: event.target as EventTarget,
-        message: 'Esta seguro de crear este crédito?',
-        icon: 'pi pi-exclamation-triangle',
-        rejectButtonProps: {
-            label: 'Mejor no',
-            severity: 'secondary',
-            outlined: true
-        },
-        acceptButtonProps: {
-            label: 'Si, por favor'
-        },
-        accept: () => {
-            this.createCredit()
-        },
-        reject: () => {
-            this.messageService.add({ severity: 'error', summary: 'Rejected', detail: 'You have rejected', life: 3000 });
-        }
+      target: event.target as EventTarget,
+      message: 'Esta seguro de crear este crédito?',
+      icon: 'pi pi-exclamation-triangle',
+      rejectButtonProps: {
+        label: 'Mejor no',
+        severity: 'secondary',
+        outlined: true,
+      },
+      acceptButtonProps: {
+        label: 'Si, por favor',
+      },
+      accept: () => {
+        this.createCredit();
+      },
+      reject: () => {
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Rejected',
+          detail: 'You have rejected',
+          life: 3000,
+        });
+      },
     });
-}
+  }
 
-  createCredit(){
-    let baseUrl = url+'credit'
+  createCredit() {
+    let baseUrl = url + 'credit';
 
-    const item = this.dynamicForm.value
+    const item = this.dynamicForm.value;
     // Aquí puedes realizar la lógica para enviar el formulario
-    item.accountId = this.accountAsigned
-    item.uid = this.userLogin.uid
-    item.createAt = Utils.parseSpanishDate(item.createAt)
-    item.endAt = Utils.parseSpanishDate(item.endAt)
+    item.accountId = this.accountAsigned;
+    item.uid = this.userLogin.uid;
+    item.createAt = Utils.parseSpanishDate(item.createAt);
+    item.endAt = Utils.parseSpanishDate(item.endAt);
     this.baseService.postItem(baseUrl, item).subscribe({
       next: (resp: any) => {
-        this.nextStep()
+        this.nextStep();
         Utils.showMessage(
           this.messageService,
           'success',
@@ -453,10 +556,10 @@ nextStep() {
         );
         this.ngOnInit();
         setTimeout(() => {
-          this.dynamicForm.reset()
-          this.value=0
-          this.interest= 0
-          this.cuota = 0
+          this.dynamicForm.reset();
+          this.value = 0;
+          this.interest = 0;
+          this.cuota = 0;
           this.activeIndex = 0;
         }, 5000);
       },

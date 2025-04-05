@@ -119,7 +119,7 @@
             [dateFormat]="'dd/mm/yy'"
             appendTo="body"
           ></p-datepicker>
-          <label [for]="field.name || ''">{{ field.label }}</label>
+          <label [for]="field.name || ''">{{ field.label }} <span *ngIf="field.required">*</span></label>
         </p-floatLabel>
       </div>
       <div

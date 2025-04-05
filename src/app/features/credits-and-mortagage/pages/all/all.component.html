@@ -51,14 +51,21 @@
       <p-toast />
       <app-table
         [dataSource]="filteredDataSource"
-        [dynamicGroup]="dynamicUpdateGroup"
+        [dynamicGroup]="dynamicUpdateCreditGroup"
       ></app-table>
     </p-card>
   </p-card>
 </div>
+
 <div class="mt-4">
   <p-card>
-    <h2 class="text-2xl font-bold mb-4 text-gray-600">Préstamo</h2>
+    <app-menu-top [items]="itemsTop"></app-menu-top>
+  </p-card>
+</div>
+
+<div class="mt-4" *ngIf="itemPage === 0">
+  <p-card>
+    <h2 class="text-2xl font-bold mb-4 text-gray-600">Simular</h2>
     <p>Antonio, simular la adquisición de un prestamo</p>
     <div
       class="text-center my-4"
@@ -219,7 +226,7 @@
             <p-button
               label="Continuar"
               icon="pi pi-user"
-              (onClick)="submitCredit()"
+              (onClick)="submitCreditFast()"
             ></p-button>
           </div>
         </div>
@@ -250,8 +257,40 @@
       </div>
       <div class="card flex justify-center my-4" *ngIf="activeIndex === 2">
         Credito creado correctamente.
-
       </div>
     </div>
+  </p-card>
+</div>
+
+<div class="mt-4" *ngIf="itemPage === 1">
+  <p-card>
+    <h2 class="text-2xl font-bold mb-4 text-gray-600">Crear crédito</h2>
+    <app-dynamic-form
+      [formData]="dynamicCreateCreditGroup"
+      (formGroupChange)="onFormGroupChange($event)"
+    ></app-dynamic-form>
+    <div class="card flex justify-center my-4">
+      <p-button
+        label="Continuar"
+        icon="pi pi-user"
+        [disabled]="dynamicForm.invalid"
+        (onClick)="calculateCredit()"
+      />
+    </div>
+    <div *ngIf="spinner ">
+      <div class="card flex justify-center mt-4">
+        <p-progress-spinner
+          strokeWidth="8"
+          fill="transparent"
+          animationDuration=".9s"
+          [style]="{ width: '50px', height: '50px' }"
+        />
+      </div>
+    </div>
+    <app-dynamic-form
+    [formData]="dynamicResultCreateCreditGroup"
+    (formGroupChange)="onFormGroupChange($event)"
+    *ngIf="dynamicResultCreateCreditGroup.valid && !spinner"
+  ></app-dynamic-form>
   </p-card>
 </div>

@@ -77,7 +77,6 @@ export class DashboardComponent implements OnInit {
     ];
     this.route.data.subscribe((data) => {
       this.title = data['title'];
-      console.log('Título de la ruta:', this.title);
     });
   }
 }

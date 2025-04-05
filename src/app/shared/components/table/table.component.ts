@@ -118,7 +118,6 @@ export class TableComponent implements OnInit {
     });
   }
   ngOnChanges() {
-    console.log('DataSource actualizado:', this.dataSource);
   }
   clear(table: Table) {
     table.clear();

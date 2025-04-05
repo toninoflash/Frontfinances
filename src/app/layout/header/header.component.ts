@@ -33,12 +33,6 @@ export class HeaderComponent implements OnInit {
 
   ngOnInit() {
     this.userService.user ? (this.login = true) : (this.login = false);
-    const savedTheme = localStorage.getItem('theme');
-    if (savedTheme === 'dark') {
-      document.querySelector('html')?.classList.add('my-app-dark'); // Aplica el tema oscuro
-      this.isDarkMode = true; // Actualiza el estado de la variable
-      this.iconMode = this.isDarkMode
-    }
     this.itemsSub = [
       {
         label: 'Cuentas',

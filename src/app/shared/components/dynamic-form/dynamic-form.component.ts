@@ -50,7 +50,6 @@ export class DynamicFormComponent {
 
   ngOnInit() {
     this.buildForm();
-    console.log('Formulario inicializado:', this.formGroup.value);
     this.formGroupChange.emit(this.formGroup);
   }
 

@@ -11,6 +11,7 @@ import { environment } from '../../../../enviroments/environment';
 import { UserService } from '../../../core/services/users/users.service';
 import { ProgressSpinner } from 'primeng/progressspinner';
 import { Router } from '@angular/router';
+import { Card } from 'primeng/card';
 const endpoint: any = environment.baseUrl;
 
 @Component({
@@ -21,7 +22,8 @@ const endpoint: any = environment.baseUrl;
     CheckboxModule,
     ProgressSpinner,
     DynamicFormComponent,
-    HttpClientModule
+    HttpClientModule,
+    Card
   ],
   providers: [UserService, BaseServiceService],
   templateUrl: './login.component.html',

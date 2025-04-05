@@ -68,7 +68,6 @@ export class FinancesComponent {
   ngOnInit() {
     this.route.data.subscribe((data) => {
       this.title = data['title'];
-      console.log('Título de la ruta:', this.title);
     });
     this.mothPass = Utils.paintMothActuallity(true);
     this.mothActually = Utils.paintMothActuallity();

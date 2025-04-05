@@ -62,10 +62,8 @@ export class CarruselComponent implements OnInit {
   }
 
   onProductChange(event: any) {
-    console.log('Página cambiada:', event);
     const currentIndex = event.page; // Índice de la página actual
     this.currentProduct = this.dataSource[currentIndex]; // Actualiza el producto actual
-    console.log('Producto actual:', this.currentProduct);
     this.runEmmiter(this.currentProduct);
   }
 }

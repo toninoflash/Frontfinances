@@ -1,5 +1,5 @@
-<div class="flex justify-center items-center h-screen bg-gray-100">
-  <div class="p-8 bg-white rounded-lg shadow-lg text-center" *ngIf="!spinner">
+<div class="flex justify-center items-center h-screen">
+  <p-card class="p-8  text-center" *ngIf="!spinner">
     <!-- Título -->
     <h2 class="text-2xl font-bold text-center mb-6">Iniciar Sesión</h2>
 
@@ -9,25 +9,32 @@
       (formGroupChange)="onFormGroupChange($event)"
     ></app-dynamic-form>
     <!-- Si es error -->
-    <div class="flex  items-center mt-4" *ngIf="error">
+    <div class="flex items-center mt-4" *ngIf="error">
       <div class="flex items-center">
-        <label for="remember" class="text-sm text-red-600">&nbsp;Credenciales erroneas</label>
+        <label for="remember" class="text-sm text-red-600"
+          >&nbsp;Credenciales erroneas</label
+        >
       </div>
     </div>
-     <!-- Enlace de recordar contraseña -->
-     <div class="flex  items-center mt-4">
+    <!-- Enlace de recordar contraseña -->
+    <div class="flex items-center mt-4">
       <div class="flex items-center text-center">
-        <p-checkbox  [binary]="true" />
+        <p-checkbox [binary]="true" />
         <label for="remember" class="text-sm">&nbsp;Recordarme</label>
-        <a href="#" class="text-sm text-blue-600 hover:underline mx-6">¿Olvidaste tu contraseña?</a>
+        <a href="#" class="text-sm text-green-600 hover:underline mx-6"
+          >¿Olvidaste tu contraseña?</a
+        >
       </div>
-
     </div>
 
     <!-- Botón de login -->
 
-    <p-button label="Iniciar sesión" icon="pi pi-sign-in" severity="secondary"
-    styleClass="w-full mt-4" (click)="login()"/>
+    <p-button
+      label="Iniciar sesión"
+      icon="pi pi-sign-in"
+      styleClass="w-full mt-4"
+      (click)="login()"
+    />
     <!-- Separador -->
     <div class="flex items-center my-4">
       <hr class="flex-grow border-gray-300" />
@@ -37,29 +44,31 @@
 
     <!-- Botón de login con Google -->
     <div>
-      <button
-        pButton
+      <p-button
         label="Iniciar sesión con Google"
-        icon="pi pi-google"
-        class="w-full p-button-rounded p-button-secondary"
-        style="background-color: #db4437; color: white"
-      ></button>
+        icon="pi pi-sign-in"
+        severity="secondary"
+        styleClass="w-full mt-4"
+      />
     </div>
 
     <!-- Enlace a la página de registro -->
     <div class="mt-4 text-center">
       <p class="text-sm text-gray-600">
         ¿No tienes una cuenta?
-        <a href="/register" class="text-blue-600 hover:underline"
+        <a href="/register" class="text-green-600 hover:underline"
           >Regístrate aquí</a
         >
       </p>
     </div>
-  </div>
+  </p-card>
 
   <div class="p-8 text-center" *ngIf="spinner">
-    <p-progress-spinner strokeWidth="8" fill="transparent" animationDuration=".5s" [style]="{ width: '50px', height: '50px' }" />
-
+    <p-progress-spinner
+      strokeWidth="8"
+      fill="transparent"
+      animationDuration=".5s"
+      [style]="{ width: '50px', height: '50px' }"
+    />
   </div>
 </div>
-
