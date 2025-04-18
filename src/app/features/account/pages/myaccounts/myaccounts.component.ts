@@ -193,7 +193,6 @@ export class MyaccountsComponent {
     let baseUrl = url + 'account/' + this.userLogin.uid;
     this.baseService.getItems(baseUrl).subscribe({
       next: (resp: any) => {
-        console.log('Data:', resp);
         this.dataSource = resp.accounts;
         this.productService.dataSource = this.dataSource;
       },
@@ -206,7 +205,6 @@ export class MyaccountsComponent {
     let baseUrl = url + 'movement/' + this.account.id;
     this.baseService.getItems(baseUrl).subscribe({
       next: (resp: any) => {
-        console.log('Data:', resp);
         this.dataSourceMov = resp.movements;
         this.customerService.dataSource = this.dataSourceMov;
       },

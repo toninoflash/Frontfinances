@@ -1,3 +1,4 @@
+import { TableColumn } from './../../../../core/interfaces';
 import { Validator } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
@@ -51,6 +52,7 @@ import { ToastModule } from 'primeng/toast';
 import { ConfirmPopupModule } from 'primeng/confirmpopup';
 import { MenuTopComponent } from '../../../../shared/components/menu-top/menu-top.component';
 import { CustomDatePipe } from '../../../../core/pipes/custom-date-pipe';
+import { ReactiveTableComponent } from "../../../../shared/components/reactive-table/reactive-table.component";
 const endpoint: any = environment.baseUrl;
 const url = `${endpoint}/`;
 @Component({
@@ -78,8 +80,9 @@ const url = `${endpoint}/`;
     ToastModule,
     ConfirmPopupModule,
     MenuTopComponent,
-    CustomDatePipe
-  ],
+    CustomDatePipe,
+    ReactiveTableComponent
+],
   providers: [
     UserService,
     BaseServiceService,
@@ -105,6 +108,17 @@ export class AllComponent {
   dynamicResultCreateCreditGroup: any = FormsCredit.resultCreditGroup;
   dynamicUpdateCreditGroup: any = FormsCredit.updateCreditGroup;
   dataSource: any[] = [];
+  tableColumns: TableColumn[] = [];
+  botton: any[] = [
+    {
+        label: 'Amortización',
+        icon: 'pi pi-refresh',
+    },
+    {
+        label: 'Cancelación',
+        icon: 'pi pi-times',
+    },
+];
 
   selectedItems: any[] = []; //filtro
   selectedCategories: any[] = []; //filtro
@@ -149,6 +163,9 @@ export class AllComponent {
       {
         label: 'Nuevo',
         icon: 'pi pi-money-bill',
+        command: () => {
+          this.itemPage = 1;
+        },
       },
       {
         label: 'Simulación prestamo rapido',
@@ -169,6 +186,13 @@ export class AllComponent {
         label: 'Confirmar',
       },
     ];
+    this.tableColumns = [
+      { field: 'name', header: 'Préstamo', sortable: false, style: { width: '20%' } },
+      { field: 'createAt', header: 'Fecha constitución', sortable: false, style: { width: '20%' } },
+      { field: 'balance', header: 'Capital concedido	', sortable: false, style: { width: '20%' } },
+      { field: 'balancePending', header: 'Importe pendiente', sortable: false, style: { width: '20%' } },
+    ];
+    this.botton
     // Configura el debounce para el Subject de 'value'
     this.valueChangeSubject.pipe(debounceTime(1000)).subscribe((newValue) => {
       this.makeApiCall(newValue, this.interest);
@@ -181,6 +205,7 @@ export class AllComponent {
         this.makeApiCall(this.value, newInterest);
       });
     this.onStateOptions();
+    this.getDataSource()
   }
 
   // Método que se llama cuando el slider cambia
@@ -274,12 +299,10 @@ export class AllComponent {
   onSubmitForm() {}
 
   getDataSource() {
-    let baseUrl = url + 'account/' + this.userLogin.uid;
+    let baseUrl = url + 'credit/' + this.userLogin.uid;
     this.baseService.getItems(baseUrl).subscribe({
       next: (resp: any) => {
-        console.log('Data:', resp);
-        this.dataSource = resp.accounts;
-        this.productService.dataSource = this.dataSource;
+        this.dataSource = resp.credits;
       },
       error: (err: any) => {
         console.error('Error:', err);
@@ -287,26 +310,6 @@ export class AllComponent {
     });
   }
 
-  filterDataSource() {
-    this.customerService.dataSource = this.dataSource;
-    this.filteredDataSource = this.customerService.dataSource.filter(
-      (item: any) => {
-        const matchesItems =
-          this.selectedItems.length === 0 ||
-          this.selectedItems.includes(item.tipe);
-        const matchesCategories =
-          this.selectedCategories.length === 0 ||
-          this.selectedCategories.includes(item.category);
-
-        const matchesPeriodos =
-          this.selectedPeriodos.length === 0 ||
-          this.isWithinPeriod(item.createAt);
-
-        return matchesItems && matchesCategories && matchesPeriodos;
-      }
-    );
-    this.customerService.dataSource = this.filteredDataSource;
-  }
 
   isWithinPeriod(createAt: string): boolean {
     if (this.selectedPeriodos.length === 0) {
@@ -401,33 +404,6 @@ export class AllComponent {
     });
   }
 
-  // calculateCredit() {
-  //   this.nextStep();
-  //   this.spinner = true;
-  //   let baseUrl = url + 'credit/calculate';
-
-  //   const items = this.dynamicForm.value;
-
-  //   const item = {
-  //     balance: items.balance,
-  //     interest: items.interest,
-  //     moth: items.numCuotas,
-  //     amortizacion: items.amortiCuota || null,
-
-  //   };
-  //   // Aquí puedes realizar la lógica para enviar el formulario
-
-  //   this.baseService.postItem(baseUrl, item).subscribe({
-  //     next: (resp: any) => {
-  //       this.cuota = resp.amount;
-  //       this.endAt = resp.endAt;
-  //       this.spinner = false;
-  //     },
-  //     error: (err: any) => {
-  //       console.error('Error al registrar el ingreso:', err);
-  //     },
-  //   });
-  // }
   submitForm() {
     let event = this.dynamicForm.value as Income;
     let baseUrl = url + 'transaction';

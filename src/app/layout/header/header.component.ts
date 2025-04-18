@@ -41,29 +41,29 @@ export class HeaderComponent implements OnInit {
           {
             label: 'Mis finanzas',
             icon: 'pi pi-bolt',
-            url: '/dashboard',
+            routerLink: ['/dashboard'],
           },
           {
             label: 'Cuentas',
             icon: 'pi pi-server',
-            url: '/account',
+            routerLink: ['/account'],
           },
           {
             label: 'Transferencias',
             icon: 'pi pi-pencil',
-            url: '/dashboard',
+            routerLink: 'dashboard',
           },
           {
             label: 'Mis tarjetas',
             icon: 'pi pi-palette',
-            url: '/dashboard',
+            routerLink: 'dashboard',
           },
         ],
       },
       {
         label: 'Prestamos e Hipotecas',
         icon: 'pi pi-home',
-        url: '/craditall',
+        routerLink: ['/craditall'],
       },
       {
         label: 'Ahorros e inversiones',
@@ -87,6 +87,5 @@ export class HeaderComponent implements OnInit {
     const isDarkMode = element?.classList.toggle('my-app-dark'); // Alterna la clase
     localStorage.setItem('theme', isDarkMode ? 'dark' : 'light'); // Guarda el estado en localStorage
     this.iconMode = isDarkMode || false
-
   }
 }

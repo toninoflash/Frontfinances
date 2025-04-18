@@ -13,6 +13,7 @@ import { AuthGuard } from './core/guards/auth.guard';
 import { ProductComponent } from './features/dashboard/pages/product/product.component';
 import { CreditsAndMortagageComponent } from './features/credits-and-mortagage/credits-and-mortagage.component';
 import { AllComponent } from './features/credits-and-mortagage/pages/all/all.component';
+import { CreditComponent } from './features/credits-and-mortagage/pages/credit/credit.component';
 
 export const routes: Routes = [
   {
@@ -117,6 +118,11 @@ export const routes: Routes = [
             path: 'myaccounts',
             component: MyaccountsComponent,
             data: { title: 'Mis cuentas' },
+          },
+          {
+            path: 'get/:id',
+            component: CreditComponent,
+            data: { title: 'Crédito' },
           },
         ],
       },

@@ -53,7 +53,7 @@ export class DoughnutComponent implements OnInit {
               labels: this.labels,
               datasets: [
                   {
-                      data: [this.dataSource.totalMovementPer, this.dataSource.totalBillsPer],
+                      data: [this.dataSource.totalFirst, this.dataSource.totalSecond],
                       backgroundColor: [documentStyle.getPropertyValue('--p-yellow-200'), documentStyle.getPropertyValue('--p-green-600')],
                       hoverBackgroundColor: [documentStyle.getPropertyValue('--p-yellow-300'), documentStyle.getPropertyValue('--p-green-800')]
                   }

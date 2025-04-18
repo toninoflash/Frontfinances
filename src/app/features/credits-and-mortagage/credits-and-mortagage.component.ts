@@ -22,61 +22,11 @@ export class CreditsAndMortagageComponent {
   ngOnInit() {
     this.items = [
       {
-        label: 'Mis finanzas',
+        label: 'Mis créditos',
         icon: 'pi pi-file',
-        route: 'finances',
+        route: 'all',
       },
-      {
-        label: 'Mis productos',
-        icon: 'pi pi-shopping-cart',
-        route: 'product',
-      },
-      {
-        label: 'Ingresos y gastos',
-        icon: 'pi pi-money-bill',
-        items: [
-          {
-            label: 'Listado',
-            icon: 'pi pi-eye',
-            route: 'incomes-bills',
 
-          },
-          {
-            label: 'Calendario',
-            icon: 'pi pi-calendar',
-            route: 'calendar',
-
-          },
-          {
-            label: 'Evolución',
-            icon: 'pi pi-chart-line',
-        route: 'evolution',
-
-            // command: () => {
-            //   this.page = 2;
-            //   console.log('Página actual:', this.page);
-            // },
-          },
-        ],
-      },
-      {
-        label: 'Tarjetas',
-        icon: 'pi pi-credit-card',
-        items: [
-          {
-            label: 'Ir a',
-            icon: 'pi pi-eye',
-            route: 'card',
-
-          },
-          {
-            label: 'Añadir',
-            icon: 'pi pi-plus',
-            route: 'add',
-
-          },
-        ],
-      },
     ];
     this.route.data.subscribe((data) => {
       this.title = data['title'];

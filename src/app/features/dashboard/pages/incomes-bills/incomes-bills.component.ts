@@ -151,7 +151,6 @@ export class IncomesBillsComponent implements OnInit {
     let baseUrl = url+'/'+this.userService.user?.uid;
     this.baseService.getItems(baseUrl).subscribe({
       next: (resp: any) => {
-        console.log('Data:', resp);
         this.dataSource = resp.incomes;
         this.customerService.dataSource = this.dataSource;
       },

@@ -56,6 +56,7 @@ export class FinancesComponent {
   labelsDog: any = ['Ingresos %', 'Gastos %'];
   label: any = ['Fijo', 'Extra'];
   dataChart: any = {};
+  dataCompareInform:any = []
   difference:any = {}
   constructor(
     private route: ActivatedRoute,
@@ -79,7 +80,6 @@ export class FinancesComponent {
     let baseUrl = url + 'movement/user/' + this.userService.user?.uid;
     this.baseService.getItems(baseUrl).subscribe({
       next: (resp: any) => {
-        console.log('Data:', resp);
         this.dataSource = resp.movements;
         this.difference = {total:resp.difference.total, percentage: resp.difference.percentage};
       },
@@ -101,9 +101,21 @@ export class FinancesComponent {
             totalMovement: resp.totalMovement,
             totalBills: resp.totalBills,
             total: resp.total,
-            totalMovementPer: resp.percentages.totalMovement,
-            totalBillsPer: resp.percentages.totalBills,
+            totalFirst: resp.percentages.totalMovement,
+            totalSecond: resp.percentages.totalBills,
           }
+          this.getDataSourceCompare()
+      },
+      error: (err: any) => {
+        console.error('Error:', err);
+      },
+    });
+  }
+  getDataSourceCompare() {
+    let baseUrl = url + 'movement/compare/' + this.userService.user?.uid;
+    this.baseService.getItems(baseUrl).subscribe({
+      next: (resp: any) => {
+        this.dataCompareInform = resp;
       },
       error: (err: any) => {
         console.error('Error:', err);

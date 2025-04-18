@@ -2,57 +2,15 @@
 
 <div class="mt-4">
   <p-card>
-    <p-card
-      class="summary-card savings-card"
-      [style]="{ 'margin-top': '1rem' }"
-    >
-      <p-multiselect
-        [options]="items"
-        [(ngModel)]="selectedItems"
-        optionLabel="label"
-        optionValue="value"
-        [maxSelectedLabels]="3"
-        styleClass="w-full md:w-80 me-6"
-        size="small"
-        placeholder="Movimientos"
-      ></p-multiselect>
-
-      <p-multiselect
-        [options]="categories"
-        [(ngModel)]="selectedCategories"
-        optionLabel="label"
-        optionValue="value"
-        [maxSelectedLabels]="3"
-        styleClass="w-full md:w-80 me-6"
-        size="small"
-        placeholder="Categorias"
-      ></p-multiselect>
-
-      <p-multiselect
-        [options]="periodos"
-        [(ngModel)]="selectedPeriodos"
-        optionLabel="label"
-        optionValue="value"
-        [maxSelectedLabels]="3"
-        styleClass="w-full md:w-80 me-6"
-        size="small"
-        placeholder="Periodos"
-      ></p-multiselect>
-
-      <p-button
-        label="Filtrar"
-        size="small"
-        (click)="filterDataSource()"
-        class="text-end"
-      ></p-button>
-    </p-card>
-
     <p-card [style]="{ 'margin-top': '1rem' }" class="text-end">
       <p-toast />
-      <app-table
-        [dataSource]="filteredDataSource"
+      <app-reactive-table
+        [dataSource]="dataSource"
         [dynamicGroup]="dynamicUpdateCreditGroup"
-      ></app-table>
+        [columns]="tableColumns"
+        [boton]="botton"
+        urlLink="craditall/get"
+      ></app-reactive-table>
     </p-card>
   </p-card>
 </div>
@@ -245,6 +203,11 @@
           class="card flex justify-center my-4"
           *ngIf="accountAsigned.length > 0"
         >
+        <p-button
+              label="Atras"
+              icon="pi pi-user"
+              (onClick)="activeIndex = 0"
+            ></p-button>
           <p-toast />
           <p-confirmpopup />
           <p-button
@@ -263,86 +226,90 @@
 </div>
 
 <div class="mt-4" *ngIf="itemPage === 1">
-<p-card>
+  <p-card>
+    <h2 class="text-2xl font-bold mb-4 text-gray-600">Nuevo</h2>
+    <p>Antonio, simular la adquisición de un prestamo</p>
+    <div
+      class="text-center my-4"
+      [style]="{ 'margin-left': '10rem', 'margin-right': '10rem' }"
+    >
+      <!-- Componente de pasos -->
+      <p-steps
+        [model]="items"
+        [activeIndex]="activeIndex"
+        [readonly]="true"
+      ></p-steps>
 
-  <h2 class="text-2xl font-bold mb-4 text-gray-600">Nuevo</h2>
-  <p>Antonio, simular la adquisición de un prestamo</p>
-  <div
-    class="text-center my-4"
-    [style]="{ 'margin-left': '10rem', 'margin-right': '10rem' }"
-  >
-    <!-- Componente de pasos -->
-    <p-steps
-      [model]="items"
-      [activeIndex]="activeIndex"
-      [readonly]="true"
-    ></p-steps>
+      <div *ngIf="activeIndex === 0">
+        <app-dynamic-form
+          [formData]="dynamicCreateCreditGroup"
+          (formGroupChange)="onFormGroupChange($event)"
+        ></app-dynamic-form>
+        <div *ngIf="dynamicForm.valid">
+          <div class="card flex justify-center">
+            <h2 class="text-xl font-bold my-4">
+              Selecciona la cuenta asociada
+            </h2>
+          </div>
+          <div class="card flex justify-center">
+            <p-selectbutton
+              [options]="stateOptions"
+              [(ngModel)]="accountAsigned"
+              optionLabel="label"
+              optionValue="value"
+              aria-labelledby="basic"
+            />
+          </div>
+        </div>
 
-    <div *ngIf="activeIndex === 0">
-      <app-dynamic-form
-        [formData]="dynamicCreateCreditGroup"
-        (formGroupChange)="onFormGroupChange($event)"
-      ></app-dynamic-form>
-      <div  *ngIf="dynamicForm.valid">
-
-      <div class="card flex justify-center">
-        <h2 class="text-xl font-bold my-4">
-          Selecciona la cuenta asociada
-        </h2>
-      </div>
-      <div class="card flex justify-center">
-        <p-selectbutton
-          [options]="stateOptions"
-          [(ngModel)]="accountAsigned"
-          optionLabel="label"
-          optionValue="value"
-          aria-labelledby="basic"
-        />
-      </div>
-    </div>
-
-      <div class="card flex justify-center my-4">
-        <p-button
-          label="Continuar"
-          icon="pi pi-user"
-          [disabled]="accountAsigned.length === 0 || dynamicForm.invalid"
-          (onClick)="submitCreditFast()"
-        />
-      </div>
-
-      <div *ngIf="spinner">
-        <div class="card flex justify-center mt-4">
-          <p-progress-spinner
-            strokeWidth="8"
-            fill="transparent"
-            animationDuration=".9s"
-            [style]="{ width: '50px', height: '50px' }"
+        <div class="card flex justify-center my-4">
+          <p-button
+            label="Continuar"
+            icon="pi pi-user"
+            [disabled]="accountAsigned.length === 0 || dynamicForm.invalid"
+            (onClick)="submitCreditFast()"
           />
         </div>
+
+        <div *ngIf="spinner">
+          <div class="card flex justify-center mt-4">
+            <p-progress-spinner
+              strokeWidth="8"
+              fill="transparent"
+              animationDuration=".9s"
+              [style]="{ width: '50px', height: '50px' }"
+            />
+          </div>
+        </div>
       </div>
-    </div>
-    <div *ngIf="activeIndex === 1">
+      <div *ngIf="activeIndex === 1">
         <h2 class="text-xl font-bold mb-4">Resultados</h2>
 
         <!-- Valores del formulario -->
         <app-dynamic-form
-        [formData]="dynamicGroup"
-        (formGroupChange)="onFormGroupChange($event)"
-      ></app-dynamic-form>
-      <div *ngIf="spinner">
-        <div class="card flex justify-center mt-4">
-          <p-progress-spinner
-            strokeWidth="8"
-            fill="transparent"
-            animationDuration=".9s"
-            [style]="{ width: '50px', height: '50px' }"
-          />
+          [formData]="dynamicGroup"
+          (formGroupChange)="onFormGroupChange($event)"
+        ></app-dynamic-form>
+        <div *ngIf="spinner">
+          <div class="card flex justify-center mt-4">
+            <p-progress-spinner
+              strokeWidth="8"
+              fill="transparent"
+              animationDuration=".9s"
+              [style]="{ width: '50px', height: '50px' }"
+            />
+          </div>
         </div>
-      </div>
-      <div
+        <div
           class="card flex justify-center my-4"
           *ngIf="accountAsigned.length > 0"
         >
+        <p-button
+              label="Atras"
+              icon="pi pi-user"
+              (onClick)="activeIndex = 0"
+              class="mx-2"
+            ></p-button>
           <p-toast />
           <p-confirmpopup />
           <p-button
@@ -356,7 +323,6 @@
       <div class="card flex justify-center my-4" *ngIf="activeIndex === 2">
         Credito creado correctamente.
       </div>
-  </div>
-</p-card>
-
+    </div>
+  </p-card>
 </div>

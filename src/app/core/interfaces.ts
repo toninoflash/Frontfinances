@@ -122,3 +122,9 @@ export interface Product {
   image: string;
   rating: number;
 }
+export interface TableColumn {
+  field: string; // Campo del objeto que se mostrará
+  header: string; // Encabezado de la columna
+  sortable?: boolean; // Indica si la columna es ordenable
+  style?: { [key: string]: string }; // Estilo opcional para la columna
+}
