@@ -1,4 +1,5 @@
 <header>
+  <div class="bg-orange-400/30 text-orange-500 p-2  border border-orange-400 rounded mx-4"  *ngIf="!login">Versión prueba para Recruiter. Loguease como <b>prueba&#64;prueba.com | 12345</b></div>
   <div class="container mx-auto flex items-center justify-between">
     <!-- Logo (centro) -->
     <div class="flex">
@@ -7,7 +8,7 @@
         class="text-2xl font-bold  flex items-center space-x-2"
       >
         <svg
-          class="w-8 h-8 text-green-600"
+          class="w-8 h-8 text-orange-400"
           fill="currentColor"
           viewBox="0 0 24 24"
         >
@@ -19,12 +20,12 @@
       </a>
     </div>
     <!-- Menú + Icono (derecha) -->
-    <div class="flex" *ngIf="login">
-      <button class="text-gray-700 hover:text-green-600 p-4 cursor-pointer">
+    <div class="flex">
+      <button class="text-gray-700 hover:text-orange-400 p-4 cursor-pointer">
         <i class="pi pi-user" style="font-size: 1rem"></i>
       </button>
       <button
-        class="text-gray-700 hover:text-green-600 cursor-pointer"
+        class="text-gray-700 hover:text-orange-400 cursor-pointer"
         (click)="toggleDarkMode()"
       >
         <i class="pi pi-sun" style="font-size: 1rem" *ngIf="iconMode"></i>
@@ -32,10 +33,10 @@
       </button>
     </div>
     <div class="flex" *ngIf="!login">
-      <button class="hover:text-green-600 p-4 cursor-pointer" routerLink="/login">
+      <button class="hover:text-orange-400 p-4 cursor-pointer" routerLink="/login">
         Iniciar sesión
       </button>
-      <button class="text-green-600 hover:text-green-700 cursor-pointer">Registrarse</button>
+      <button class="text-orange-400 hover:text-orange-700 cursor-pointer" routerLink="/register">Registrarse</button>
     </div>
   </div>
 </header>

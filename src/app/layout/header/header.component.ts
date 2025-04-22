@@ -8,6 +8,7 @@ import { PanelMenuModule } from 'primeng/panelmenu';
 import { RouterModule } from '@angular/router';
 import { UserService } from '../../core/services/users/users.service';
 import { MenuTopComponent } from '../../shared/components/menu-top/menu-top.component';
+import { Message } from 'primeng/message';
 @Component({
   selector: 'app-header',
   templateUrl: './header.component.html',
@@ -21,6 +22,7 @@ import { MenuTopComponent } from '../../shared/components/menu-top/menu-top.comp
     RouterModule,
     HttpClientModule,
     MenuTopComponent,
+    Message
   ],
 })
 export class HeaderComponent implements OnInit {

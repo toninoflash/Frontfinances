@@ -17,10 +17,10 @@ export namespace FormsAuth {
     const name = (grid?:any) => {
       return {
           type:'input',
-          label:AuthConstans.email.label,
-          name:AuthConstans.email.name,
+          label:AuthConstans.name.label,
+          name:AuthConstans.name.name,
           required:true,
-          grid:100
+          grid
       }
   }
     const password = (grid?:any) => {
@@ -29,11 +29,73 @@ export namespace FormsAuth {
             label:AuthConstans.password.label,
             name:AuthConstans.password.name,
             required:true,
-            grid:100
-
-
+            grid
         }
     }
+    const passwordRepeat = (grid?:any) => {
+      return {
+          type:'pass',
+          label:AuthConstans.password.labelConfin,
+          name:AuthConstans.password.nameConfin,
+          required:true,
+          grid
+      }
+  }
+    const username = (grid?:any) => {
+      return {
+          type:'input',
+          label:AuthConstans.username.label,
+          name:AuthConstans.username.name,
+          required:true,
+          grid
+      }
+  }
+  const email = (grid?:any) => {
+    return {
+        type:'input',
+        label:AuthConstans.email.label,
+        name:AuthConstans.email.name,
+        required:true,
+        grid
+    }
+}
+const lastname = (grid?:any) => {
+  return {
+      type:'input',
+      label:AuthConstans.lastName.label,
+      name:AuthConstans.lastName.name,
+      required:true,
+      grid
+  }
+}
+const bio = (grid?:any) => {
+  return {
+      type:'textarea',
+      label:AuthConstans.bio.label,
+      name:AuthConstans.bio.name,
+      grid
+  }
+}
+const country = (grid?:any) => {
+  return {
+      type:'select',
+      label:AuthConstans.country.label,
+      name:AuthConstans.country.name,
+      option:AuthConstans.country.option,
+      required:true,
+      grid
+  }
+}
+const city = (grid?:any) => {
+  return {
+      type:'select',
+      label:AuthConstans.city.label,
+      name:AuthConstans.city.name,
+      option:AuthConstans.city.option,
+      required:true,
+      grid
+  }
+}
     const createAt = () => {
         return {
             type:'date',
@@ -42,6 +104,14 @@ export namespace FormsAuth {
             required:true,
         }
     }
+    const birthDate = () => {
+      return {
+          type:'date',
+          label:AuthConstans.birthDate.label,
+          name:AuthConstans.birthDate.name,
+          required:true,
+      }
+  }
     const check = () => {
       return {
           type:'checkbox',
@@ -66,7 +136,11 @@ const textarea = () => {
       required:true,
   }
 }
-
+const divider = () => {
+  return {
+    type: 'divider',
+  };
+};
 
     export const loginGroup: FormData = {
         type: Type.update,
@@ -80,8 +154,20 @@ const textarea = () => {
         type: Type.update,
         data: [
 
+          email(),
+          username(),
+          divider(),
 
-
+          password(),
+          passwordRepeat(),
+          divider(),
+          name(),
+          lastname(),
+          country(),
+          city(),
+          birthDate(),
+          divider(),
+          bio()
 
         ],
     };

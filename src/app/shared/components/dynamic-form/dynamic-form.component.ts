@@ -15,6 +15,8 @@ import { RadioButton } from 'primeng/radiobutton';
 import { CheckboxModule } from 'primeng/checkbox';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { DividerModule } from 'primeng/divider';
+
+import { TextareaModule } from 'primeng/textarea';
 @Component({
   selector: 'app-dynamic-form',
   templateUrl: './dynamic-form.component.html',
@@ -32,7 +34,8 @@ import { DividerModule } from 'primeng/divider';
     DatePickerModule,
     CheckboxModule,
     InputNumberModule,
-    DividerModule
+    DividerModule,
+    TextareaModule
   ],
 })
 export class DynamicFormComponent {

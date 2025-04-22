@@ -75,16 +75,10 @@
         [class]="field.grid ? 'form-item full-width' : 'form-item'"
         *ngIf="field.type === 'textarea' && !field.hidden"
       >
-        <p-floatLabel>
-          <textarea
-            pTextarea
-            id="description"
-            rows="5"
-            cols="30"
-            style="resize: none"
-          ></textarea>
-          <label for="description">Description</label>
-        </p-floatLabel>
+      <p-floatlabel variant="in">
+        <textarea pTextarea id="over_label" rows="5" cols="30" style="resize: none" class="h-full"></textarea>
+        <label for="in_label">{{ field.label }}</label>
+    </p-floatlabel>
       </div>
 
       <!-- Render Checkbox -->

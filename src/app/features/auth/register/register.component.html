@@ -1,0 +1,75 @@
+<div class="flex justify-center items-center h-screen">
+  <p-card class="p-8  text-center " *ngIf="!spinner" styleClass="w-150">
+    <!-- Título -->
+    <h2 class="text-2xl font-bold text-center mb-6">Registro</h2>
+
+    <!-- Formulario de Login -->
+
+    <app-dynamic-form
+      [formData]="dynamicGroup"
+      (formGroupChange)="onFormGroupChange($event)"
+    ></app-dynamic-form>
+    <!-- Si es error -->
+    <div class="flex items-center mt-4" *ngIf="error">
+      <div class="flex items-center">
+        <label for="remember" class="text-sm text-red-600"
+          >&nbsp;Credenciales erroneas</label
+        >
+      </div>
+    </div>
+    <!-- Enlace de recordar contraseña -->
+    <div class="flex items-center mt-4">
+      <div class="flex items-center text-center">
+        <p-checkbox [binary]="true" />
+        <label for="remember" class="text-sm">&nbsp;Recordarme</label>
+        <a href="#" class="text-sm text-green-600 hover:underline mx-6"
+          >¿Olvidaste tu contraseña?</a
+        >
+      </div>
+    </div>
+
+    <!-- Botón de login -->
+
+    <p-button
+      label="Crear usuario"
+      icon="pi pi-sign-in"
+      styleClass="w-full mt-4"
+      (click)="register()"
+    />
+    <!-- Separador -->
+    <div class="flex items-center my-4">
+      <hr class="flex-grow border-gray-300" />
+      <span class="px-2 text-sm text-gray-500">O</span>
+      <hr class="flex-grow border-gray-300" />
+    </div>
+
+    <!-- Botón de login con Google -->
+    <div>
+      <p-button
+        label="Iniciar sesión con Google"
+        icon="pi pi-sign-in"
+        severity="secondary"
+        styleClass="w-full mt-4"
+      />
+    </div>
+
+    <!-- Enlace a la página de registro -->
+    <div class="mt-4 text-center">
+      <p class="text-sm text-gray-600">
+        ¿No tienes una cuenta?
+        <a href="/register" class="text-green-600 hover:underline"
+          >Regístrate aquí</a
+        >
+      </p>
+    </div>
+  </p-card>
+
+  <div class="p-8 text-center" *ngIf="spinner">
+    <p-progress-spinner
+      strokeWidth="8"
+      fill="transparent"
+      animationDuration=".5s"
+      [style]="{ width: '50px', height: '50px' }"
+    />
+  </div>
+</div>

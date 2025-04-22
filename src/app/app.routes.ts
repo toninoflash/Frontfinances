@@ -14,6 +14,7 @@ import { ProductComponent } from './features/dashboard/pages/product/product.com
 import { CreditsAndMortagageComponent } from './features/credits-and-mortagage/credits-and-mortagage.component';
 import { AllComponent } from './features/credits-and-mortagage/pages/all/all.component';
 import { CreditComponent } from './features/credits-and-mortagage/pages/credit/credit.component';
+import { RegisterComponent } from './features/auth/register/register.component';
 
 export const routes: Routes = [
   {
@@ -132,6 +133,10 @@ export const routes: Routes = [
   {
     path: 'login',
     component: LoginComponent,
+  },
+  {
+    path: 'register',
+    component: RegisterComponent,
   },
   { path: '', redirectTo: '/index', pathMatch: 'full' },
 ];

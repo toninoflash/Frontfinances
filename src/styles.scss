@@ -1,6 +1,14 @@
 /* You can add global styles to this file, and also import other style files */
 @use "tailwindcss";
 
+body {
+  background-image: url("https://www.primefaces.org/cdn/primevue/images/layout/pattern.png");
+  background-blend-mode: hard-light, multiply;
+    background-position: top;
+    background-repeat: no-repeat;
+    background-size: auto 15rem;
+}
+
 .layout {
   display: flex;
   flex-direction: column;
@@ -20,7 +28,6 @@
   flex: 1;
   overflow: hidden;
   min-width: 250px;
-
 }
 
 // .sidebar {
@@ -40,9 +47,9 @@
   padding: 10px;
 }
 
-.bg-green{
+.bg-green {
   background-color: #10b981;
 }
-.text-green{
+.text-green {
   color: #10b981;
 }

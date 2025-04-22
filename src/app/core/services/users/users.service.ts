@@ -5,7 +5,7 @@ import { environment } from '../../../../enviroments/environment';
 import { HttpClient } from '@angular/common/http';
 import { isPlatformBrowser } from '@angular/common';
 
-const endpoint: any = environment.baseUrl;
+const endpoint: any = environment.baseUrlSpring;
 
 @Injectable({
   providedIn: 'root',
@@ -103,7 +103,7 @@ export class UserService {
   }
 
   createUser(formData: any) {
-    return this.http.post(`${endpoint}/usuarios`, formData);
+    return this.http.post(`${endpoint}/user`, formData);
   }
 
   updateUser(newUser: User) {
@@ -133,8 +133,8 @@ export class UserService {
       })
       .pipe(
         map((resp: any) => {
-          const { tipe, name, lastname, email, uid, role, img, createAt, country, city } = resp.usuario;
-          this.user = new User(tipe, name, lastname, email, uid, img, role, '', true, createAt, country, city);
+          const { username, name, lastname, email, uid, role, profileImageUrl, createAt, country, city, bio } = resp.usuario;
+          this.user = new User(username, name, lastname, email, uid, profileImageUrl, role, '', true, createAt, country, city, bio);
           if (this.isSessionStorageAvailable()) {
             sessionStorage.setItem('token', resp.token);
           }
@@ -153,7 +153,7 @@ export class UserService {
       delay(500),
       map((resp: any) => {
         let Users = resp.usuarios as User[];
-        Users = Users.map((user) => new User(user.tipe, user.name, user.lastname, user.email, user.uid, user.role!));
+        Users = Users.map((user) => new User(user.username, user.name, user.lastname, user.email, user.uid, user.role!, user.profileImageUrl, user.password, user.active, user.createAt, user.country, user.city, user.bio));
         return {
           Users,
           total: resp.total,

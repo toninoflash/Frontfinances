@@ -10,11 +10,11 @@ export class BaseServiceService {
   get token(): string {
     return sessionStorage.getItem('token') || '';
   }
-  postItem(url: string, formData: any) {
+  postItem(url: string, formData: any,header:any = {
+    'x-token': this.token,
+  }) {
     return this.http.post(url, formData, {
-      headers: {
-        'x-token': this.token,
-      },
+      headers: header,
     });
   }
   postItemSinToken(url: string, formData: any) {

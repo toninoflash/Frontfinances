@@ -2,7 +2,7 @@ import { Constans } from "../../../core/consts";
 
 export const AuthConstans = {
     title:"Asunto",
-    
+
     tipo: {
         label:"Usuario",
         name:'tipe',
@@ -17,10 +17,13 @@ export const AuthConstans = {
         nameConfin:"passconf",
         name:'password',
     },
-    
-    
-    
-    
+
+
+
+    username: {
+      label:"Nombre de usuario",
+      name:'username',
+  },
     name: {
         label:"Nombre",
         name:'name',
@@ -37,11 +40,18 @@ export const AuthConstans = {
         label:"email",
         name:'email',
     },
+    bio: {
+      label:"Descripción",
+      name:'bio',
+  },
     createAt: {
         label:"Fecha de nacimiento",
         name:'createAt',
     },
-
+    birthDate: {
+      label:"Fecha de nacimiento",
+      name:'birthDate',
+  },
 
     country: {
         label:"Pais",
