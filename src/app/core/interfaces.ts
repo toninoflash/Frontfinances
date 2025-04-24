@@ -96,14 +96,17 @@ export enum Type {
 }
 
 export interface Customer {
-  id: string;
+  id: number;
   name: string;
-  tipe: string;
-  uid: string;
-  amount: number;
-  category: string;
-  active:boolean;
-  createAt:Date
+  company: string;
+  date: Date;
+  status: string;
+  country: { name: string };
+  activity: number;
+  representative: {
+    name: string;
+    image: string;
+  };
 }
 
 export interface Representative {

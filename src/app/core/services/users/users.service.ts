@@ -1,5 +1,14 @@
 import { Inject, Injectable, PLATFORM_ID } from '@angular/core';
-import { BehaviorSubject, Observable, catchError, delay, map, of, tap, throwError } from 'rxjs';
+import {
+  BehaviorSubject,
+  Observable,
+  catchError,
+  delay,
+  map,
+  of,
+  tap,
+  throwError,
+} from 'rxjs';
 import { User } from '../../models/user';
 import { environment } from '../../../../enviroments/environment';
 import { HttpClient } from '@angular/common/http';
@@ -11,11 +20,17 @@ const endpoint: any = environment.baseUrlSpring;
   providedIn: 'root',
 })
 export class UserService {
-  private _userSubject: BehaviorSubject<User | null> = new BehaviorSubject<User | null>(null);
+  private _userSubject: BehaviorSubject<User | null> =
+    new BehaviorSubject<User | null>(null);
 
-  constructor(private http: HttpClient, @Inject(PLATFORM_ID) private platformId: Object) {
+  constructor(
+    private http: HttpClient,
+    @Inject(PLATFORM_ID) private platformId: Object
+  ) {
     if (this.isSessionStorageAvailable()) {
-      const storedUser = sessionStorage.getItem('us') ? JSON.parse(sessionStorage.getItem('us')!) : null;
+      const storedUser = sessionStorage.getItem('us')
+        ? JSON.parse(sessionStorage.getItem('us')!)
+        : null;
       this._userSubject.next(storedUser);
     } else {
       this._userSubject.next(null); // Si no está en el navegador, inicializa con null
@@ -133,8 +148,40 @@ export class UserService {
       })
       .pipe(
         map((resp: any) => {
-          const { username, name, lastname, email, uid, role, profileImageUrl, createAt, country, city, bio } = resp.usuario;
-          this.user = new User(username, name, lastname, email, uid, profileImageUrl, role, '', true, createAt, country, city, bio);
+          const {
+            username,
+            email,
+            lastname,
+            name,
+            uid,
+            bio,
+            password,
+            roles,
+            avatarUrl,
+            enabled,
+            createdAt,
+            updatedAt,
+            direction,
+            phone,
+            website
+          } = resp.usuario;
+          this.user = new User(
+            username,
+            email,
+            lastname,
+            name,
+            uid,
+            bio,
+            password,
+            roles!,
+            avatarUrl,
+            enabled,
+            createdAt,
+            updatedAt,
+            direction,
+            phone,
+            website
+          );
           if (this.isSessionStorageAvailable()) {
             sessionStorage.setItem('token', resp.token);
           }
@@ -145,38 +192,61 @@ export class UserService {
   }
 
   getUsers(desde: number = 0) {
-    return this.http.get(`${endpoint}/user`, {
-      headers: {
-        'x-token': this.token,
-      },
-    }).pipe(
-      delay(500),
-      map((resp: any) => {
-        let Users = resp.usuarios as User[];
-        Users = Users.map((user) => new User(user.username, user.name, user.lastname, user.email, user.uid, user.role!, user.profileImageUrl, user.password, user.active, user.createAt, user.country, user.city, user.bio));
-        return {
-          Users,
-          total: resp.total,
-        };
+    return this.http
+      .get(`${endpoint}/user`, {
+        headers: {
+          'x-token': this.token,
+        },
       })
-    );
+      .pipe(
+        delay(500),
+        map((resp: any) => {
+          let Users = resp.usuarios as User[];
+          Users = Users.map(
+            (user) =>
+              new User(
+                user.username,
+                user.email,
+                user.lastname,
+                user.name,
+                user.uid,
+                user.bio,
+                user.password,
+                user.roles!,
+                user.avatarUrl,
+                user.enabled,
+                user.createdAt,
+                user.updatedAt,
+                user.direction,
+                user.phone,
+                user.website
+              )
+          );
+          return {
+            Users,
+            total: resp.total,
+          };
+        })
+      );
   }
 
   getUserByUID(uid: any) {
-    return this.http.get(`${endpoint}/user/${uid}`, {
-      headers: {
-        'x-token': this.token,
-      },
-    }).pipe(
-      delay(500),
-      map((resp: any) => {
-        let user = resp.user as User;
-        let favoritesProtected = resp.favoritesProtected;
-        return {
-          user,
-          favoritesProtected,
-        };
+    return this.http
+      .get(`${endpoint}/user/${uid}`, {
+        headers: {
+          'x-token': this.token,
+        },
       })
-    );
+      .pipe(
+        delay(500),
+        map((resp: any) => {
+          let user = resp.user as User;
+          let favoritesProtected = resp.favoritesProtected;
+          return {
+            user,
+            favoritesProtected,
+          };
+        })
+      );
   }
 }

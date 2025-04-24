@@ -1,11 +1,21 @@
-<header>
-  <div class="bg-orange-400/30 text-orange-500 p-2  border border-orange-400 rounded mx-4"  *ngIf="!login">Versión prueba para Recruiter. Loguease como <b>prueba&#64;prueba.com | 12345</b></div>
-  <div class="container mx-auto flex items-center justify-between">
+<header class=" bg-transparent backdrop-blur-sm">
+  <div
+    class="bg-orange-400/30 text-orange-500 border border-orange-400 rounded flex justify-between items-center p-4"
+    *ngIf="!login"
+  >
+    <span>
+      Versión prueba para Recruiter. Loguéate como
+      <a (click)="guardar()" class="cursor-pointer"><b>prueba&#64;prueba.com | 12345</b></a>
+    </span>
+    <i class="pi pi-spin pi-spinner" style="font-size: 0.8rem"  *ngIf="isLoading"></i>
+    <i class="pi pi-times  cursor-pointer" style="font-size: 0.8rem" *ngIf="!isLoading" (click)="login=true"></i>
+  </div>
+  <div class="container mx-auto my-2 flex items-center justify-between">
     <!-- Logo (centro) -->
     <div class="flex">
       <a
         href="/"
-        class="text-2xl font-bold  flex items-center space-x-2"
+        class="text-xl font-bold  flex items-center space-x-2"
       >
         <svg
           class="w-8 h-8 text-orange-400"
@@ -20,28 +30,42 @@
       </a>
     </div>
     <!-- Menú + Icono (derecha) -->
-    <div class="flex">
-      <button class="text-gray-700 hover:text-orange-400 p-4 cursor-pointer">
-        <i class="pi pi-user" style="font-size: 1rem"></i>
-      </button>
-      <button
-        class="text-gray-700 hover:text-orange-400 cursor-pointer"
-        (click)="toggleDarkMode()"
-      >
-        <i class="pi pi-sun" style="font-size: 1rem" *ngIf="iconMode"></i>
-        <i class="pi pi-moon" style="font-size: 1rem" *ngIf="!iconMode"></i>
-      </button>
-    </div>
-    <div class="flex" *ngIf="!login">
-      <button class="hover:text-orange-400 p-4 cursor-pointer" routerLink="/login">
-        Iniciar sesión
-      </button>
-      <button class="text-orange-400 hover:text-orange-700 cursor-pointer" routerLink="/register">Registrarse</button>
+
+    <div class="flex items-center gap-2 p-2">
+
+      <div class="rounded border-1 border-gray-400 hover:border-orange-400 p-1 flex items-center justify-center cursor-pointer" (click)="showDialog()">
+        <i class="pi pi-search" style="font-size: 0.8rem"></i>
+      </div>
+
+      <div class="rounded border-1 border-gray-400 hover:border-orange-400 p-1 flex items-center justify-center cursor-pointer" (click)="user.toggle($event)" *ngIf="login">
+        <i class="pi pi-user" style="font-size: 0.8rem"></i>
+      <p-menu #user [popup]="true" [model]="itemsUser" appendTo="body"></p-menu>
+
+      </div>
+      <div class="rounded border-1 border-gray-400 hover:border-orange-400 p-1 flex items-center justify-center cursor-pointer" routerLink="/login" *ngIf="!login">
+        <i class="pi pi-user" style="font-size: 0.8rem"></i>
+
+
+      </div>
+      <div class="rounded border-1 border-gray-400 hover:border-orange-400 p-1 flex items-center justify-center cursor-pointer" (click)="option.toggle($event)">
+        <i class="pi pi-cog" style="font-size: 0.8rem"></i>
+      <p-menu #option [popup]="true" [model]="itemsOption" appendTo="body"></p-menu>
+
+      </div>
+
+
     </div>
   </div>
+
+
+
 </header>
-<header class="shadow-md" *ngIf="login">
-  <div class="container mx-auto ">
-    <app-menu-top [items]="itemsSub"></app-menu-top>
-  </div>
-</header>
+
+<p-dialog [modal]="true" [(visible)]="visible" [style]="{ width: '100%' }" position="top">
+    <p-iconfield>
+      <p-inputicon styleClass="pi pi-search" />
+      <input type="text" pInputText placeholder="Buscar" [style]="{ width: '100%' }"/>
+  </p-iconfield>
+  <div class="flex items-center justify-center p-4">No hay busquedas recientes</div>
+
+</p-dialog>

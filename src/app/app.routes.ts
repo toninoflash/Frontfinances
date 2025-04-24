@@ -1,20 +1,14 @@
 import { Routes } from '@angular/router';
-import { LayoutComponent } from './layout/layout.component';
 import { LoginComponent } from './features/auth/login/login.component';
 import { IndexComponent } from './features/index/index.component';
 import { features } from 'process';
 import { FeaturesComponent } from './features/features.component';
-import { DashboardComponent } from './features/dashboard/dashboard.component';
-import { IncomesBillsComponent } from './features/dashboard/pages/incomes-bills/incomes-bills.component';
-import { FinancesComponent } from './features/dashboard/pages/finances/finances.component';
-import { AccountComponent } from './features/account/account.component';
-import { MyaccountsComponent } from './features/account/pages/myaccounts/myaccounts.component';
-import { AuthGuard } from './core/guards/auth.guard';
-import { ProductComponent } from './features/dashboard/pages/product/product.component';
-import { CreditsAndMortagageComponent } from './features/credits-and-mortagage/credits-and-mortagage.component';
-import { AllComponent } from './features/credits-and-mortagage/pages/all/all.component';
-import { CreditComponent } from './features/credits-and-mortagage/pages/credit/credit.component';
 import { RegisterComponent } from './features/auth/register/register.component';
+import { ProfileComponent } from './features/profile/profile.component';
+import { ArtworkComponent } from './features/artwork/artwork/artwork.component';
+import { GalleryComponent } from './features/artwork/gallery/gallery.component';
+import { TableComponent } from './shared/components/table/table.component';
+import { AuthGuard } from './core/guards/auth.guard';
 
 export const routes: Routes = [
   {
@@ -25,109 +19,36 @@ export const routes: Routes = [
     ],
   },
   {
-    path: 'dashboard',
+    path: 'profile',
     component: FeaturesComponent,
-    canActivate:[AuthGuard],
+    //canActivate: [AuthGuard],
+    data: { title: 'Perfil' },
     children: [
       {
-        path: '',
-        redirectTo: 'finances', // Redirige automáticamente a 'finances'
-        pathMatch: 'full',
+        path: 'mydata',
+        component: ProfileComponent,
+        data: { title: 'Mis datos' },
       },
       {
-        path: '',
-        component: DashboardComponent,
-        data: { title: 'Dashboard' },
+        path: 'artwaorks',
+        component: ArtworkComponent,
+        data: { title: 'Mis obras' },
         children: [
           {
-            path: 'finances',
-            component: FinancesComponent,
-            data: { title: 'Mis finanzas' },
+            path: 'gallery',
+            component: GalleryComponent,
+            data: { title: 'Galería' },
           },
           {
-            path: 'incomes-bills',
-            component: IncomesBillsComponent,
-            data: { title: 'Ingresos y gastos' },
+            path: 'table',
+            component: TableComponent,
+            data: { title: 'Tabla' },
           },
-        ],
-      },
-      {
-        path: '',
-        component: DashboardComponent,
-        data: { title: 'Dashboard' },
-        children: [
-          {
-            path: 'product',
-            component: ProductComponent,
-            data: { title: 'Mis productos' },
-          },
-        ],
-      },
-    ],
-  },
-  {
-    path: 'account',
-    component: FeaturesComponent,
-    canActivate:[AuthGuard],
-    children: [
-      {
-        path: '',
-        redirectTo: 'myac', // Redirige automáticamente a 'finances'
-        pathMatch: 'full',
-      },
-      {
-        path: '',
-        component: AccountComponent,
-        data: { title: 'Mis cuentas' },
-        children: [
-          {
-            path: 'myac',
-            component: MyaccountsComponent,
-            data: { title: 'Mis cuentas' },
-          },
-          {
-            path: 'myaccounts',
-            component: MyaccountsComponent,
-            data: { title: 'Mis cuentas' },
-          },
+          { path: '', redirectTo: 'gallery', pathMatch: 'full' },
         ],
       },
 
-    ],
-  },
-  {
-    path: 'craditall',
-    component: FeaturesComponent,
-    canActivate:[AuthGuard],
-    children: [
-      {
-        path: '',
-        redirectTo: 'all', // Redirige automáticamente a 'finances'
-        pathMatch: 'full',
-      },
-      {
-        path: '',
-        component: CreditsAndMortagageComponent,
-        data: { title: 'Mis cuentas' },
-        children: [
-          {
-            path: 'all',
-            component: AllComponent,
-            data: { title: 'Mis préstamos e hipotecas' },
-          },
-          {
-            path: 'myaccounts',
-            component: MyaccountsComponent,
-            data: { title: 'Mis cuentas' },
-          },
-          {
-            path: 'get/:id',
-            component: CreditComponent,
-            data: { title: 'Crédito' },
-          },
-        ],
-      },
-
+      { path: '', redirectTo: 'mydata', pathMatch: 'full' },
     ],
   },
   {

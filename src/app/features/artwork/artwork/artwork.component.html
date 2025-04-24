@@ -1,0 +1,9 @@
+<div class="grid grid-cols-1 md:grid-cols-5 gap-4 p-4">
+  <app-menu-left [menuItems]="menuItems"></app-menu-left>
+
+  <!-- Contenido principal del perfil -->
+  <div class="md:col-span-4 profile-container">
+    <!-- Tarjeta principal de perfil -->
+    <router-outlet></router-outlet>
+  </div>
+</div>

@@ -1,22 +1,20 @@
-import { Component, Input, input } from '@angular/core';
-import { MenuItem } from 'primeng/api';
-import { TieredMenu } from 'primeng/tieredmenu';
-import { PanelMenu } from 'primeng/panelmenu';
-import { Router, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
+import { Component, Input } from '@angular/core';
+import { RouterModule } from '@angular/router';
+
 @Component({
   selector: 'app-menu-left',
-  imports: [PanelMenu, RouterModule, CommonModule],
+  imports: [RouterModule, CommonModule],
   templateUrl: './menu-left.component.html',
   styleUrl: './menu-left.component.scss'
 })
 export class MenuLeftComponent {
-@Input() items: MenuItem[] | undefined;
 
-constructor(private router: Router) {}
+  @Input() menuItems: any[] = [
 
-  ngOnInit() {
-
-  }
-
+    { label: 'Mis datos', icon: 'pi pi-bolt', routerLink: ['/profile'] },
+    { label: 'Mis obras', icon: 'pi pi-server', routerLink: ['/profile/artwaorks'] },
+    { label: 'Mis favoritos', icon: 'pi pi-pencil', routerLink: 'dashboard' },
+  ];
+  @Input() title: string = ''; // Título del menú
 }

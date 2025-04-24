@@ -29,11 +29,7 @@ export class BaseServiceService {
     })
   }
   getItems(url:string) {
-    return this.http.get(url, {
-      headers: {
-        'x-token': this.token,
-      }
-    })
+    return this.http.get(url)
   }
 
 }

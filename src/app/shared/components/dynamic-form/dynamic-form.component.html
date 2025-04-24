@@ -75,10 +75,17 @@
         [class]="field.grid ? 'form-item full-width' : 'form-item'"
         *ngIf="field.type === 'textarea' && !field.hidden"
       >
-      <p-floatlabel variant="in">
-        <textarea pTextarea id="over_label" rows="5" cols="30" style="resize: none" class="h-full"></textarea>
-        <label for="in_label">{{ field.label }}</label>
-    </p-floatlabel>
+        <p-floatlabel variant="in">
+          <textarea
+            pTextarea
+            id="over_label"
+            rows="5"
+            cols="30"
+            style="resize: none"
+            class="h-full"
+          ></textarea>
+          <label for="in_label">{{ field.label }}</label>
+        </p-floatlabel>
       </div>
 
       <!-- Render Checkbox -->
@@ -113,15 +120,18 @@
             [dateFormat]="'dd/mm/yy'"
             appendTo="body"
           ></p-datepicker>
-          <label [for]="field.name || ''">{{ field.label }} <span *ngIf="field.required">*</span></label>
+          <label [for]="field.name || ''"
+            >{{ field.label }} <span *ngIf="field.required">*</span></label
+          >
         </p-floatLabel>
       </div>
       <div
-  class="form-item full-width divider-container"
-  *ngIf="field.type === 'divider' && !field.hidden"
->
-  <p-divider [style]="{ 'width': '100%' }"></p-divider>
-</div>
+        class="form-item full-width divider-container"
+        *ngIf="field.type === 'divider' && !field.hidden"
+      >
+        <p-divider [style]="{ width: '100%' }"></p-divider>
+      </div>
+      <div class="form-item space-field" *ngIf="field.type === 'space' && !field.hidden"></div>
       <!-- Render Button -->
       <div
         [class]="field.grid ? 'form-item full-width' : 'form-item'"

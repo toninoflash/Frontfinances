@@ -12,3 +12,7 @@
     right: 40px;
   }
 }
+::ng-deep .custom-spinner {
+  width: 24px !important;   /* Ajusta el tamaño */
+  height: 24px !important;
+}
