@@ -2,7 +2,7 @@
   <app-menu-left [menuItems]="menuItems"></app-menu-left>
 
   <!-- Contenido principal del perfil -->
-  <div class="md:col-span-4 profile-container">
+  <div [ngClass]="userIsLoged ? 'md:col-span-4' : 'md:col-span-5'" class="profile-container">
     <!-- Tarjeta principal de perfil -->
     <router-outlet></router-outlet>
   </div>

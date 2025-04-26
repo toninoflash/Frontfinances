@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
-import { RouterModule } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { AvatarModule } from 'primeng/avatar';
 import { ButtonModule } from 'primeng/button';
 import { CardModule } from 'primeng/card';
@@ -10,6 +10,10 @@ import { PanelMenuModule } from 'primeng/panelmenu';
 import { UserService } from '../../../core/services/users/users.service';
 import { BaseServiceService } from '../../../core/services/base-service.service';
 import { MenuLeftComponent } from "../../../shared/components/menu-left/menu-left.component";
+import { User } from '../../../core/models/user';
+import { environment } from '../../../../enviroments/environment';
+const endpoint: any = environment.baseUrlSpring + 'users';
+
 
 @Component({
   selector: 'app-artwork',
@@ -20,16 +24,50 @@ import { MenuLeftComponent } from "../../../shared/components/menu-left/menu-lef
 export class ArtworkComponent {
 menuItems: any[] = [];
 
-  constructor(private userService: UserService,
-              private baseService: BaseServiceService, // Cambiado a RouterModule
+userLogin!: any;
+  userIsLoged: boolean = false;
+  arthish:User | null = null;
+
+  constructor(
+    private userService: UserService,
+    private baseService: BaseServiceService,
+    private route: ActivatedRoute,
+
+    private router:Router
   ) {}
 
   ngOnInit() {
-    this.menuItems = [
 
-          { label: 'Galería', icon: 'pi pi-bolt', routerLink: 'gallery' },
-          { label: 'Tabla', icon: 'pi pi-server', routerLink: 'table' },
-          { label: 'Estadísticas', icon: 'pi pi-pencil', routerLink: 'dashboard' },
-    ];
+    this.userLogin = this.userService.user;
+    const id = Number(this.route.snapshot.paramMap.get('uid'));
+    if (id && id === this.userLogin.id) {
+      this.userIsLoged = true;
+      this.menuItems = [
+        {
+          label: 'Datos',
+          icon: 'pi pi-bolt',
+          routerLink: ['/profile/' + this.userLogin?.id+'/arthist/'],
+        },
+        {
+          label: 'Obras',
+          icon: 'pi pi-image',
+          expanded: false, // <-- para controlar visibilidad del submenu
+          children: [
+            {
+              label: 'Galería',
+              routerLink: '/profile/' + this.userLogin?.id+'/artwork/gallery/',
+            },
+            {
+              label: 'Tabla',
+              routerLink: '/profile/artwork/' + this.userLogin?.id+'/table',
+            },
+          ],
+        },
+        { label: 'Favoritos', icon: 'pi pi-pencil', routerLink: 'dashboard' },
+      ];
+    }
+
   }
+
+
 }

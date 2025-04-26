@@ -1,0 +1,24 @@
+
+
+<div
+  class="flex flex-wrap gap-4 justify-center md:justify-start"
+  (window:scroll)="onScroll()"
+  #scrollContainer
+>
+  <p-card
+    class="hover-card "
+    [style]="{ width: '14rem', overflow: 'hidden' }"
+    (click)="goToArtwork(card)" *ngFor="let card of limit && limit > 0 ? artworks.slice(0, limit) : artworks"
+  >
+    <ng-template #header>
+      <img alt="Card" class="w-full" [src]="card.imageUrl" />
+    </ng-template>
+    <ng-template #title > {{ card.title }} </ng-template>
+    <ng-template #subtitle> {{ card.subtitle }} </ng-template>
+    <p>{{ card.description }}</p>
+  </p-card>
+</div>
+<!-- Spinner mientras carga -->
+<div class="w-full flex justify-center my-4 py-4" *ngIf="isLoading">
+  <i class="pi pi-spin pi-spinner text-orange-400" style="font-size: 2rem"></i>
+</div>

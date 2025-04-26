@@ -1,13 +1,47 @@
-<!-- Menú lateral -->
 <div class="md:col-span-1">
   <div class="flex flex-col">
-    <a
-      *ngFor="let item of menuItems"
-      [routerLink]="item.routerLink"
-      routerLinkActive=" border-orange-400 text-orange-400 px-1"
-      class="border-l-1 border-gray-400 px-4 hover:text-orange-400 hover:border-orange-400 transition-colors py-2"
-    >
-      <i class="{{ item.icon }} mr-2"></i> {{ item.label }}
-    </a>
+    <ng-container *ngFor="let item of menuItems">
+      <!-- Wrapper que incluye el borde izquierdo -->
+      <div
+        class="group border-l-4 pl-4 transition-colors"
+        [ngClass]="{
+          'border-orange-400': item.expanded,
+          'hover:border-orange-400': true,
+          'border-gray-400': !item.expanded
+        }"
+      >
+        <!-- Ítem principal -->
+        <a
+          (click)="item.children ? item.expanded = !item.expanded : null"
+          [routerLink]="item.children ? null : item.routerLink"
+          routerLinkActive="text-orange-400"
+          class="py-2 pr-2 hover:text-orange-400 transition-colors cursor-pointer flex items-center"
+          [ngClass]="{ 'text-orange-400': item.expanded }"
+        >
+          <i class="{{ item.icon }} mr-2"></i> {{ item.label }}
+          <span
+            *ngIf="item.children"
+            class="ml-auto pi"
+            [ngClass]="{
+              'pi-chevron-down': !item.expanded,
+              'pi-chevron-up': item.expanded
+            }"
+          ></span>
+        </a>
+
+        <!-- Submenús -->
+        <div *ngIf="item.children && item.expanded" class="flex flex-col relative">
+          <a
+            *ngFor="let child of item.children"
+            [routerLink]="child.routerLink"
+            routerLinkActive="text-orange-400"
+            class="py-2 pl-8 pr-2 hover:text-orange-400 transition-colors flex items-center relative"
+          >
+            <span class="absolute left-0 top-1/2 w-4 h-px bg-gray-300"></span>
+            {{ child.label }}
+          </a>
+        </div>
+      </div>
+    </ng-container>
   </div>
 </div>

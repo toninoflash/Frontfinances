@@ -74,7 +74,7 @@ export class LoginComponent {
 
   login(id:string) {
     let loginUser: any;
-    const url: string = `${endpoint}/users`;
+    const url: string = `${endpoint}/users/`;
     this.spinner = true;
     this.error = false;
 
@@ -93,7 +93,7 @@ export class LoginComponent {
       //     this.spinner = false;
       //   }
       // );
-      const net = endpoint + '/'+id;
+      const net = endpoint + '/full/'+id;
       this.baseService.getItems(net).subscribe(
         (res) => {
           this.userService.user = res as User;

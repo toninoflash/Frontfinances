@@ -76,26 +76,35 @@ const bio = (grid?:any) => {
       grid
   }
 }
-const country = (grid?:any) => {
+const phone = (grid?:any) => {
   return {
-      type:'select',
-      label:ProfileConstans.country.label,
-      name:ProfileConstans.country.name,
-      option:ProfileConstans.country.option,
+      type:'input',
+      label:ProfileConstans.phone.label,
+      name:ProfileConstans.phone.name,
       required:true,
       grid
   }
 }
-const city = (grid?:any) => {
+const direction = (grid?:any) => {
   return {
-      type:'select',
-      label:ProfileConstans.city.label,
-      name:ProfileConstans.city.name,
-      option:ProfileConstans.city.option,
+      type:'input',
+      label:ProfileConstans.direction.label,
+      name:ProfileConstans.direction.name,
       required:true,
       grid
   }
 }
+
+const website = (grid?:any) => {
+  return {
+      type:'input',
+      label:ProfileConstans.website.label,
+      name:ProfileConstans.website.name,
+      required:true,
+      grid
+  }
+}
+
     const createAt = () => {
         return {
             type:'date',
@@ -158,14 +167,12 @@ const space = () => {
     export const updateGroup: FormData = {
         type: Type.update,
         data: [
+          divider(),
           name(),
           lastname(),
-          space(),
-          country(),
-          city(),
-          space(),
-
-          birthDate(),
+          phone(),
+          direction(),
+          website(),
           bio()
 
         ],

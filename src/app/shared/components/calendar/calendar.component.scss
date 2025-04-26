@@ -1,0 +1,54 @@
+/* Personalización del calendario */
+.fc {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* Fuente base */
+  background-color: #f9f9f9; /* Fondo suave */
+  border-radius: 8px;
+}
+
+.fc-toolbar {
+  background-color: #ff6f61; /* Fondo del toolbar con color cálido */
+  color: white;
+  border-radius: 8px 8px 0 0; /* Bordes redondeados */
+}
+
+.fc-button-primary {
+  background-color: #ff6f61; /* Color de los botones */
+  color: white;
+}
+
+.fc-button-primary:hover {
+  background-color: #ff4d3b; /* Hover de botones */
+}
+
+.fc-daygrid-day {
+  border-radius: 8px;
+  margin: 5px;
+  transition: transform 0.2s ease-in-out;
+}
+
+.fc-daygrid-day:hover {
+  transform: scale(1.05); /* Zoom suave al pasar el cursor */
+}
+
+.fc-event {
+  background-color: #ffa726; /* Color cálido para los eventos */
+  color: white;
+  border-radius: 5px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  padding: 4px 8px;
+  font-size: 14px;
+}
+
+.fc-event:hover {
+  background-color: #ff5722; /* Evento resaltado al pasar el cursor */
+}
+
+.fc-daygrid-day-number {
+  font-size: 16px;
+  font-weight: bold;
+}
+
+/* Fondo de días en fin de semana */
+.fc-day-sat, .fc-day-sun {
+  background-color: #f0f0f0;
+}

@@ -1,14 +1,14 @@
 <header class=" bg-transparent backdrop-blur-sm">
   <div
     class="bg-orange-400/30 text-orange-500 border border-orange-400 rounded flex justify-between items-center p-4"
-    *ngIf="!login"
+    *ngIf="!isLogin"
   >
     <span>
       Versión prueba para Recruiter. Loguéate como
       <a (click)="guardar()" class="cursor-pointer"><b>prueba&#64;prueba.com | 12345</b></a>
     </span>
     <i class="pi pi-spin pi-spinner" style="font-size: 0.8rem"  *ngIf="isLoading"></i>
-    <i class="pi pi-times  cursor-pointer" style="font-size: 0.8rem" *ngIf="!isLoading" (click)="login=true"></i>
+    <i class="pi pi-times  cursor-pointer" style="font-size: 0.8rem" *ngIf="!isLoading" (click)="isLogin=true"></i>
   </div>
   <div class="container mx-auto my-2 flex items-center justify-between">
     <!-- Logo (centro) -->
@@ -37,12 +37,12 @@
         <i class="pi pi-search" style="font-size: 0.8rem"></i>
       </div>
 
-      <div class="rounded border-1 border-gray-400 hover:border-orange-400 p-1 flex items-center justify-center cursor-pointer" (click)="user.toggle($event)" *ngIf="login">
+      <div class="rounded border-1 border-gray-400 hover:border-orange-400 p-1 flex items-center justify-center cursor-pointer" (click)="user.toggle($event)" *ngIf="isLogin">
         <i class="pi pi-user" style="font-size: 0.8rem"></i>
       <p-menu #user [popup]="true" [model]="itemsUser" appendTo="body"></p-menu>
 
       </div>
-      <div class="rounded border-1 border-gray-400 hover:border-orange-400 p-1 flex items-center justify-center cursor-pointer" routerLink="/login" *ngIf="!login">
+      <div class="rounded border-1 border-gray-400 hover:border-orange-400 p-1 flex items-center justify-center cursor-pointer" routerLink="/login" *ngIf="!isLogin">
         <i class="pi pi-user" style="font-size: 0.8rem"></i>
 
 

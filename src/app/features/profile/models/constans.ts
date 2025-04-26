@@ -41,7 +41,7 @@ export const ProfileConstans = {
         name:'email',
     },
     bio: {
-      label:"Descripción",
+      label:"Biografía",
       name:'bio',
   },
     createAt: {
@@ -53,22 +53,18 @@ export const ProfileConstans = {
       name:'birthDate',
   },
 
-    country: {
-        label:"Pais",
-        name:'country',
-        option: [
-            {value:"1", label:'España'},
-        ]
+  phone: {
+        label:"Teléfono",
+        name:'phone',
+
     },
-    city: {
-        label:"Provincia",
-        name:'city',
-        option: Constans.PROVINCIAS_ESPAÑA
+    direction: {
+        label:"Dirección",
+        name:'direction',
     },
-    vivienda: {
-        label:"Vivienda",
-        name:'vivienda',
-        option: Constans.VIVIENDA
+    website: {
+        label:"Web",
+        name:'website',
     },
     espacio: {
         label:"Espacio",

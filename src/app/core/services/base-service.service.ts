@@ -22,11 +22,7 @@ export class BaseServiceService {
     });
   }
   putItem(url:string,formData: any, ) {
-    return this.http.put(url, formData,  {
-      headers: {
-        'x-token': this.token,
-      }
-    })
+    return this.http.put(url, formData)
   }
   getItems(url:string) {
     return this.http.get(url)

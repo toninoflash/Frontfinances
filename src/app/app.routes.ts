@@ -9,6 +9,7 @@ import { ArtworkComponent } from './features/artwork/artwork/artwork.component';
 import { GalleryComponent } from './features/artwork/gallery/gallery.component';
 import { TableComponent } from './shared/components/table/table.component';
 import { AuthGuard } from './core/guards/auth.guard';
+import { SeeComponent } from './features/artwork/see/see.component';
 
 export const routes: Routes = [
   {
@@ -25,30 +26,21 @@ export const routes: Routes = [
     data: { title: 'Perfil' },
     children: [
       {
-        path: 'mydata',
+        path: ':uid/arthist',
         component: ProfileComponent,
-        data: { title: 'Mis datos' },
+        data: { title: 'Artista' },
       },
       {
-        path: 'artwaorks',
+        path: 'artwork/:uid',
         component: ArtworkComponent,
         data: { title: 'Mis obras' },
         children: [
-          {
-            path: 'gallery',
-            component: GalleryComponent,
-            data: { title: 'Galería' },
-          },
-          {
-            path: 'table',
-            component: TableComponent,
-            data: { title: 'Tabla' },
-          },
+          { path: 'gallery', component: GalleryComponent, data: { title: 'Galería' } },
+          { path: 'table', component: TableComponent, data: { title: 'Tabla' } },
+          { path: 'see/:id', component: SeeComponent, data: { title: 'Obra' } },
           { path: '', redirectTo: 'gallery', pathMatch: 'full' },
         ],
-      },
-
-      { path: '', redirectTo: 'mydata', pathMatch: 'full' },
+      }
     ],
   },
   {

@@ -12,7 +12,7 @@ import { Router } from '@angular/router';
 import { FormsAuth } from '../models/forms';
 import { FormGroup } from '@angular/forms';
 import { environment } from '../../../../enviroments/environment';
-const endpoint: any = environment.baseUrlSpring;
+const endpoint: any = environment.baseUrlSpring+"/api/";
 
 @Component({
   selector: 'app-register',

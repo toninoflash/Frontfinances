@@ -6,7 +6,7 @@ export class User {
         public email: string,
         public lastname: string,
         public name: string,
-        public uid: string,
+        public id: string,
         public bio: string,
         public password?: string,
         public roles?: string,
@@ -17,5 +17,6 @@ export class User {
         public direction?: string,
         public phone?: string,
         public website?: string,
+        public artWork:any[] = [],
     ){}
 }

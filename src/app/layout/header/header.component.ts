@@ -41,7 +41,7 @@ const endpoint: any = environment.baseUrlSpring + 'users';
 export class HeaderComponent implements OnInit {
   itemsOption: MenuItem[] | undefined;
   itemsUser: MenuItem[] | undefined;
-  login: boolean = false;
+  isLogin: boolean = false;
   isDarkMode: boolean = false; // Variable para rastrear el estado del modo oscuro
   iconMode: boolean = false; // Estado actual del modo oscuro (true = oscuro, false = claro)
 
@@ -51,28 +51,31 @@ export class HeaderComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.userService.user ? (this.login = true) : (this.login = false);
+    this.userService.user ? (this.isLogin = true) : (this.isLogin = false);
 
     // Inicializar los íconos del menú de usuario
-    this.itemsUser = [
-      {
-        label: 'Perfil',
-        icon: 'pi pi-money-bill',
-        items: [
-          { label: 'Mis datos', icon: 'pi pi-bolt', routerLink: ['/profile'] },
-          {
-            label: 'Mis obras',
-            icon: 'pi pi-server',
-            routerLink: ['/profile/artwaorks'],
-          },
-          {
-            label: 'Mis favoritos',
-            icon: 'pi pi-pencil',
-            routerLink: 'dashboard',
-          },
-        ],
-      },
-    ];
+    if(this.isLogin) {
+      this.itemsUser = [
+        {
+          label: 'Perfil',
+          icon: 'pi pi-money-bill',
+          items: [
+            { label: 'Mis datos', icon: 'pi pi-bolt', routerLink: ['/profile/'+this.userService.user!.id+'/arthist'] },
+            {
+              label: 'Mis obras',
+              icon: 'pi pi-server',
+              routerLink: ['/profile//artwork/'+this.userService.user!.id+'/gallery'],
+            },
+            {
+              label: 'Mis favoritos',
+              icon: 'pi pi-pencil',
+              routerLink: 'dashboard',
+            },
+          ],
+        },
+      ];
+    }
+
 
     // Inicializar los íconos del menú de opciones
     this.itemsOption = [
@@ -126,14 +129,14 @@ export class HeaderComponent implements OnInit {
 
   guardar() {
     this.isLoading = true;
-    const net = endpoint + '/14';
+    const net = endpoint + '/1';
 
     // Simula una espera
     setTimeout(() => {
       this.baseService.getItems(net).subscribe(
         (res) => {
           this.userService.user = res as User;
-          this.login = true;
+          this.isLogin = true;
           this.isLoading = false;
         },
         (error) => {

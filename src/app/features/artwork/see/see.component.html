@@ -1,0 +1,30 @@
+<div class="artwork-container">
+  <div class="artwork-image">
+    <img [src]="artwork.imageUrl" [alt]="artwork.title" />
+  </div>
+
+  <div class="artwork-details">
+    <h1>{{ artwork.title }}</h1>
+    <h4 class="author">Por <a [routerLink]="`/profile/${artwork.uid}/arthist/`" class="text-orange-400 hover:text-orange-600">{{ arthist.name }} {{ arthist.lastname }} ({{ arthist.username }})</a></h4>
+    <p class="description">{{ artwork.description }}</p>
+    <p class="date">{{ artwork.date  }}</p>
+
+    <div class="interaction">
+      <button class="like-btn" >
+        ❤️ {{ artwork.likes || 0 }}
+      </button>
+    </div>
+  </div>
+
+  <div class="comments-section">
+    <h3>Comentarios</h3>
+    <div *ngFor="let comment of artwork.comments" class="comment">
+      <strong>{{ comment.user }}:</strong> {{ comment.text }}
+    </div>
+
+    <div class="new-comment">
+      <textarea  placeholder="Escribe un comentario..."></textarea>
+      <button >Enviar</button>
+    </div>
+  </div>
+</div>

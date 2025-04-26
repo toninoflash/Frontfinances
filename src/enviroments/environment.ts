@@ -6,6 +6,7 @@ export const environment = {
     production: false,
      baseUrl: 'http://localhost:3000/api',
      baseUrlSpring: 'http://localhost:8080/api/',
+     baseUrlLogin: 'http://localhost:8088/',
     socketUrl: 'ws://localhost:3000'
 
   };

@@ -10,24 +10,6 @@
     <img [src]="item.thumbnailImageSrc" />
   </ng-template>
 </p-galleria> -->
-<div class="flex flex-wrap gap-4 justify-start" (window:scroll)="onScroll()" #scrollContainer>
-  <p-card
-    *ngFor="let card of cards"
-    [style]="{ width: '16rem', overflow: 'hidden' }"
-  >
-    <ng-template #header>
-      <img
-        alt="Card"
-        class="w-full"
-        src="https://primefaces.org/cdn/primeng/images/card-ng.jpg"
-      />
-    </ng-template>
-    <ng-template #title> {{ card.title }} </ng-template>
-    <ng-template #subtitle> {{ card.subtitle }} </ng-template>
-    <p>{{ card.description }}</p>
-  </p-card>
-</div>
-<!-- Spinner mientras carga -->
-<div class="w-full flex justify-center my-4 py-4" *ngIf="isLoading">
-  <i class="pi pi-spin pi-spinner text-orange-400" style="font-size: 2rem"></i>
-</div>
+<app-gallery-component
+  [artworks]="artworks"
+></app-gallery-component>

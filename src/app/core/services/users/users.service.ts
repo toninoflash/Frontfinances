@@ -90,7 +90,8 @@ export class UserService {
   }
 
   login(formData: any) {
-    return this.http.post(`${endpoint}/login`, formData).pipe(
+    const url = environment.baseUrlLogin;
+    return this.http.post(`${url}login`, formData).pipe(
       tap((resp: any) => {
         if (this.isSessionStorageAvailable()) {
           sessionStorage.setItem('token', resp.token);
@@ -122,7 +123,7 @@ export class UserService {
   }
 
   updateUser(newUser: User) {
-    return this.http.put(`${endpoint}/user/` + newUser.uid, newUser, {
+    return this.http.put(`${endpoint}/user/` + newUser.id, newUser, {
       headers: {
         'x-token': this.token,
       },
@@ -209,7 +210,7 @@ export class UserService {
                 user.email,
                 user.lastname,
                 user.name,
-                user.uid,
+                user.id,
                 user.bio,
                 user.password,
                 user.roles!,
