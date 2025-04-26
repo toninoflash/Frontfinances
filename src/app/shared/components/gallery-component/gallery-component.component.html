@@ -1,24 +1,29 @@
-
-
 <div
-  class="flex flex-wrap gap-4 justify-center md:justify-start"
+  class="flex flex-wrap gap-6 justify-center md:justify-start p-4"
   (window:scroll)="onScroll()"
   #scrollContainer
 >
   <p-card
-    class="hover-card "
-    [style]="{ width: '14rem', overflow: 'hidden' }"
-    (click)="goToArtwork(card)" *ngFor="let card of limit && limit > 0 ? artworks.slice(0, limit) : artworks"
+    class="hover-card transform hover:scale-105 transition-transform duration-300 shadow-md hover:shadow-lg rounded-lg overflow-hidden"
+    [style]="{ width: '16rem', background: 'transparent', border: 'none' }"
+    (click)="goToArtwork(card)"
+    *ngFor="let card of limit && limit > 0 ? artworks.slice(0, limit) : artworks"
   >
     <ng-template #header>
-      <img alt="Card" class="w-full" [src]="card.imageUrl" />
+      <div class="relative w-full h-48 overflow-hidden">
+        <img alt="Artwork" class="w-full h-full object-cover" [src]="card.imageUrl" />
+        <div class="absolute bottom-0 w-full h-24 bg-gradient-to-t from-black/70 to-transparent text-white flex items-end p-2">
+          <div class="font-semibold text-md">{{ card.title }}</div>
+        </div>
+      </div>
     </ng-template>
-    <ng-template #title > {{ card.title }} </ng-template>
-    <ng-template #subtitle> {{ card.subtitle }} </ng-template>
-    <p>{{ card.description }}</p>
   </p-card>
 </div>
+
 <!-- Spinner mientras carga -->
-<div class="w-full flex justify-center my-4 py-4" *ngIf="isLoading">
-  <i class="pi pi-spin pi-spinner text-orange-400" style="font-size: 2rem"></i>
+<div class="w-full flex justify-center items-center py-8" *ngIf="isLoading">
+  <div class="flex flex-col items-center">
+    <i class="pi pi-spin pi-spinner text-orange-500" style="font-size: 3rem"></i>
+    <span class="mt-2 text-orange-400 font-semibold">Cargando obras...</span>
+  </div>
 </div>

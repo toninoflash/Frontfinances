@@ -1,90 +1,77 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { Table } from 'primeng/table';
-import { TagModule } from 'primeng/tag';
-import { IconFieldModule } from 'primeng/iconfield';
-import { InputIconModule } from 'primeng/inputicon';
-import { HttpClientModule } from '@angular/common/http';
-import { InputTextModule } from 'primeng/inputtext';
-import { MultiSelectModule } from 'primeng/multiselect';
-import { SelectModule } from 'primeng/select';
 import { CommonModule } from '@angular/common';
 import { TableModule } from 'primeng/table';
-import { Customer, Representative } from '../../../core/interfaces';
-import { CustomerService } from '../../../core/services/customerservice';
-
+import { TagModule } from 'primeng/tag';
+import { InputTextModule } from 'primeng/inputtext';
+import { MultiSelectModule } from 'primeng/multiselect';
+import { FormsModule } from '@angular/forms';
+import { IconFieldModule } from 'primeng/iconfield';
+import { InputIconModule } from 'primeng/inputicon';
+import { DropdownModule } from 'primeng/dropdown';
+type SeverityType = 'success' | 'secondary' | 'info' | 'warn' | 'danger' | 'contrast' | undefined;
 @Component({
   selector: 'app-table',
-  imports: [TableModule, TagModule, IconFieldModule, InputTextModule, InputIconModule, MultiSelectModule, SelectModule, HttpClientModule, CommonModule],
-    providers: [CustomerService],
+  standalone: true,
+  imports: [
+    CommonModule,
+    TableModule,
+    TagModule,
+    InputTextModule,
+    MultiSelectModule,
+    FormsModule,
+    IconFieldModule,
+    InputIconModule,
+    DropdownModule,
+  ],
   templateUrl: './table.component.html',
-  styleUrl: './table.component.scss'
+  styleUrls: ['./table.component.scss']
 })
-export class TableComponent  implements OnInit {
-  customers!: Customer[];
+export class TableComponent {
+  @Input() dataSource: any[] = [];
+  @Input() loading: boolean = false;
+  @Input() label: any[] = [];
+  @Input() representatives: any[] = [];
+  @Input() statuses: any[] = [];
 
-  representatives!: Representative[];
-
-  statuses!: any[];
-
-  loading: boolean = true;
-
-  activityValues: number[] = [0, 100];
-
-  constructor(private customerService: CustomerService) {}
-
-  ngOnInit() {
-      this.customerService.getCustomersLarge().then((customers) => {
-          this.customers = customers;
-          this.loading = false;
-
-          this.customers.forEach((customer) => (customer.date = new Date(<Date>customer.date)));
-      });
-
-      this.representatives = [
-          { name: 'Amy Elsner', image: 'amyelsner.png' },
-          { name: 'Anna Fali', image: 'annafali.png' },
-          { name: 'Asiya Javayant', image: 'asiyajavayant.png' },
-          { name: 'Bernardo Dominic', image: 'bernardodominic.png' },
-          { name: 'Elwin Sharvill', image: 'elwinsharvill.png' },
-          { name: 'Ioni Bowcher', image: 'ionibowcher.png' },
-          { name: 'Ivan Magalhaes', image: 'ivanmagalhaes.png' },
-          { name: 'Onyama Limba', image: 'onyamalimba.png' },
-          { name: 'Stephen Shaw', image: 'stephenshaw.png' },
-          { name: 'Xuxue Feng', image: 'xuxuefeng.png' }
-      ];
-
-      this.statuses = [
-          { label: 'Unqualified', value: 'unqualified' },
-          { label: 'Qualified', value: 'qualified' },
-          { label: 'New', value: 'new' },
-          { label: 'Negotiation', value: 'negotiation' },
-          { label: 'Renewal', value: 'renewal' },
-          { label: 'Proposal', value: 'proposal' }
-      ];
+  get globalFilterFields(): string[] {
+    return this.label.map(col => col.field);
   }
 
   clear(table: Table) {
-      table.clear();
+    table.clear();
   }
 
-  getSeverity(status: string) {
-      switch (status) {
-          case 'unqualified':
-              return 'danger';
+  getColumnType(field: string): string {
+    if (field === 'verified') return 'boolean';
+    if (field === 'status') return 'status';
+    if (field === 'country') return 'country';
+    if (field === 'representative') return 'representative';
+    return 'text';
+  }
 
-          case 'qualified':
-              return 'success';
+  getSeverity(status: string): SeverityType {
+    if (!status) return undefined;
 
-          case 'new':
-              return 'info';
+    const statusLower = status.toLowerCase();
 
-          case 'negotiation':
-              return 'warn';
-
-          case 'renewal':
-              return null;
-              default:
-              return null;
-      }
+    switch (statusLower) {
+      case 'approved':
+      case 'active':
+      case 'success':
+        return 'success';
+      case 'pending':
+        return 'warn'; // Nota: PrimeNG usa 'warn' no 'warning'
+      case 'rejected':
+      case 'inactive':
+      case 'error':
+        return 'danger';
+      case 'new':
+        return 'info';
+      case 'renewal':
+        return 'secondary';
+      default:
+        return undefined;
+    }
   }
 }

@@ -9,7 +9,7 @@
     <!-- Tarjeta principal de perfil -->
     <p-card styleClass="shadow-sm" class="mb-4">
       <!-- Parte superior: avatar, nombre, botones -->
-      <div class="flex flex-col md:flex-row items-center md:items-start justify-between gap-4">
+      <div class="flex flex-col md:flex-row items-center md:items-start justify-between gap-4  p-6 pb-0">
         <div class="flex flex-col md:flex-row items-center gap-4 flex-1">
           <p-avatar [image]="artist!.avatarUrl" size="xlarge" shape="circle"></p-avatar>
           <div class="text-center md:text-left">
@@ -17,14 +17,14 @@
             <p class="text-gray-500">{{artist!.username}}</p>
           </div>
         </div>
-        <div class="flex gap-2">
+        <div class="flex gap-2" *ngIf="userIsLoged">
           <button pButton label="Editar perfil" icon="pi pi-user-edit" class="p-button-sm p-button-outlined p-button-text" (click)="showDialog()"></button>
           <button pButton label="Ajustes" icon="pi pi-cog" class="p-button-sm p-button-secondary p-button-outlined p-button-text"></button>
         </div>
       </div>
 
       <!-- Parte inferior: datos adicionales -->
-      <div class="mt-6 text-sm text-gray-500 grid md:grid-cols-2 gap-6">
+      <div class="mt-6 text-sm text-gray-500 grid md:grid-cols-2 gap-6  p-6">
         <div class="flex items-center gap-2">
           <i class="pi pi-envelope text-lg text-gray-400"></i>
           <span><strong>Email:</strong> {{artist!.email}}</span>
@@ -41,12 +41,12 @@
           <i class="pi pi-globe text-lg text-gray-400"></i>
           <span><strong>Web:</strong> <a [href]="artist!.website" target="_blank" class="text-blue-500 hover:underline">{{artist!.website}}</a></span>
         </div>
-      </div>
-      <div class="mt-6 text-sm text-gray-500 grid md:grid-cols-2 gap-6">
         <div class="flex items-center gap-2">
           <i class="pi pi-calendar text-lg text-gray-400"></i>
           <span><strong>Bio:</strong> {{artist!.bio }}</span>
-        </div> </div>
+        </div>
+      </div>
+
     </p-card>
 
 
@@ -62,7 +62,7 @@
       <p-card>
         <div class="text-center">
           <h3 class="text-lg font-medium">Proyectos</h3>
-          <p class="text-2xl font-bold text-primary">asd</p>
+          <p class="text-2xl font-bold text-primary">{{artworks.length}}</p>
         </div>
       </p-card>
 

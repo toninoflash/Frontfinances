@@ -10,6 +10,7 @@ import { GalleryComponent } from './features/artwork/gallery/gallery.component';
 import { TableComponent } from './shared/components/table/table.component';
 import { AuthGuard } from './core/guards/auth.guard';
 import { SeeComponent } from './features/artwork/see/see.component';
+import { TableArtwaorkComponent } from './features/artwork/table-artwaork/table-artwaork.component';
 
 export const routes: Routes = [
   {
@@ -36,7 +37,7 @@ export const routes: Routes = [
         data: { title: 'Mis obras' },
         children: [
           { path: 'gallery', component: GalleryComponent, data: { title: 'Galería' } },
-          { path: 'table', component: TableComponent, data: { title: 'Tabla' } },
+          { path: 'table', component: TableArtwaorkComponent, data: { title: 'Tabla' } },
           { path: 'see/:id', component: SeeComponent, data: { title: 'Obra' } },
           { path: '', redirectTo: 'gallery', pathMatch: 'full' },
         ],

@@ -40,7 +40,7 @@ userLogin!: any;
 
     this.userLogin = this.userService.user;
     const id = Number(this.route.snapshot.paramMap.get('uid'));
-    if (id && id === this.userLogin.id) {
+    if (id && id === this.userLogin?.id) {
       this.userIsLoged = true;
       this.menuItems = [
         {
@@ -55,7 +55,7 @@ userLogin!: any;
           children: [
             {
               label: 'Galería',
-              routerLink: '/profile/' + this.userLogin?.id+'/artwork/gallery/',
+              routerLink: '/profile/artwork/' + this.userLogin?.id+'/gallery/',
             },
             {
               label: 'Tabla',

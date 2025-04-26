@@ -1,3 +1,4 @@
+
 import { Validator } from "@angular/forms";
 
 export interface MenuOption {
@@ -109,10 +110,7 @@ export interface Customer {
   };
 }
 
-export interface Representative {
-  name: string;
-  image: string;
-}
+
 export interface Product {
   id: string;
   name: string;
@@ -125,9 +123,19 @@ export interface Product {
   image: string;
   rating: number;
 }
+
 export interface TableColumn {
-  field: string; // Campo del objeto que se mostrará
-  header: string; // Encabezado de la columna
-  sortable?: boolean; // Indica si la columna es ordenable
-  style?: { [key: string]: string }; // Estilo opcional para la columna
+  field: string;
+  header: string;
+  width?: string;
+}
+
+export interface Representative {
+  name: string;
+  image: string;
+}
+
+export interface StatusOption {
+  value: string;
+  label?: string;
 }

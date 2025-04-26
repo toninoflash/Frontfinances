@@ -7,3 +7,9 @@
     box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
   }
 }
+/* En tu archivo global o componente */
+::ng-deep .p-card-body {
+  background-color: transparent !important;
+  padding: 0 !important;
+  border: none !important;
+}

@@ -34,7 +34,7 @@ export class GalleryComponentComponent {
       const scrollPosition = window.innerHeight + window.scrollY;
       const maxScroll = document.body.offsetHeight;
 
-      if (scrollPosition >= maxScroll - 300) {
+      if (scrollPosition >= maxScroll - 300 && this.limit > 0) {
         this.loadMoreCards();
       }
     }
