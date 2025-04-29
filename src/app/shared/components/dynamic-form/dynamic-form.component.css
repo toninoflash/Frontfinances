@@ -1,11 +1,31 @@
-.dynamic-form .form-grid {
-  display: flex; /* Cambia a Flexbox */
-  flex-wrap: wrap; /* Permite que los elementos se ajusten a la siguiente línea si no hay espacio */
-  gap: 5px; /* Espaciado uniforme entre los elementos */
-  padding: 5px;
+/* Asegura que los contenedores con 'w-full' ocupen toda la línea */
+.w-full {
+  flex: 1 1 100%; /* Asegura que el elemento ocupe todo el ancho disponible */
+  margin-bottom: 0 !important; /* Elimina cualquier margen adicional */
 }
 
-.divider-container {
-  margin: 1rem 0; /* Espaciado superior e inferior */
-  width: 100%; /* Asegura que ocupe todo el ancho */
+/* Ajuste para asegurar que los elementos dentro de .w-full también ocupen el ancho completo */
+.w-full input, .w-full select, .w-full textarea, .w-full p-inputnumber, .w-full p-password {
+  width: 100%; /* Asegura que los inputs y otros controles ocupen todo el ancho del contenedor */
+}
+
+/* Si es un campo de tipo grid (ancho completo) */
+.form-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem; /* espacio entre elementos en la fila */
+  row-gap: 1rem; /* espacio entre filas */
+}
+
+.form-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  flex: 0 1 auto; /* Asegura que los items ocupen el espacio correcto */
+}
+
+.form-item input,
+.form-item select,
+.form-item textarea {
+  width: auto; /* Para mantener el comportamiento original */
 }

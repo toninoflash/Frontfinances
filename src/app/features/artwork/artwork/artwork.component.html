@@ -1,8 +1,9 @@
 <div class="grid grid-cols-1 md:grid-cols-5 gap-4 p-4">
-  <app-menu-left [menuItems]="menuItems"></app-menu-left>
+
+  <app-menu-left [menuItems]="menuItems" [user] = "userLogin"></app-menu-left>
 
   <!-- Contenido principal del perfil -->
-  <div [ngClass]="userIsLoged ? 'md:col-span-4' : 'md:col-span-5'" class="profile-container">
+  <div  class="profile-container md:col-span-4">
     <!-- Tarjeta principal de perfil -->
     <router-outlet></router-outlet>
   </div>

@@ -8,8 +8,17 @@ import { MultiSelectModule } from 'primeng/multiselect';
 import { FormsModule } from '@angular/forms';
 import { IconFieldModule } from 'primeng/iconfield';
 import { InputIconModule } from 'primeng/inputicon';
-import { DropdownModule } from 'primeng/dropdown';
+import { Select } from 'primeng/select';
 type SeverityType = 'success' | 'secondary' | 'info' | 'warn' | 'danger' | 'contrast' | undefined;
+
+export interface ColumnConfig {
+  field: string;
+  header: string;
+  width?: string;
+  type: 'text' | 'image' | 'status' | 'tag' | 'boolean';
+  filterType?: 'text' | 'status' | 'boolean'; // Opcional: solo para columnas filtrables
+}
+
 @Component({
   selector: 'app-table',
   standalone: true,
@@ -22,7 +31,7 @@ type SeverityType = 'success' | 'secondary' | 'info' | 'warn' | 'danger' | 'cont
     FormsModule,
     IconFieldModule,
     InputIconModule,
-    DropdownModule,
+    Select
   ],
   templateUrl: './table.component.html',
   styleUrls: ['./table.component.scss']
@@ -31,9 +40,8 @@ export class TableComponent {
   @Input() dataSource: any[] = [];
   @Input() loading: boolean = false;
   @Input() label: any[] = [];
-  @Input() representatives: any[] = [];
   @Input() statuses: any[] = [];
-
+  @Input() columns: ColumnConfig[] = [];
   get globalFilterFields(): string[] {
     return this.label.map(col => col.field);
   }
@@ -50,28 +58,39 @@ export class TableComponent {
     return 'text';
   }
 
-  getSeverity(status: string): SeverityType {
-    if (!status) return undefined;
+  // Opciones para el filtro de estado
+  statusOptions = ['PÚBLICO', 'PRIVADO', 'BORRADOR'];
 
-    const statusLower = status.toLowerCase();
-
-    switch (statusLower) {
-      case 'approved':
-      case 'active':
-      case 'success':
+  // Función para determinar el color del tag según el estado
+  getStatusSeverity(status: string): SeverityType {
+    switch (status?.toUpperCase()) {
+      case 'PÚBLICO':
         return 'success';
-      case 'pending':
-        return 'warn'; // Nota: PrimeNG usa 'warn' no 'warning'
-      case 'rejected':
-      case 'inactive':
-      case 'error':
+      case 'PRIVADO':
+        return 'warn';
+      case 'BORRADOR':
         return 'danger';
-      case 'new':
-        return 'info';
-      case 'renewal':
-        return 'secondary';
       default:
-        return undefined;
+        return 'info';
     }
+  }
+
+  // Función para abrir vista previa de imagen (opcional)
+  openImagePreview(imageUrl: string) {
+    // Implementar lógica para mostrar imagen en modal/dialog
+    console.log('Abrir imagen:', imageUrl);
+  }
+
+  // Limpiar filtros
+  clearFilters(table: Table) {
+    table.clear();
+  }
+
+  getGlobalFilterFields(): string[] {
+    return this.columns ? this.columns.map(col => col.field) : [];
+  }
+  filterGlobal(event: Event, table: Table): void {
+    const input = event.target as HTMLInputElement;
+    table.filterGlobal(input.value, 'contains');
   }
 }

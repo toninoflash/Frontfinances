@@ -2,12 +2,12 @@ import { environment } from "../../../enviroments/environment";
 
 export class User {
     constructor(
-        public username: string,
-        public email: string,
-        public lastname: string,
-        public name: string,
-        public id: string,
-        public bio: string,
+        public username?: string,
+        public email?: string,
+        public lastname?: string,
+        public name?: string,
+        public id?: string,
+        public bio?: string,
         public password?: string,
         public roles?: string,
         public avatarUrl?: string,

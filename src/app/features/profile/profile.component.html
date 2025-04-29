@@ -1,11 +1,12 @@
+
 <div class="grid grid-cols-1 md:grid-cols-5 gap-4 p-4">
   <!-- Menú lateral -->
-  <div class="md:col-span-1" *ngIf="userIsLoged">
-  <app-menu-left [menuItems]="menuItems"></app-menu-left>
+  <div class="md:col-span-1">
+  <app-menu-left [menuItems]="menuItems" [user] = "artist"></app-menu-left>
 </div>
 
   <!-- Contenido principal del perfil -->
-  <div [ngClass]="userIsLoged ? 'md:col-span-4' : 'md:col-span-5'" class="profile-container">
+  <div  class="profile-container md:col-span-4">
     <!-- Tarjeta principal de perfil -->
     <p-card styleClass="shadow-sm" class="mb-4">
       <!-- Parte superior: avatar, nombre, botones -->
@@ -17,9 +18,9 @@
             <p class="text-gray-500">{{artist!.username}}</p>
           </div>
         </div>
-        <div class="flex gap-2" *ngIf="userIsLoged">
-          <button pButton label="Editar perfil" icon="pi pi-user-edit" class="p-button-sm p-button-outlined p-button-text" (click)="showDialog()"></button>
-          <button pButton label="Ajustes" icon="pi pi-cog" class="p-button-sm p-button-secondary p-button-outlined p-button-text"></button>
+        <div class="flex gap-2" >
+          <button pButton [label]="userIsLogged ?'Editar perfil':'Mensaje'" [icon]="userIsLogged ?'pi pi-user-edit':'pi pi-comment'" class="p-button-sm p-button-outlined p-button-text" (click)="showDialog()"></button>
+          <button pButton [label]="userIsLogged ?'Ajustes':'Seguir'" [icon]="userIsLogged ?'pi pi-cog':'pi pi-user-plus'" class="p-button-sm p-button-secondary p-button-outlined p-button-text"></button>
         </div>
       </div>
 

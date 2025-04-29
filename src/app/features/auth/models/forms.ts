@@ -3,7 +3,7 @@ import { AuthConstans } from "./constans";
 
 export namespace FormsAuth {
 
-    const tipo = (grid:any = '', disabled?:boolean) => {
+    const tipo = (grid?:any, disabled?:boolean) => {
         return {
             type:'select',
             label:AuthConstans.tipo.label,

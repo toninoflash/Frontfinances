@@ -32,7 +32,7 @@ export class SeeComponent {
     if (id) {
       this.baseService.getItems(endpoint+"artwork/"+id).subscribe((data:any) => {
         this.artwork = data;
-        this.baseService.getItems(endpoint+"users/"+this.artwork.uid).subscribe((data:any) => {
+        this.baseService.getItems(endpoint+"users/full/"+this.artwork.uid).subscribe((data:any) => {
           this.arthist = data;
         });
       });

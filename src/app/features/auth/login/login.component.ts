@@ -13,6 +13,7 @@ import { ProgressSpinner } from 'primeng/progressspinner';
 import { Router } from '@angular/router';
 import { Card } from 'primeng/card';
 import { User } from '../../../core/models/user';
+import { FormTestComponent } from "../../../shared/components/form-test/form-test.component";
 const endpoint: any = environment.baseUrlSpring+"users";
 
 @Component({
@@ -25,7 +26,8 @@ const endpoint: any = environment.baseUrlSpring+"users";
     DynamicFormComponent,
     HttpClientModule,
     Card,
-  ],
+    FormTestComponent
+],
   providers: [UserService, BaseServiceService],
   templateUrl: './login.component.html',
   styleUrl: './login.component.scss',

@@ -9,7 +9,7 @@ import { InputTextModule } from 'primeng/inputtext';
 import { FloatLabelModule } from 'primeng/floatlabel';
 import { PasswordModule } from 'primeng/password';
 import { SelectModule } from 'primeng/select';
-import { DropdownModule } from 'primeng/dropdown';
+import { Select } from 'primeng/select';
 import { DatePickerModule } from 'primeng/datepicker';
 import { RadioButton } from 'primeng/radiobutton';
 import { CheckboxModule } from 'primeng/checkbox';
@@ -30,7 +30,7 @@ import { TextareaModule } from 'primeng/textarea';
     FloatLabelModule,
     PasswordModule,
     SelectModule,
-    DropdownModule,
+    Select,
     DatePickerModule,
     CheckboxModule,
     InputNumberModule,

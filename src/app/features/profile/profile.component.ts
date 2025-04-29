@@ -23,6 +23,8 @@ import { FormsProfile } from './models/forms';
 import { Toast } from 'primeng/toast';
 import { Utils } from '../../core/utils';
 import { GalleryComponentComponent } from "../../shared/components/gallery-component/gallery-component.component";
+import { Subscription } from 'rxjs';
+import { ProgressSpinner } from 'primeng/progressspinner';
 const endpoint: any = environment.baseUrlSpring + 'users';
 @Component({
   selector: 'app-profile',
@@ -40,17 +42,19 @@ const endpoint: any = environment.baseUrlSpring + 'users';
     Dialog,
     DynamicFormComponent,
     Toast,
-    GalleryComponentComponent
+    GalleryComponentComponent,
+    ProgressSpinner
 ],
   templateUrl: './profile.component.html',
   styleUrl: './profile.component.scss',
   providers: [UserService, MessageService],
 })
 export class ProfileComponent {
+  private routeSubscription!: Subscription;
   menuItems: any[] = [];
   userLogin!: any;
   artist!: any;
-  userIsLoged: boolean = false;
+  userIsLogged: boolean = false;
   visible: boolean = false;
   isLoading = false;
   artworks: any[] = [];
@@ -64,53 +68,130 @@ export class ProfileComponent {
     private messageService: MessageService,
     private route: ActivatedRoute,
 
-    private router: Router
   ) {}
 
   ngOnInit() {
+
+
+// Suscripción a cambios de ruta
+this.routeSubscription = this.route.paramMap.subscribe(params => {
+  this.initializeUserData();
+    this.initializeMenu();
+});
+  }
+  ngOnDestroy(): void {
+    // Importante: limpiar la suscripción
+    if (this.routeSubscription) {
+      this.routeSubscription.unsubscribe();
+    }
+  }
+  private initializeUserData(): void {
     this.dynamicGroup = FormsProfile.updateGroup;
     this.userLogin = this.userService.user;
-    const id = Number(this.route.snapshot.paramMap.get('id'));
-    const uid = Number(this.route.snapshot.paramMap.get('uid'));
+    const id = this.getRouteParam('id');
+    const uid = this.getRouteParam('uid');
 
-    if (uid && uid === this.userLogin.id) {
-      this.userIsLoged = true;
-      this.artist= this.userLogin;
-      this.artworks = this.artist?.artWork as any[];
-    } else if (uid){
-      this.getUser(uid);
+    if (uid && this.isCurrentUser(uid)) {
+      this.handleCurrentUser();
+    } else if (uid) {
+      this.fetchUser(uid);
     }
-    if (id && id === this.userLogin.id) {
-      this.userIsLoged = true;
-      this.artist= this.userLogin;
-    } else if (id){
-      this.getUser(id);
-    }
-    this.menuItems = [
-      {
-        label: 'Datos',
-        icon: 'pi pi-bolt',
-        routerLink: ['/profile/' + this.artist?.id+'/arthist/'],
-      },
-      {
-        label: 'Obras',
-        icon: 'pi pi-image',
-        expanded: false, // <-- para controlar visibilidad del submenu
-        children: [
-          {
-            label: 'Galería',
-            routerLink: '/profile/artwork/' + this.artist?.id+'/gallery/',
-          },
-          {
-            label: 'Tabla',
-            routerLink: '/profile/artwork/' + this.artist?.id+'/table',
-          },
-        ],
-      },
-      { label: 'Favoritos', icon: 'pi pi-pencil', routerLink: 'dashboard' },
-    ];
-    this.artworks = this.artist?.artWork as any[];
 
+    if (id && this.isCurrentUser(id)) {
+      this.handleCurrentUser();
+    } else if (id) {
+      this.fetchUser(id);
+    }
+  }
+  private fetchUser(id: number): void {
+    this.baseService.getItems(`${endpoint}/full/${id}`).subscribe({
+      next: (response) => this.handleUserFetchSuccess(response),
+      error: () => this.handleUserFetchError()
+    });
+  }
+  private handleUserFetchSuccess(response: any): void {
+    this.artist = response as User;
+    this.artworks = this.artist?.artWork || [];
+    this.initializeMenu();
+  }
+
+  private handleUserFetchError(): void {
+    Utils.showMessage(
+      this.messageService,
+      'error',
+      'Error',
+      'No se ha podido cargar el artista'
+    );
+  }
+  private getRouteParam(param: string): number | null {
+    const paramValue = this.route.snapshot.paramMap.get(param);
+    return paramValue ? Number(paramValue) : null;
+  }
+  private isCurrentUser(id: number): boolean {
+    return !!this.userLogin && id === this.userLogin.id;
+  }
+  private handleCurrentUser(): void {
+    this.userIsLogged = true;
+    this.artist = this.userLogin;
+    this.userService.user = this.artist;
+    this.fetchUser(this.artist.id);
+  }
+  private initializeMenu(): void {
+    if (!this.artist) return;
+
+    if(this.userIsLogged){
+      this.menuItems = [
+        {
+          label: 'Datos',
+          icon: 'pi pi-bolt',
+          routerLink: [`/profile/${this.artist.id}/arthist`],
+        },
+        {
+          label: 'Obras',
+          icon: 'pi pi-image',
+          expanded: false,
+          children: [
+            {
+              label: 'Galería',
+              routerLink: `/profile/artwork/${this.artist.id}/gallery/${this.artist.id}`,
+            },
+            {
+              label: 'Gestión',
+              routerLink: `/profile/artwork/${this.artist.id}/table`,
+            },
+          ],
+        },
+        {
+          label: 'Favoritos',
+          icon: 'pi pi-pencil',
+          routerLink: 'dashboard'
+        },
+      ];
+    } else {
+      this.menuItems = [
+        {
+          label: 'Datossss',
+          icon: 'pi pi-bolt',
+          routerLink: [`/profile/${this.artist.id}/arthist`],
+        },
+        {
+          label: 'Obras',
+          icon: 'pi pi-image',
+          expanded: false,
+          children: [
+            {
+              label: 'Galería',
+              routerLink: `/profile/artwork/${this.artist.id}/gallery/${this.artist.id}`,
+            },
+          ],
+        },
+        {
+          label: 'Favoritos',
+          icon: 'pi pi-pencil',
+          routerLink: 'dashboard'
+        },
+      ];
+    }
 
   }
   onFormGroupChange(formGroup: FormGroup) {
@@ -170,24 +251,6 @@ export class ProfileComponent {
           'No se ha podido actualizar el usuario'
         );
         this.isLoading = false;
-      }
-    );
-  }
-  getUser(id: number) {
-    const url = endpoint + '/' + id;
-    this.baseService.getItems(url).subscribe(
-      (resp:any) => {
-        this.artist = resp as User;
-        this.userIsLoged = false;
-        this.artworks = this.artist?.artWork as any[];
-      },
-      (error:any) => {
-        Utils.showMessage(
-          this.messageService,
-          'error',
-          'Error',
-          'No se ha podido cargar el artista'
-        );
       }
     );
   }

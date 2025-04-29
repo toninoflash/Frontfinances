@@ -2,7 +2,10 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { MenuItem, MessageService } from 'primeng/api';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { FormGroup } from '@angular/forms';
-import { TableComponent } from '../../../shared/components/table/table.component';
+import {
+  ColumnConfig,
+  TableComponent,
+} from '../../../shared/components/table/table.component';
 import { environment } from '../../../../enviroments/environment';
 import { UserService } from '../../../core/services/users/users.service';
 import { BaseServiceService } from '../../../core/services/base-service.service';
@@ -10,13 +13,32 @@ import { FormsProfile } from '../../profile/models/forms';
 import { User } from '../../../core/models/user';
 import { Utils } from '../../../core/utils';
 import { TableColumn } from '../../../core/interfaces';
+import { ButtonModule } from 'primeng/button';
+import { ProgressSpinner } from 'primeng/progressspinner';
+import { Dialog } from 'primeng/dialog';
+import { Menubar } from 'primeng/menubar';
+import { DynamicFormComponent } from '../../../shared/components/dynamic-form/dynamic-form.component';
+import { FileupComponent } from '../../../shared/components/fileup/fileup.component';
+
+import { FileUpload, UploadEvent } from 'primeng/fileupload';
+import { CommonModule } from '@angular/common';
+import { FormsArtwork } from '../models/forms';
 const endpoint: any = environment.baseUrlSpring + 'users';
 
 @Component({
   selector: 'app-table-artwaork',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [TableComponent],
-  providers: [UserService, BaseServiceService,MessageService],
+  imports: [
+    TableComponent,
+    ButtonModule,
+    Menubar,
+    Dialog,
+    DynamicFormComponent,
+    FileUpload,
+    CommonModule,
+    ProgressSpinner,
+  ],
+  providers: [UserService, BaseServiceService, MessageService],
   templateUrl: './table-artwaork.component.html',
   styleUrl: './table-artwaork.component.scss',
 })
@@ -39,25 +61,18 @@ export class TableArtwaorkComponent {
   dynamicGroup: any = 0;
   dynamicForm: any;
 
-  artworks = [
-    {
-      name: 'Artwork 1',
-      representative: { name: 'Artist 1', image: 'avatar1.png' },
-      status: 'approved',
-      verified: true,
-    },
-  ];
+  artworks: any[] = [];
 
+  artworkColumns: ColumnConfig[] = [
+    { field: 'imageUrl', header: 'Imagen', width: '120px', type: 'image' },
+    { field: 'title', header: 'Título', type: 'text', filterType: 'text' },
+    { field: 'category', header: 'Categoría', type: 'tag' },
+  ];
   label = [
-    { field: 'name', header: 'Name', width: '22%' },
-    { field: 'artist.name', header: 'Artist', width: '22%' }, // ← Cambiado de "country" a "artist.name"
+    { field: 'title', header: 'Titulo', width: '22%' },
+    { field: 'imageUrl', header: 'Obra', width: '22%' }, // ← Cambiado de "country" a "artist.name"
     { field: 'status', header: 'Status', width: '22%' },
-    { field: 'published', header: 'Yo', width: '22%' }, // ← Cambiado de "verified" a "published"
-  ];
-
-  representatives = [
-    { name: 'John Doe', image: 'avatar1.png' },
-    { name: 'Jane Smith', image: 'avatar2.png' },
+    { field: 'category', header: 'Categoría', width: '22%' }, // ← Cambiado de "verified" a "published"
   ];
 
   statuses = [
@@ -65,9 +80,13 @@ export class TableArtwaorkComponent {
     { value: 'pending' },
     { value: 'rejected' },
   ];
+
   loading = false;
   dataLoaded = false;
   tableColumns: TableColumn[] = [];
+
+  previewImageUrl: string | ArrayBuffer | null = null;
+  selectedFile: File | null = null;
   constructor(
     private userService: UserService,
     private baseService: BaseServiceService,
@@ -78,7 +97,7 @@ export class TableArtwaorkComponent {
   ) {}
 
   ngOnInit() {
-    this.dynamicGroup = FormsProfile.updateGroup;
+    this.dynamicGroup = FormsArtwork.createGroup;
     this.userLogin = this.userService.user;
     const id = Number(this.route.snapshot.paramMap.get('id'));
     const uid = Number(this.route.snapshot.paramMap.get('uid'));
@@ -94,29 +113,15 @@ export class TableArtwaorkComponent {
       this.artist = this.userLogin;
     } else if (id) {
     }
-
+    this.getUser();
     this.menuItems = [
       {
-        label: 'Datos',
-        icon: 'pi pi-bolt',
-        routerLink: ['/profile/' + this.userLogin?.id + '/arthist/'],
+        label: 'Nueva',
+        icon: 'pi pi-plus',
+        command: () => {
+          this.showDialog();
+        },
       },
-      {
-        label: 'Obras',
-        icon: 'pi pi-image',
-        expanded: false, // <-- para controlar visibilidad del submenu
-        children: [
-          {
-            label: 'Galería',
-            routerLink: '/profile/artwork/' + this.userLogin?.id + '/gallery/',
-          },
-          {
-            label: 'Tabla',
-            routerLink: '/profile/artwork/' + this.userLogin?.id + '/table',
-          },
-        ],
-      },
-      { label: 'Favoritos', icon: 'pi pi-pencil', routerLink: 'dashboard' },
     ];
     this.artworks = this.userLogin?.artWork as any[];
   }
@@ -144,7 +149,6 @@ export class TableArtwaorkComponent {
   }
   showDialog() {
     this.visible = true;
-    this.dynamicForm.patchValue(this.userLogin);
   }
 
   update() {
@@ -181,4 +185,76 @@ export class TableArtwaorkComponent {
     );
   }
 
+  getUser() {
+    const url = endpoint + '/full/' + this.userLogin?.id;
+    this.baseService.getItems(url).subscribe(
+      (resp: any) => {
+        this.artist = resp as User;
+        this.userIsLoged = false;
+        this.artworks = this.artist?.artWork as any[];
+      },
+      (error: any) => {
+        Utils.showMessage(
+          this.messageService,
+          'error',
+          'Error',
+          'No se ha podido cargar el artista'
+        );
+      }
+    );
+  }
+
+  onUpload() {
+    if (!this.selectedFile) {
+      this.messageService.add({ severity: 'error', summary: 'Error', detail: 'No file selected' });
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append('file', this.selectedFile);
+    this.baseService
+      .postItem(`${environment.baseUrlSpring}artwork/image`, formData)
+      .subscribe(
+        (response: any) => {
+          console.log('Imagen subida:', response.url);
+          this.messageService.add({
+            severity: 'info',
+            summary: 'Success',
+            detail: 'Imagen subida a Cloudinary',
+          });
+        },
+        (error) => {
+          console.error('Error subiendo la imagen', error);
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'Error al subir imagen',
+          });
+        }
+      );
+    this.messageService.add({
+      severity: 'info',
+      summary: 'Success',
+      detail: 'File Uploaded with Basic Mode',
+    });
+  }
+  previewImage: string | ArrayBuffer | null = null;
+
+  onSelectFile(event: any) {
+    this.isLoading = true;
+    const file = event.files[0]; // toma el primer archivo seleccionado
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        this.previewImage = reader.result;
+        this.isLoading = false;
+      };
+      reader.readAsDataURL(file); // lo convierte a base64 para mostrar en el <img>
+    }
+    this.selectedFile=file
+  }
+
+  clearPreview() {
+    this.previewImage = null;
+  }
 }

@@ -1,8 +1,8 @@
-<form [formGroup]="formGroup" class="dynamic-form">
+<form [formGroup]="formGroup" class="p-6   max-w-xl mx-auto space-y-1">
   <div class="form-grid">
     <ng-container *ngFor="let field of formData.data">
       <!-- Render Input -->
-      <div [class]="field.grid ? 'form-item ' : 'form-item'">
+      <div [class]="field.grid ? 'flex flex-col gap-1 w-full ' : 'form-item'">
         <p-floatLabel
           variant="on"
           *ngIf="field.type === 'input' && !field.hidden"
@@ -12,6 +12,7 @@
             [formControlName]="field.name || ''"
             [required]="field.required || false"
             [readonly]="field.readonly || false"
+
           />
           <label [for]="field.name || ''">
             {{ field.label }} <span *ngIf="field.required">*</span>
@@ -19,7 +20,7 @@
         </p-floatLabel>
       </div>
       <!-- Render Input with Currency -->
-      <div [class]="field.grid ? 'form-item full-width' : 'form-item'">
+      <div [ngClass]="field.grid ? 'w-full' : 'form-item'">
         <p-floatLabel
           variant="on"
           *ngIf="field.type === 'number' && !field.hidden"
@@ -36,7 +37,7 @@
         </p-floatLabel>
       </div>
       <!-- Render Password Input -->
-      <div [class]="field.grid ? 'form-item full-width' : 'form-item'">
+      <div [ngClass]="field.grid ? 'w-full' : 'form-item'">
         <div *ngIf="field.type === 'pass' && !field.hidden">
           <p-password
             [formControlName]="field.name || ''"
@@ -44,12 +45,13 @@
             [toggleMask]="true"
             [placeholder]="field.label"
             [disabled]="field.readonly || false"
+            styleClass="width: 100%;"
           ></p-password>
         </div>
       </div>
       <!-- Render Select Input -->
       <div
-        [class]="field.grid ? 'form-item full-width' : 'form-item'"
+        [class]="field.grid ? 'flex flex-col gap-1 w-full' : 'form-item'"
         *ngIf="field.type === 'select' && !field.hidden"
       >
         <p-floatLabel variant="on">
@@ -72,7 +74,7 @@
 
       <!-- Render Textarea -->
       <div
-        [class]="field.grid ? 'form-item full-width' : 'form-item'"
+        [class]="field.grid ? 'flex flex-col gap-1 w-full' : 'form-item'"
         *ngIf="field.type === 'textarea' && !field.hidden"
       >
       <p-floatlabel variant="in">
@@ -83,7 +85,7 @@
 
       <!-- Render Checkbox -->
       <div
-        [class]="field.grid ? 'form-item full-width' : 'form-item'"
+        [class]="field.grid ? 'flex flex-col gap-1 w-full' : 'form-item'"
         *ngIf="field.type === 'check' && !field.hidden"
       >
         <p-floatLabel>
@@ -101,7 +103,7 @@
 
       <!-- Render Datepicker -->
       <div
-        [class]="field.grid ? 'form-item full-width' : 'form-item'"
+        [class]="field.grid ? 'flex flex-col gap-1 w-full' : 'form-item'"
         *ngIf="field.type === 'date' && !field.hidden"
       >
         <p-floatLabel variant="on">
@@ -117,14 +119,14 @@
         </p-floatLabel>
       </div>
       <div
-  class="form-item full-width divider-container"
+  class="flex flex-col gap-1 w-full"
   *ngIf="field.type === 'divider' && !field.hidden"
 >
   <p-divider [style]="{ 'width': '100%' }"></p-divider>
 </div>
       <!-- Render Button -->
       <div
-        [class]="field.grid ? 'form-item full-width' : 'form-item'"
+        [class]="field.grid ? 'flex flex-col gap-1 w-full' : 'form-item'"
         *ngIf="field.type === 'button' && !field.hidden"
       >
         <button type="button" class="btn-primary" (click)="field.onClick()">

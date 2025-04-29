@@ -3,14 +3,12 @@ import { GalleryComponentComponent } from "../../shared/components/gallery-compo
 import { environment } from '../../../enviroments/environment';
 import { UserService } from '../../core/services/users/users.service';
 import { BaseServiceService } from '../../core/services/base-service.service';
-import { ActivatedRoute } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { GalleryCircleComponent } from "../../shared/components/gallery-circle/gallery-circle.component";
-import { CalendarComponent } from "../../shared/components/calendar/calendar.component";
 const endpoint: any = environment.baseUrlSpring;
 @Component({
   selector: 'app-index',
-  imports: [GalleryComponentComponent, CommonModule, GalleryCircleComponent, CalendarComponent],
+  imports: [GalleryComponentComponent, CommonModule, GalleryCircleComponent],
   templateUrl: './index.component.html',
   styleUrl: './index.component.scss'
 })

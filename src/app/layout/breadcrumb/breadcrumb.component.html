@@ -1,4 +1,19 @@
-<div >
-  <p-breadcrumb  [model]="items" [home]="home" [style]="{ 'border': 'none','background-color': 'transparent'  }"/>
+<div class="breadcrumb-container">
+  <!-- Botón de retroceso -->
+  <button
+    *ngIf="showBackButton"
+    pButton
+    icon="pi pi-arrow-left"
+    class="p-button-text p-button-sm mr-2"
+    (click)="goBack()"
+    pTooltip="Volver atrás"
+    tooltipPosition="bottom">
+  </button>
 
+  <!-- Breadcrumb estático (sin navegación) -->
+  <p-breadcrumb
+    [model]="items"
+    [home]="home"
+    [style]="{ 'border': 'none', 'background-color': 'transparent' }">
+  </p-breadcrumb>
 </div>

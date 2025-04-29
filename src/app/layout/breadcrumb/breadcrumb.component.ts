@@ -2,48 +2,64 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { MenuItem } from 'primeng/api';
 import { BreadcrumbModule } from 'primeng/breadcrumb';
-import { filter } from 'rxjs';
+import { ButtonModule } from 'primeng/button';
+import { filter } from 'rxjs/operators';
+import { CommonModule, Location } from '@angular/common';
+
 @Component({
   selector: 'app-breadcrumb',
-  imports: [BreadcrumbModule],
+  standalone: true,
+  imports: [BreadcrumbModule, ButtonModule,CommonModule],
   templateUrl: './breadcrumb.component.html',
-  styleUrl: './breadcrumb.component.scss',
+  styleUrls: ['./breadcrumb.component.scss'],
 })
-export class BreadcrumbComponent  implements OnInit{
+export class BreadcrumbComponent implements OnInit {
   items: MenuItem[] = [];
-  home: MenuItem | undefined;
+  home: MenuItem = { icon: 'pi pi-home', routerLink: '/' };
+  showBackButton: boolean = false;
 
-  constructor(private route: ActivatedRoute, private router: Router) {}
+  constructor(
+    private route: ActivatedRoute,
+    private router: Router,
+    private location: Location
+  ) {}
 
   ngOnInit() {
-    this.home = { icon: 'pi pi-home', routerLink: '/' };
-
     this.router.events.pipe(
       filter(event => event instanceof NavigationEnd)
     ).subscribe(() => {
+      this.showBackButton = this.router.url !== '/';
       this.updateBreadcrumbs();
     });
 
     this.updateBreadcrumbs();
   }
 
-  // Método para actualizar los breadcrumbs según la URL actual
-  updateBreadcrumbs() {
-    this.items = [];  // Limpiar los items actuales
-
-    let currentRoute = this.route.root;  // Empezar desde la raíz
-    let urlSegments: string[] = [];  // Para almacenar los segmentos de la URL
-
-    // Recorrer las rutas para construir los breadcrumbs
-    this.buildBreadcrumbs(currentRoute, urlSegments);
-
+  // Método para navegar atrás
+  goBack(): void {
+    this.location.back();
   }
 
-  // Función recursiva para construir los breadcrumbs
+  // Método para actualizar los breadcrumbs
+  updateBreadcrumbs() {
+    this.items = [];
+    let currentRoute = this.route.root;
+    let urlSegments: string[] = [];
+    this.buildBreadcrumbs(currentRoute, urlSegments);
+
+    // Deshabilitar navegación en todos los items excepto Home
+    this.items = this.items.map(item => ({
+      ...item,
+      routerLink: undefined, // Elimina el enlace
+      command: () => {}, // Elimina cualquier acción
+      styleClass: 'non-clickable' // Añade clase para estilos
+    }));
+  }
+
+  // Función recursiva para construir los breadcrumbs (sin cambios)
   buildBreadcrumbs(route: ActivatedRoute, urlSegments: string[]) {
     const routeSnapshot = route.snapshot;
 
-    // Si la ruta actual tiene un título en los datos, añadirlo (aunque no tenga URL propia)
     if (routeSnapshot.data && routeSnapshot.data['title']) {
       this.items.push({
         label: routeSnapshot.data['title'],
@@ -57,17 +73,14 @@ export class BreadcrumbComponent  implements OnInit{
     childrenRoutes.forEach(childRoute => {
       const childSnapshot = childRoute.snapshot;
 
-      // Añadir los segmentos al path
       if (childSnapshot.url.length) {
         childSnapshot.url.forEach(segment => {
           urlSegments.push(segment.path);
         });
       }
 
-      // Llamada recursiva
       this.buildBreadcrumbs(childRoute, urlSegments);
 
-      // Quitar los segmentos agregados para esta ruta
       if (childSnapshot.url.length) {
         childSnapshot.url.forEach(() => urlSegments.pop());
       }

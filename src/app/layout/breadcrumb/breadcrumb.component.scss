@@ -1,0 +1,19 @@
+.breadcrumb-container {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+
+  // Estilos para el breadcrumb no clickeable
+  ::ng-deep .p-breadcrumb ul li.p-menuitem-active {
+    cursor: default;
+
+    .p-menuitem-link {
+      cursor: default;
+      color: inherit;
+
+      &:hover {
+        text-decoration: none;
+      }
+    }
+  }
+}

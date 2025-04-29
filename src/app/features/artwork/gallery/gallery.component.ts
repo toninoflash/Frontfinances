@@ -82,8 +82,8 @@ export class GalleryComponent {
   goToArtwork(artwork: any) {
     this.router.navigate(['/profile'+ artwork?.uid+'/artwork/see', artwork.id]);
   }
-  async getUser(id: any) {
-    await this.baseService
+  getUser(id: any) {
+    this.baseService
       .getItems(endpoint + '/full/' + id)
       .subscribe((resp) => {
         this.arthish = resp as User;

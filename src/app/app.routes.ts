@@ -36,8 +36,8 @@ export const routes: Routes = [
         component: ArtworkComponent,
         data: { title: 'Mis obras' },
         children: [
-          { path: 'gallery', component: GalleryComponent, data: { title: 'Galería' } },
-          { path: 'table', component: TableArtwaorkComponent, data: { title: 'Tabla' } },
+          { path: 'gallery/:id', component: GalleryComponent, data: { title: 'Galería' } },
+          { path: 'table', component: TableArtwaorkComponent, data: { title: 'Gestión' } },
           { path: 'see/:id', component: SeeComponent, data: { title: 'Obra' } },
           { path: '', redirectTo: 'gallery', pathMatch: 'full' },
         ],

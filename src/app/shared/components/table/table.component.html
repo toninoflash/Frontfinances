@@ -7,78 +7,29 @@
     [rowsPerPageOptions]="[10, 25, 50]"
     [loading]="loading"
     [paginator]="true"
-    [globalFilterFields]="globalFilterFields"
+    [globalFilterFields]="getGlobalFilterFields()"
     [tableStyle]="{ 'min-width': '75rem' }"
   >
-    <ng-template pTemplate="caption">
-      <div class="flex">
-        <p-iconfield iconPosition="left" class="ml-auto">
-          <p-inputicon>
-            <i class="pi pi-search"></i>
-          </p-inputicon>
-          <input
-            pInputText
-            type="text"
-            placeholder="Search keyword"
-          />
-        </p-iconfield>
-      </div>
-    </ng-template>
+    <!-- Cabecera y búsqueda global (se mantienen igual) -->
 
     <ng-template pTemplate="header">
       <tr>
-        <th *ngFor="let col of label" [style.width]="col.width || 'auto'">
+        <th *ngFor="let col of columns" [style.width]="col.width || 'auto'">
           {{ col.header }}
         </th>
       </tr>
       <tr>
-        <th *ngFor="let col of label">
-          <ng-container [ngSwitch]="getColumnType(col.field)">
-            <!-- Text Filter -->
+        <th *ngFor="let col of columns">
+          <ng-container [ngSwitch]="col.filterType">
+            <!-- Filtro de texto estándar -->
             <p-columnFilter
               *ngSwitchCase="'text'"
               type="text"
               [field]="col.field"
-              [placeholder]="'Search by ' + col.header"
+              [placeholder]="'Buscar por ' + col.header"
             ></p-columnFilter>
 
-            <!-- Boolean Filter -->
-            <p-columnFilter
-              *ngSwitchCase="'boolean'"
-              type="boolean"
-              [field]="col.field"
-            ></p-columnFilter>
-
-            <!-- Representative Filter -->
-            <p-columnFilter
-              *ngSwitchCase="'representative'"
-              [field]="col.field"
-              matchMode="in"
-              [showMenu]="false"
-            >
-              <ng-template pTemplate="filter" let-value let-filter="filterCallback">
-                <p-multiselect
-                  [options]="representatives"
-                  placeholder="Any"
-                  (onChange)="filter($event.value)"
-                  optionLabel="name"
-                  [panelStyle]="{ minWidth: '16rem' }"
-                >
-                  <ng-template let-option pTemplate="item">
-                    <div class="flex items-center gap-2">
-                      <img
-                        [alt]="option.name"
-                        [src]="'https://primefaces.org/cdn/primeng/images/demo/avatar/' + option.image"
-                        width="24"
-                      />
-                      <span>{{ option.name }}</span>
-                    </div>
-                  </ng-template>
-                </p-multiselect>
-              </ng-template>
-            </p-columnFilter>
-
-            <!-- Status Filter -->
+            <!-- Filtro para estado -->
             <p-columnFilter
               *ngSwitchCase="'status'"
               [field]="col.field"
@@ -86,18 +37,33 @@
               [showMenu]="false"
             >
               <ng-template pTemplate="filter" let-value let-filter="filterCallback">
-                <p-dropdown
-                  [options]="statuses"
+                <p-select
+                  [options]="statusOptions"
                   (onChange)="filter($event.value)"
-                  placeholder="Select Status"
+                  placeholder="Filtrar estado"
                   [showClear]="true"
                 >
                   <ng-template let-option pTemplate="item">
-                    <p-tag [value]="option.value" [severity]="getSeverity(option.value)"></p-tag>
+                    <p-tag [value]="option" [severity]="getStatusSeverity(option)"></p-tag>
                   </ng-template>
-                </p-dropdown>
+                </p-select>
               </ng-template>
             </p-columnFilter>
+
+            <!-- Filtro booleano -->
+            <p-columnFilter
+              *ngSwitchCase="'boolean'"
+              type="boolean"
+              [field]="col.field"
+            ></p-columnFilter>
+
+            <!-- Filtro por defecto (para columnas sin filtro específico) -->
+            <p-columnFilter
+              *ngSwitchDefault
+              type="text"
+              [field]="col.field"
+              [placeholder]="'Buscar por ' + col.header"
+            ></p-columnFilter>
           </ng-container>
         </th>
       </tr>
@@ -105,14 +71,39 @@
 
     <ng-template pTemplate="body" let-item>
       <tr>
-        <td *ngFor="let col of label">
-          <ng-container [ngSwitch]="getColumnType(col.field)">
-            <!-- Text Column -->
+        <td *ngFor="let col of columns">
+          <ng-container [ngSwitch]="col.type">
+            <!-- Texto simple -->
             <ng-container *ngSwitchCase="'text'">
               {{ item[col.field] }}
             </ng-container>
 
-            <!-- Boolean Column -->
+            <!-- Imagen -->
+            <ng-container *ngSwitchCase="'image'">
+              <img
+                [src]="item[col.field]"
+                [alt]="item['title'] || 'Imagen'"
+                class="w-20 h-20 object-cover rounded shadow"
+                (click)="openImagePreview(item[col.field])"
+                style="cursor: pointer"
+              >
+            </ng-container>
+
+            <!-- Estado con tag -->
+            <ng-container *ngSwitchCase="'status'">
+              <p-tag
+                [value]="item[col.field]"
+                [severity]="getStatusSeverity(item[col.field])"
+                class="uppercase"
+              ></p-tag>
+            </ng-container>
+
+            <!-- Categoría con tag -->
+            <ng-container *ngSwitchCase="'tag'">
+              <p-tag [value]="item[col.field]" severity="info"></p-tag>
+            </ng-container>
+
+            <!-- Booleano -->
             <ng-container *ngSwitchCase="'boolean'">
               <i
                 class="pi"
@@ -122,35 +113,6 @@
                 }"
               ></i>
             </ng-container>
-
-            <!-- Country Column -->
-            <ng-container *ngSwitchCase="'country'">
-              <div class="flex items-center gap-2" *ngIf="item[col.field]">
-                <img
-                  src="https://primefaces.org/cdn/primeng/images/demo/flag/flag_placeholder.png"
-                  [class]="'flag flag-' + item[col.field].code"
-                  width="20"
-                />
-                <span>{{ item[col.field].name }}</span>
-              </div>
-            </ng-container>
-
-            <!-- Representative Column -->
-            <ng-container *ngSwitchCase="'representative'">
-              <div class="flex items-center gap-2" *ngIf="item[col.field]">
-                <img
-                  [alt]="item[col.field].name"
-                  [src]="'https://primefaces.org/cdn/primeng/images/demo/avatar/' + item[col.field].image"
-                  width="32"
-                />
-                <span>{{ item[col.field].name }}</span>
-              </div>
-            </ng-container>
-
-            <!-- Status Column -->
-            <ng-container *ngSwitchCase="'status'">
-              <p-tag [value]="item[col.field]" [severity]="getSeverity(item[col.field])"></p-tag>
-            </ng-container>
           </ng-container>
         </td>
       </tr>
@@ -158,7 +120,10 @@
 
     <ng-template pTemplate="emptymessage">
       <tr>
-        <td [attr.colspan]="label.length">No records found.</td>
+        <td [attr.colspan]="columns.length" class="text-center py-8">
+          <i class="pi pi-image text-4xl text-gray-400 mb-2"></i>
+          <p class="text-gray-500">No se encontraron registros</p>
+        </td>
       </tr>
     </ng-template>
   </p-table>

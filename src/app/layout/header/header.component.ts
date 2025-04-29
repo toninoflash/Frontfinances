@@ -64,7 +64,7 @@ export class HeaderComponent implements OnInit {
             {
               label: 'Mis obras',
               icon: 'pi pi-server',
-              routerLink: ['/profile//artwork/'+this.userService.user!.id+'/gallery'],
+              routerLink: ['/profile//artwork/'+this.userService.user!.id+'/gallery/'+this.userService.user!.id],
             },
             {
               label: 'Mis favoritos',
