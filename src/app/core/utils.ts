@@ -108,7 +108,7 @@ export class Utils {
       {
         label: 'Datos',
         icon: 'pi pi-bolt',
-        routerLink: [`/profile/${artist.id}/arthist`],
+        routerLink: [`/profile/${artist?.id}/arthist`],
       },
       {
         label: 'Obras',
@@ -117,7 +117,7 @@ export class Utils {
         children: [
           {
             label: 'Galería',
-            routerLink: `/profile/artwork/${artist.id}/gallery/${artist.id}`,
+            routerLink: `/profile/artwork/${artist?.id}/gallery/${artist?.id}`,
           },
         ],
       },
@@ -132,7 +132,7 @@ export class Utils {
       if (obrasMenuItem && obrasMenuItem.children) {
         obrasMenuItem.children.push({
           label: 'Gestión',
-          routerLink: `/profile/artwork/${artist.id}/table`,
+          routerLink: `/profile/artwork/${artist?.id}/table`,
         });
       }
     }

@@ -14,6 +14,9 @@ import { Router } from '@angular/router';
 import { Card } from 'primeng/card';
 import { User } from '../../../core/models/user';
 import { FormTestComponent } from "../../../shared/components/form-test/form-test.component";
+import { Utils } from '../../../core/utils';
+import { MessageService } from 'primeng/api';
+import { Toast } from 'primeng/toast';
 const endpoint: any = environment.baseUrlSpring+"users";
 
 @Component({
@@ -26,9 +29,9 @@ const endpoint: any = environment.baseUrlSpring+"users";
     DynamicFormComponent,
     HttpClientModule,
     Card,
-    FormTestComponent
+    Toast
 ],
-  providers: [UserService, BaseServiceService],
+  providers: [UserService, BaseServiceService, MessageService],
   templateUrl: './login.component.html',
   styleUrl: './login.component.scss',
 })
@@ -46,7 +49,8 @@ export class LoginComponent {
   constructor(
     private userService: UserService,
     private baseService: BaseServiceService,
-    private router: Router
+    private router: Router,
+    private messageService: MessageService,
   ) {}
   ngOnInit(): void {
     this.dynamicGroup = FormsAuth.loginGroup;
@@ -76,38 +80,61 @@ export class LoginComponent {
 
   login(id:string) {
     let loginUser: any;
-    const url: string = `${endpoint}/users/`;
+    const url: string = `${endpoint}`;
     this.spinner = true;
     this.error = false;
 
     if (this.dynamicForm.valid) {
       loginUser = this.dynamicForm.value;
-      // this.userService.login(loginUser).subscribe(
-      //   (resp: any) => {
-      //     this.userService.user = resp.usuario;
-      //     this.spinner = false;
-      //     this.router.navigate(['/dashboard']);
 
+      this.baseService.getItemsWithParams(url+'/validate',loginUser).subscribe(
+        (res) => {
+          if(res) {
+
+            this.userService.login(loginUser).subscribe(
+              (resp: any) => {
+                this.userService.user = res as User;
+                sessionStorage.setItem('token', resp.access_token);
+                this.spinner = false;
+                this.router.navigate(['/index']);
+
+              },
+              (error) => {
+
+                this.error = true;
+                this.spinner = false;
+              }
+            );
+          } else {
+            Utils.showMessage(
+                      this.messageService,
+                      'error',
+                      'Error',
+                      'No se ha podido actualizar el usuario'
+                    );
+                    this.error = true;
+                this.spinner = false;
+          }
+
+
+          });
+
+
+
+
+      // const net = endpoint + '/full/'+id;
+      // this.baseService.getItems(net).subscribe(
+      //   (res) => {
+      //     this.userService.user = res as User;
+      //     this.spinner = false;
+      //     this.router.navigate(['/index']);
       //   },
       //   (error) => {
-
       //     this.error = true;
       //     this.spinner = false;
+      //     console.error('Error al obtener los datos del usuario:', error);
       //   }
       // );
-      const net = endpoint + '/full/'+id;
-      this.baseService.getItems(net).subscribe(
-        (res) => {
-          this.userService.user = res as User;
-          this.spinner = false;
-          this.router.navigate(['/index']);
-        },
-        (error) => {
-          this.error = true;
-          this.spinner = false;
-          console.error('Error al obtener los datos del usuario:', error);
-        }
-      );
     }
   }
 }

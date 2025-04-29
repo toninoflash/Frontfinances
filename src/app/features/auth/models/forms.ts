@@ -145,7 +145,7 @@ const divider = () => {
     export const loginGroup: FormData = {
         type: Type.update,
         data: [
-          name(),
+          username(),
           password()
         ],
     };

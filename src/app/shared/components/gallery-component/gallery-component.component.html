@@ -7,7 +7,7 @@
     class="hover-card transform hover:scale-105 transition-transform duration-300 shadow-md hover:shadow-lg rounded-lg overflow-hidden"
     [style]="{ width: '16rem', background: 'transparent', border: 'none' }"
     (click)="goToArtwork(card)"
-    *ngFor="let card of limit && limit > 0 ? artworks.slice(0, limit) : artworks"
+    *ngFor="let card of limit && limit > 0 ? artworks?.slice(0, limit) : artworks"
   >
     <ng-template #header>
       <div class="relative w-full h-48 overflow-hidden">

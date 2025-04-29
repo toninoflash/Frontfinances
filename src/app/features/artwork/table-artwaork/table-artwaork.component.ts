@@ -23,6 +23,7 @@ import { FileupComponent } from '../../../shared/components/fileup/fileup.compon
 import { FileUpload, UploadEvent } from 'primeng/fileupload';
 import { CommonModule } from '@angular/common';
 import { FormsArtwork } from '../models/forms';
+import { Toast } from 'primeng/toast';
 const endpoint: any = environment.baseUrlSpring + 'users';
 
 @Component({
@@ -37,6 +38,7 @@ const endpoint: any = environment.baseUrlSpring + 'users';
     FileUpload,
     CommonModule,
     ProgressSpinner,
+    Toast
   ],
   providers: [UserService, BaseServiceService, MessageService],
   templateUrl: './table-artwaork.component.html',
@@ -213,15 +215,11 @@ export class TableArtwaorkComponent {
     const formData = new FormData();
     formData.append('file', this.selectedFile);
     this.baseService
-      .postItem(`${environment.baseUrlSpring}artwork/image`, formData)
+      .postItemImage(`${environment.baseUrlSpring}artwork/image`, formData)
       .subscribe(
         (response: any) => {
           console.log('Imagen subida:', response.url);
-          this.messageService.add({
-            severity: 'info',
-            summary: 'Success',
-            detail: 'Imagen subida a Cloudinary',
-          });
+          this.createArtwork(response.url);
         },
         (error) => {
           console.error('Error subiendo la imagen', error);
@@ -232,11 +230,7 @@ export class TableArtwaorkComponent {
           });
         }
       );
-    this.messageService.add({
-      severity: 'info',
-      summary: 'Success',
-      detail: 'File Uploaded with Basic Mode',
-    });
+
   }
   previewImage: string | ArrayBuffer | null = null;
 
@@ -257,4 +251,39 @@ export class TableArtwaorkComponent {
   clearPreview() {
     this.previewImage = null;
   }
+
+
+  createArtwork(imageUrl: string) {
+    if (this.dynamicForm.valid) {
+    const url = `${environment.baseUrlSpring}artwork`;
+    this.isLoading = true;
+    let artwork:any = null;
+    artwork= this.dynamicForm.value;
+    artwork.imageUrl = imageUrl;
+    artwork.uid = this.userLogin.id;
+
+    this.baseService.postItem(url, artwork).subscribe(
+      (resp) => {
+        Utils.showMessage(
+          this.messageService,
+          'info',
+          'Info',
+          'Obra creada correctamente'
+        );
+        this.visible = false;
+        this.isLoading = false;
+        this.getUser();
+      },
+      (error) => {
+        Utils.showMessage(
+          this.messageService,
+          'error',
+          'Error',
+          'No se ha podido crear la obra'
+        );
+        this.isLoading = false;
+      }
+    );
+  }
+}
 }

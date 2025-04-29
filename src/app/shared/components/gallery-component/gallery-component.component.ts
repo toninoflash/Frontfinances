@@ -52,7 +52,7 @@ export class GalleryComponentComponent {
     }
     this.isLoading = true;
     setTimeout(() => {
-      const nextBatch = this.artworks.slice(start, end);
+      const nextBatch = this.artworks?.slice(start, end);
       this.artworks = [...this.artworks, ...nextBatch];
       this.currentBatch++;
       this.isLoading = false;

@@ -11,7 +11,7 @@ import {
 } from 'rxjs';
 import { User } from '../../models/user';
 import { environment } from '../../../../enviroments/environment';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { isPlatformBrowser } from '@angular/common';
 
 const endpoint: any = environment.baseUrlSpring;
@@ -78,10 +78,6 @@ export class UserService {
     return this._userSubject.asObservable();
   }
 
-  setUser(newUser: User) {
-    this.user = newUser;
-  }
-
   logout() {
     if (this.isSessionStorageAvailable()) {
       sessionStorage.removeItem('token');
@@ -91,12 +87,21 @@ export class UserService {
 
   login(formData: any) {
     const url = environment.baseUrlLogin;
-    return this.http.post(`${url}login`, formData).pipe(
+    const params = new HttpParams()
+      .set('username', formData.username)
+      .set('password', formData.password);
+
+    return this.http.post(`${url}login`, null, {
+      headers: new HttpHeaders({
+        'Content-Type': 'application/json'
+      }),
+      params: params,
+      withCredentials: true
+    }).pipe(
       tap((resp: any) => {
         if (this.isSessionStorageAvailable()) {
           sessionStorage.setItem('token', resp.token);
         }
-        this.setUser(resp.usuario);
       }),
       catchError((error) => {
         console.error('Error en login:', error);

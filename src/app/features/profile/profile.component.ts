@@ -43,7 +43,6 @@ const endpoint: any = environment.baseUrlSpring + 'users';
     DynamicFormComponent,
     Toast,
     GalleryComponentComponent,
-    ProgressSpinner
 ],
   templateUrl: './profile.component.html',
   styleUrl: './profile.component.scss',
@@ -233,14 +232,18 @@ this.routeSubscription = this.route.paramMap.subscribe(params => {
     this.baseService.putItem(url, this.userLogin).subscribe(
       (resp) => {
         this.userLogin = resp as User;
+        this.userService.user = this.userLogin;
+        this.artist = this.userLogin;
+        setTimeout(() => {
+          this.visible = false;
+        this.isLoading = false;
         Utils.showMessage(
           this.messageService,
-          'info',
-          'Info',
+          'success',
+          'Exito',
           'Usuario actualizado correctamente'
         );
-        this.visible = false;
-        this.isLoading = false;
+        }, 1000);
         this.userService.user = this.userLogin;
       },
       (error) => {

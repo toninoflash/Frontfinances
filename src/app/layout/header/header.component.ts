@@ -60,11 +60,11 @@ export class HeaderComponent implements OnInit {
           label: 'Perfil',
           icon: 'pi pi-money-bill',
           items: [
-            { label: 'Mis datos', icon: 'pi pi-bolt', routerLink: ['/profile/'+this.userService.user!.id+'/arthist'] },
+            { label: 'Mis datos', icon: 'pi pi-bolt', routerLink: ['/profile/'+this.userService.user?.id+'/arthist'] },
             {
               label: 'Mis obras',
               icon: 'pi pi-server',
-              routerLink: ['/profile//artwork/'+this.userService.user!.id+'/gallery/'+this.userService.user!.id],
+              routerLink: ['/profile//artwork/'+this.userService.user?.id+'/gallery/'+this.userService.user?.id],
             },
             {
               label: 'Mis favoritos',

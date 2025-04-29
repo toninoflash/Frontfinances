@@ -1,30 +1,60 @@
-<div class="artwork-container">
-  <div class="artwork-image">
-    <img [src]="artwork.imageUrl" [alt]="artwork.title" />
+<div class="p-6 space-y-6 rounded-lg">
+  <!-- Imagen con fondo adaptable al tema -->
+  <div class="bg-gray-200 dark:bg-black p-4 rounded-lg shadow-sm flex justify-center items-center min-h-[300px]">
+    <img
+      [src]="artwork.imageUrl"
+      [alt]="artwork.title"
+      class="max-w-full max-h-[500px] rounded-lg object-contain shadow-md"
+    />
   </div>
 
-  <div class="artwork-details">
-    <h1>{{ artwork.title }}</h1>
-    <h4 class="author">Por <a [routerLink]="`/profile/${artwork.uid}/arthist/`" class="text-orange-400 hover:text-orange-600">{{ arthist.name }} {{ arthist.lastname }} ({{ arthist.username }})</a></h4>
-    <p class="description">{{ artwork.description }}</p>
-    <p class="date">{{ artwork.date  }}</p>
+  <!-- Detalles de la obra -->
+  <div class="space-y-3">
+    <h1 class="text-3xl font-bold text-gray-800 dark:text-gray-100">{{ artwork.title }}</h1>
 
-    <div class="interaction">
-      <button class="like-btn" >
+    <h4 class="text-gray-800 dark:text-gray-100">
+      Por
+      <a
+        [routerLink]="'/profile/' + artwork.uid + '/arthist/'"
+        class="text-orange-500 hover:text-orange-600 transition-colors font-medium"
+      >
+        {{ arthist.name }} {{ arthist.lastname }} ({{ arthist.username }})
+      </a>
+    </h4>
+
+    <p class="text-lg text-gray-700 dark:text-gray-200">{{ artwork.description }}</p>
+    <p class="text-sm text-gray-500 dark:text-gray-400">{{ artwork.date | date:'longDate' }}</p>
+
+    <!-- Interacciones -->
+    <div class="pt-4">
+      <button
+        class="bg-pink-600 hover:bg-pink-700 text-white px-4 py-2 rounded-full text-base font-medium transition-colors flex items-center gap-2"
+      >
         ❤️ {{ artwork.likes || 0 }}
       </button>
     </div>
   </div>
 
-  <div class="comments-section">
-    <h3>Comentarios</h3>
-    <div *ngFor="let comment of artwork.comments" class="comment">
-      <strong>{{ comment.user }}:</strong> {{ comment.text }}
+  <!-- Comentarios -->
+  <div class="mt-8 border-t border-gray-300 dark:border-gray-600 pt-6">
+    <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-100 mb-4">Comentarios</h3>
+
+    <div *ngFor="let comment of artwork.comments" class="py-3 border-b border-gray-200 dark:border-gray-600 last:border-0">
+      <strong class="text-gray-800 dark:text-gray-100 font-medium">{{ comment.user }}:</strong>
+      <span class="text-gray-700 dark:text-gray-200 ml-2">{{ comment.text }}</span>
     </div>
 
-    <div class="new-comment">
-      <textarea  placeholder="Escribe un comentario..."></textarea>
-      <button >Enviar</button>
+    <div class="mt-6 space-y-3">
+      <textarea
+        placeholder="Escribe un comentario..."
+        class="w-full min-h-[100px] p-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all bg-white dark:bg-gray-800 dark:text-white"
+      ></textarea>
+
+      <button
+        class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md font-medium transition-colors self-end"
+      >
+        Enviar
+      </button>
     </div>
   </div>
 </div>
