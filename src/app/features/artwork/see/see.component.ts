@@ -6,11 +6,13 @@ import { environment } from '../../../../enviroments/environment';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { AvatarModule } from 'primeng/avatar';
+import { ButtonModule } from 'primeng/button';
+import { Divider } from 'primeng/divider';
 const endpoint: any = environment.baseUrlSpring;
 
 @Component({
   selector: 'app-see',
-  imports: [CommonModule,RouterModule,     AvatarModule,
+  imports: [CommonModule,RouterModule,     AvatarModule, ButtonModule, Divider,
   ],
   templateUrl: './see.component.html',
   styleUrl: './see.component.scss',

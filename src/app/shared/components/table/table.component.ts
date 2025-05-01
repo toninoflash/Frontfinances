@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { Table } from 'primeng/table';
 import { CommonModule } from '@angular/common';
 import { TableModule } from 'primeng/table';
@@ -36,12 +36,13 @@ export interface ColumnConfig {
   templateUrl: './table.component.html',
   styleUrls: ['./table.component.scss']
 })
-export class TableComponent {
+export class TableComponent implements OnChanges{
   @Input() dataSource: any[] = [];
   @Input() loading: boolean = false;
   @Input() label: any[] = [];
   @Input() statuses: any[] = [];
   @Input() columns: ColumnConfig[] = [];
+  selected!: any[];
   get globalFilterFields(): string[] {
     return this.label.map(col => col.field);
   }
@@ -87,10 +88,19 @@ export class TableComponent {
   }
 
   getGlobalFilterFields(): string[] {
-    return this.columns ? this.columns.map(col => col.field) : [];
+
+    const resp:string[] = this.columns ? this.columns.map(col => col.field) : [];
+    console.table('getGlobalFilterFields', this.dataSource);
+    return resp
   }
   filterGlobal(event: Event, table: Table): void {
     const input = event.target as HTMLInputElement;
     table.filterGlobal(input.value, 'contains');
+  }
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['dataSource']) {
+      console.log('⚡ dataSource ha cambiado:', this.dataSource);
+    }
+
   }
 }

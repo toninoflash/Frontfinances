@@ -35,7 +35,17 @@
   (formGroupChange)="onFormGroupChange($event)"
 ></app-dynamic-form>
 
-<p-button label="Upload" (click)="onUpload()" severity="secondary" />
+<div style="display: flex; justify-content: flex-end;">
+  <p-button
+    label="Aceptar"
+    class="p-button-sm p-button-outlined"
+    (click)="onUpload()"
+    [disabled]="!dynamicForm.valid"
+    [loading]="isLoading"
+    [loadingIcon]="'pi pi-spinner'"
+    >
+  </p-button>
+</div>
 </div>
 
 </p-dialog>

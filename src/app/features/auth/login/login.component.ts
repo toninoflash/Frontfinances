@@ -17,6 +17,7 @@ import { FormTestComponent } from "../../../shared/components/form-test/form-tes
 import { Utils } from '../../../core/utils';
 import { MessageService } from 'primeng/api';
 import { Toast } from 'primeng/toast';
+import { firstValueFrom } from 'rxjs';
 const endpoint: any = environment.baseUrlSpring+"users";
 
 @Component({
@@ -78,63 +79,39 @@ export class LoginComponent {
     const controls = form.controls;
   }
 
-  login(id:string) {
-    let loginUser: any;
-    const url: string = `${endpoint}`;
+  async login(id: string): Promise<void> {
+    if (!this.dynamicForm.valid) return;
+
+    const loginUser = this.dynamicForm.value;
+    const url = `${endpoint}/validate`;
+
     this.spinner = true;
     this.error = false;
 
-    if (this.dynamicForm.valid) {
-      loginUser = this.dynamicForm.value;
+    try {
+      const validationRes = await firstValueFrom(this.baseService.getItemsWithParams(url, loginUser));
 
-      this.baseService.getItemsWithParams(url+'/validate',loginUser).subscribe(
-        (res) => {
-          if(res) {
+      if (!validationRes) {
+        this.handleError('No se ha podido encontrar el usuario');
+        return;
+      }
 
-            this.userService.login(loginUser).subscribe(
-              (resp: any) => {
-                this.userService.user = res as User;
-                sessionStorage.setItem('token', resp.access_token);
-                this.spinner = false;
-                this.router.navigate(['/index']);
+      const loginRes: any = await firstValueFrom(this.userService.login(loginUser));
 
-              },
-              (error) => {
+      this.userService.user = validationRes as User;
+      sessionStorage.setItem('token', loginRes.access_token);
+      this.router.navigate([`/dashboard/${this.userService.user?.id}/arthist`]);
 
-                this.error = true;
-                this.spinner = false;
-              }
-            );
-          } else {
-            Utils.showMessage(
-                      this.messageService,
-                      'error',
-                      'Error',
-                      'No se ha podido actualizar el usuario'
-                    );
-                    this.error = true;
-                this.spinner = false;
-          }
-
-
-          });
-
-
-
-
-      // const net = endpoint + '/full/'+id;
-      // this.baseService.getItems(net).subscribe(
-      //   (res) => {
-      //     this.userService.user = res as User;
-      //     this.spinner = false;
-      //     this.router.navigate(['/index']);
-      //   },
-      //   (error) => {
-      //     this.error = true;
-      //     this.spinner = false;
-      //     console.error('Error al obtener los datos del usuario:', error);
-      //   }
-      // );
+    } catch (error) {
+      this.handleError('Error al validar o iniciar sesión');
+    } finally {
+      this.spinner = false;
     }
   }
+
+  private handleError(message: string): void {
+    Utils.showMessage(this.messageService, 'error', 'Error', message);
+    this.error = true;
+  }
+
 }

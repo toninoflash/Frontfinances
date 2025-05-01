@@ -56,7 +56,9 @@ export class ProfileComponent {
   userIsLogged: boolean = false;
   visible: boolean = false;
   isLoading = false;
+  isFollower = false;
   artworks: any[] = [];
+  followers: any[] = [];
 
   dynamicGroup: any = 0;
   dynamicForm: any;
@@ -87,6 +89,7 @@ this.routeSubscription = this.route.paramMap.subscribe(params => {
   private initializeUserData(): void {
     this.dynamicGroup = FormsProfile.updateGroup;
     this.userLogin = this.userService.user;
+    this.followers = this.userService.user?.follower || [];
     const id = this.getRouteParam('id');
     const uid = this.getRouteParam('uid');
 
@@ -111,6 +114,8 @@ this.routeSubscription = this.route.paramMap.subscribe(params => {
   private handleUserFetchSuccess(response: any): void {
     this.artist = response as User;
     this.artworks = this.artist?.artWork || [];
+    this.isFollower = this.followers.some(f => f.followedId === this.artist.id);
+
     this.initializeMenu();
   }
 
@@ -256,5 +261,46 @@ this.routeSubscription = this.route.paramMap.subscribe(params => {
         this.isLoading = false;
       }
     );
+  }
+
+  isFollowerOrMenu(option:any, event: any) {
+    if(this.userIsLogged) {
+      option.toggle(event)
+    } else {
+      this.setFollow();
+    }
+  }
+  setFollow() {
+    this.isLoading = true;
+    const url = environment.baseUrlSpring +'follower'
+    const follower = {
+      followerId: this.userLogin.id,
+      followedId: this.artist.id,
+      createdAt: "2025-04-25T18:30:00",
+      status: "Pending"
+    }
+    this.baseService.postItem(`${url}`, follower).subscribe(
+      (resp) => {
+        this.isLoading = false;
+        this.followers.push(resp);
+        this.isFollower = this.followers.some(f => f.followedId === this.artist.id);
+        Utils.showMessage(
+          this.messageService,
+          'success',
+          'Exito',
+          'Usuario actualizado correctamente'
+        );
+      },
+      (error) => {
+        Utils.showMessage(
+          this.messageService,
+          'error',
+          'Error',
+          'No se ha podido actualizar el usuario'
+        );
+        this.isLoading = false;
+      }
+    );
+
   }
 }

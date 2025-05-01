@@ -1,60 +1,96 @@
-<div class="p-6 space-y-6 rounded-lg">
-  <!-- Imagen con fondo adaptable al tema -->
-  <div class="bg-gray-200 dark:bg-black p-4 rounded-lg shadow-sm flex justify-center items-center min-h-[300px]">
-    <img
-      [src]="artwork.imageUrl"
-      [alt]="artwork.title"
-      class="max-w-full max-h-[500px] rounded-lg object-contain shadow-md"
-    />
-  </div>
+<div class="p-6 space-y-10 rounded-lg">
+  <!-- Contenedor principal de imagen + detalles -->
+  <div class="flex flex-col lg:flex-row gap-8">
+    <!-- Imagen -->
+    <div
+      class="flex-3 shadow-md dark:bg-black p-4 rounded-lg shadow-sm flex justify-center items-center min-h-[300px]"
+    >
+      <img
+        [src]="artwork?.imageUrl"
+        [alt]="artwork?.title"
+        class="max-w-full max-h-[500px] rounded-lg object-contain"
+      />
+    </div>
 
-  <!-- Detalles de la obra -->
-  <div class="space-y-3">
-    <h1 class="text-3xl font-bold text-gray-800 dark:text-gray-100">{{ artwork.title }}</h1>
+    <!-- Detalles -->
+    <div class="flex-1 space-y-4">
 
-    <h4 class="text-gray-800 dark:text-gray-100">
-      Por
-      <a
-        [routerLink]="'/profile/' + artwork.uid + '/arthist/'"
-        class="text-orange-500 hover:text-orange-600 transition-colors font-medium"
+      <div class="flex justify-end">
+        <p-button icon="pi pi-heart" [text]="true"></p-button>
+      </div>
+      <p-divider></p-divider>
+
+      <div>
+
+
+      <h1 class="text-xl font-bold text-gray-800 dark:text-gray-100">
+        {{ artwork.title }}
+      </h1>
+
+      <h2 class="text-gray-800 dark:text-gray-100 text-md">
+        Por
+        <a
+          [routerLink]="'/profile/' + artwork.uid + '/arthist/'"
+          class="text-orange-500 hover:text-orange-600 transition-colors font-medium"
+        >
+          {{ arthist.name }} {{ arthist.lastname }} ({{ arthist.username }})
+        </a>
+      </h2>
+
+      <p class="text-lg text-gray-700 dark:text-gray-200">
+        {{ artwork.description }}
+      </p>
+      <time
+        class="text-sm text-gray-500 dark:text-gray-400 block"
+        [attr.datetime]="artwork.date"
       >
-        {{ arthist.name }} {{ arthist.lastname }} ({{ arthist.username }})
-      </a>
-    </h4>
+        {{ artwork.date | date : "longDate" }}
+      </time>
 
-    <p class="text-lg text-gray-700 dark:text-gray-200">{{ artwork.description }}</p>
-    <p class="text-sm text-gray-500 dark:text-gray-400">{{ artwork.date | date:'longDate' }}</p>
+      <!-- Botón like -->
 
-    <!-- Interacciones -->
-    <div class="pt-4">
-      <button
-        class="bg-pink-600 hover:bg-pink-700 text-white px-4 py-2 rounded-full text-base font-medium transition-colors flex items-center gap-2"
-      >
-        ❤️ {{ artwork.likes || 0 }}
-      </button>
+      </div>
     </div>
   </div>
 
   <!-- Comentarios -->
-  <div class="mt-8 border-t border-gray-300 dark:border-gray-600 pt-6">
-    <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-100 mb-4">Comentarios</h3>
+  <section class="border-t border-gray-300 dark:border-gray-600 pt-6 space-y-6">
+    <h3
+      class="text-xl font-semibold text-gray-800 dark:text-gray-100 flex justify-between items-center"
+    >
+      Comentarios
+      <span class="text-sm font-normal text-gray-500 dark:text-gray-400">
+        ({{ artwork.comments?.length || 0 }})
+      </span>
+    </h3>
 
-    <div *ngFor="let comment of artwork.comments" class="py-3 border-b border-gray-200 dark:border-gray-600 last:border-0">
-      <strong class="text-gray-800 dark:text-gray-100 font-medium">{{ comment.user }}:</strong>
-      <span class="text-gray-700 dark:text-gray-200 ml-2">{{ comment.text }}</span>
+    <div
+      *ngFor="let comment of artwork.comments"
+      class="py-3 border-b border-gray-200 dark:border-gray-600 last:border-0"
+    >
+      <strong class="text-gray-800 dark:text-gray-100 font-medium"
+        >{{ comment.user }}:</strong
+      >
+      <span class="text-gray-700 dark:text-gray-200 ml-2">{{
+        comment.text
+      }}</span>
     </div>
 
-    <div class="mt-6 space-y-3">
+    <form class="space-y-4">
       <textarea
+        name="comment"
         placeholder="Escribe un comentario..."
-        class="w-full min-h-[100px] p-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all bg-white dark:bg-gray-800 dark:text-white"
+        class="w-full min-h-[100px] p-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all bg-white dark:bg-gray-800 dark:text-white resize-none"
       ></textarea>
 
-      <button
-        class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md font-medium transition-colors self-end"
-      >
-        Enviar
-      </button>
-    </div>
-  </div>
+      <div class="flex justify-end">
+        <button
+          type="submit"
+          class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md font-medium transition-colors"
+        >
+          Enviar
+        </button>
+      </div>
+    </form>
+  </section>
 </div>

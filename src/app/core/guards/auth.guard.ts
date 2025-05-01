@@ -20,7 +20,7 @@ export class AuthGuard implements CanActivate {
         if (!estaAuthentic){
           sessionStorage.clear()
           this.userService.user = null
-          this.router.navigateByUrl('')
+          this.router.navigateByUrl('/login')
         }
       })
     );

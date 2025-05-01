@@ -66,9 +66,9 @@ export class TableArtwaorkComponent {
   artworks: any[] = [];
 
   artworkColumns: ColumnConfig[] = [
-    { field: 'imageUrl', header: 'Imagen', width: '120px', type: 'image' },
+    { field: 'imageUrl', header: 'Imagen', width: '1px', type: 'image' },
     { field: 'title', header: 'Título', type: 'text', filterType: 'text' },
-    { field: 'category', header: 'Categoría', type: 'tag' },
+    { field: 'category', header: 'Categoría', width: '1px', type: 'tag' },
   ];
   label = [
     { field: 'title', header: 'Titulo', width: '22%' },
@@ -192,6 +192,7 @@ export class TableArtwaorkComponent {
     this.baseService.getItems(url).subscribe(
       (resp: any) => {
         this.artist = resp as User;
+        this.userService.user = this.artist;
         this.userIsLoged = false;
         this.artworks = this.artist?.artWork as any[];
       },
@@ -214,6 +215,7 @@ export class TableArtwaorkComponent {
 
     const formData = new FormData();
     formData.append('file', this.selectedFile);
+    this.isLoading = true;
     this.baseService
       .postItemImage(`${environment.baseUrlSpring}artwork/image`, formData)
       .subscribe(
@@ -228,6 +230,8 @@ export class TableArtwaorkComponent {
             summary: 'Error',
             detail: 'Error al subir imagen',
           });
+        this.isLoading = false;
+
         }
       );
 

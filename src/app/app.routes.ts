@@ -11,19 +11,20 @@ import { TableComponent } from './shared/components/table/table.component';
 import { AuthGuard } from './core/guards/auth.guard';
 import { SeeComponent } from './features/artwork/see/see.component';
 import { TableArtwaorkComponent } from './features/artwork/table-artwaork/table-artwaork.component';
+import { DashboardComponent } from './features/dashboard/dashboard.component';
 
 export const routes: Routes = [
   {
     path: 'index',
     component: FeaturesComponent,
     children: [
-      { path: '', component: IndexComponent, data: { title: 'Dashboard' } },
+      { path: '', component: IndexComponent, data: { title: 'Home' } },
     ],
   },
   {
     path: 'profile',
     component: FeaturesComponent,
-    //canActivate: [AuthGuard],
+    canActivate: [AuthGuard],
     data: { title: 'Perfil' },
     children: [
       {
@@ -42,6 +43,20 @@ export const routes: Routes = [
           { path: '', redirectTo: 'gallery', pathMatch: 'full' },
         ],
       }
+    ],
+  },
+  {
+    path: 'dashboard',
+    component: FeaturesComponent,
+    canActivate: [AuthGuard],
+    data: { title: 'Dashboard' },
+    children: [
+      {
+        path: ':uid/arthist',
+        component: DashboardComponent,
+        data: { title: 'Dashboard' },
+      },
+
     ],
   },
   {

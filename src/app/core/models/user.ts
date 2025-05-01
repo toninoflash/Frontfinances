@@ -18,5 +18,6 @@ export class User {
         public phone?: string,
         public website?: string,
         public artWork:any[] = [],
+        public follower:any[] = [],
     ){}
 }

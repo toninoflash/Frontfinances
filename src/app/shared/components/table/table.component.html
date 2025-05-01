@@ -9,12 +9,14 @@
     [paginator]="true"
     [globalFilterFields]="getGlobalFilterFields()"
     [tableStyle]="{ 'min-width': '75rem' }"
+    [(selection)]="selected" dataKey="code"
   >
     <!-- Cabecera y búsqueda global (se mantienen igual) -->
 
     <ng-template pTemplate="header">
       <tr>
-        <th *ngFor="let col of columns" [style.width]="col.width || 'auto'">
+        <th style="width: 4rem"><p-tableHeaderCheckbox /></th>
+        <th *ngFor="let col of columns" [style.width]="col.width">
           {{ col.header }}
         </th>
       </tr>
@@ -118,8 +120,11 @@
       </tr>
     </ng-template>
 
-    <ng-template pTemplate="emptymessage">
+    <ng-template pTemplate="emptymessage" let-product>
       <tr>
+        <td>
+          <p-tableCheckbox [value]="product" />
+      </td>
         <td [attr.colspan]="columns.length" class="text-center py-8">
           <i class="pi pi-image text-4xl text-gray-400 mb-2"></i>
           <p class="text-gray-500">No se encontraron registros</p>

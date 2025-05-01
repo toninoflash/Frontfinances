@@ -117,7 +117,6 @@ export class ArtworkComponent {
   private handleCurrentUser(): void {
     this.userIsLogged = true;
     this.artist = this.userLogin;
-    this.userService.user = this.artist;
     this.fetchUser(this.artist.id);
   }
   private initializeMenu(): void {

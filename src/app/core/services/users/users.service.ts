@@ -13,6 +13,7 @@ import { User } from '../../models/user';
 import { environment } from '../../../../enviroments/environment';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { isPlatformBrowser } from '@angular/common';
+import { Router } from '@angular/router';
 
 const endpoint: any = environment.baseUrlSpring;
 
@@ -25,6 +26,7 @@ export class UserService {
 
   constructor(
     private http: HttpClient,
+    private router:Router,
     @Inject(PLATFORM_ID) private platformId: Object
   ) {
     if (this.isSessionStorageAvailable()) {
@@ -79,10 +81,10 @@ export class UserService {
   }
 
   logout() {
-    if (this.isSessionStorageAvailable()) {
-      sessionStorage.removeItem('token');
-    }
+    sessionStorage.removeItem('token');
+
     this.user = null;
+    this.router.navigateByUrl('/index');
   }
 
   login(formData: any) {
@@ -100,7 +102,7 @@ export class UserService {
     }).pipe(
       tap((resp: any) => {
         if (this.isSessionStorageAvailable()) {
-          sessionStorage.setItem('token', resp.token);
+          sessionStorage.setItem('token', resp.access_token);
         }
       }),
       catchError((error) => {
@@ -146,51 +148,17 @@ export class UserService {
   }
 
   validateToken(): Observable<boolean> {
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${this.token}`,
+      'Content-Type': 'application/json'
+    });
     return this.http
-      .get(`${endpoint}/login/renew`, {
-        headers: {
-          'x-token': this.token,
-        },
+      .get(`${environment.baseUrlLogin}valid`, {
+        headers,
       })
       .pipe(
         map((resp: any) => {
-          const {
-            username,
-            email,
-            lastname,
-            name,
-            uid,
-            bio,
-            password,
-            roles,
-            avatarUrl,
-            enabled,
-            createdAt,
-            updatedAt,
-            direction,
-            phone,
-            website
-          } = resp.usuario;
-          this.user = new User(
-            username,
-            email,
-            lastname,
-            name,
-            uid,
-            bio,
-            password,
-            roles!,
-            avatarUrl,
-            enabled,
-            createdAt,
-            updatedAt,
-            direction,
-            phone,
-            website
-          );
-          if (this.isSessionStorageAvailable()) {
-            sessionStorage.setItem('token', resp.token);
-          }
+            sessionStorage.setItem('token', resp.access_token);
           return true;
         }),
         catchError((error) => of(false))

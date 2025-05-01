@@ -57,7 +57,7 @@ export class HeaderComponent implements OnInit {
     if(this.isLogin) {
       this.itemsUser = [
         {
-          label: 'Perfil',
+          label: `${this.userService.user?.username}`,
           icon: 'pi pi-money-bill',
           items: [
             { label: 'Mis datos', icon: 'pi pi-bolt', routerLink: ['/profile/'+this.userService.user?.id+'/arthist'] },
@@ -90,6 +90,17 @@ export class HeaderComponent implements OnInit {
           },
         ],
       },
+      {
+        label: 'Salir',
+        icon: 'pi pi-money-bill',
+        items: [
+          {
+            label: "Cerrar sesión",
+            icon: "pi pi-sign-out", // Cambia el ícono según el estado del modo oscuro
+            command: () => this.userService.logout(), // Cambia el estado del modo oscuro
+          },
+        ],
+      },
     ];
   }
 
@@ -97,7 +108,7 @@ export class HeaderComponent implements OnInit {
   toggleDarkMode() {
     const element = document.querySelector('html');
     this.iconMode = !this.iconMode; // Alterna el estado del modo oscuro
-    const isDarkMode = element?.classList.toggle('my-app-dark'); // Alterna la clase
+    const isDarkMode = element?.classList.toggle('dark'); // Alterna la clase
     localStorage.setItem('theme', isDarkMode ? 'dark' : 'light'); // Guarda el estado en localStorage
 
     // Actualiza los íconos y las etiquetas después de cambiar el modo

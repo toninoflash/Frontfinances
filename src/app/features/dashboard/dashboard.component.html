@@ -1,0 +1,153 @@
+<div class="container mx-auto px-4 py-6 grid grid-cols-1 lg:grid-cols-4 gap-6">
+
+  <!-- 📥 Columna izquierda: Feed de publicaciones -->
+  <div class="lg:col-span-3 space-y-6">
+
+    <!-- 🔔 Notificación destacada -->
+    <div class="bg-orange-100  text-blue-800 dark:text-blue-100 p-4 rounded-lg shadow-sm">
+      <i class="pi pi-bell mr-2 text-xl"></i>
+      <span>Tienes <strong>3 nuevos comentarios</strong> y <strong>2 nuevos seguidores</strong>.</span>
+    </div>
+
+    <!-- 🔍 Buscador -->
+    <div class="relative w-full">
+      <input
+        type="text"
+        [(ngModel)]="searchQuery"
+        placeholder="Buscar publicaciones o usuarios..."
+        class="w-full p-3 pl-10 border rounded-lg  dark:text-white dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+      />
+      <i class="pi pi-search absolute left-3 top-3 text-gray-400"></i>
+    </div>
+
+    <!-- 📢 Filtros -->
+    <div class="flex flex-wrap items-center gap-4">
+      <p-select
+        [options]="filters"
+        [(ngModel)]="selectedFilter"
+        placeholder="Filtrar por"
+        class="w-48"
+      ></p-select>
+
+      <p-select
+        [options]="sortOptions"
+        [(ngModel)]="selectedSort"
+        placeholder="Ordenar por"
+        class="w-48"
+      ></p-select>
+    </div>
+
+    <!-- 🧱 Feed -->
+    <div *ngFor="let post of posts " class=" p-6 rounded-lg shadow-md space-y-4">
+
+      <!-- 👤 Cabecera -->
+      <div class="flex items-center gap-4">
+        <img [src]="post.user.avatar" class="w-12 h-12 rounded-full object-cover" />
+        <div>
+          <a [routerLink]="'/profile/' + post.user.id" class="font-bold hover:underline">
+            {{ post.user.name }}
+          </a>
+          <p class="text-sm text-gray-500">{{ post.date | date:'short' }}</p>
+        </div>
+      </div>
+
+      <!-- 🖼️ Contenido -->
+      <div>
+        <p class="mb-2">{{ post.text }}</p>
+        <img *ngIf="post.image" [src]="post.image" class="rounded-lg max-h-[400px] w-full object-cover" />
+      </div>
+
+      <!-- ❤️ Interacciones -->
+      <div class="flex items-center justify-between">
+        <p-button icon="pi pi-heart" [label]="post.likes + ' Me gusta'" class="p-button-text text-pink-600"></p-button>
+        <p-button icon="pi pi-comments" label="Comentar" class="p-button-outlined p-button-sm"></p-button>
+      </div>
+
+      <!-- 💬 Comentarios -->
+      <div class="pt-4 border-t border-gray-300">
+        <p *ngFor="let comment of post.comments | slice:0:2" class="text-sm">
+          <strong>asdsad:</strong> adasdsa
+        </p>
+        <a [routerLink]="'/post/' + post.id" class="text-blue-500 hover:underline text-sm">Ver más</a>
+      </div>
+
+      <!-- ✍️ Comentario rápido -->
+      <div class="mt-3">
+        <textarea
+          [(ngModel)]="post.newComment"
+          rows="1"
+          class="w-full p-2 text-sm rounded-lg border "
+          placeholder="Añade un comentario..."
+        ></textarea>
+        <div class="mt-1 text-right">
+          <p-button
+            label="Enviar"
+            icon="pi pi-send"
+            class="p-button-sm p-button-text text-blue-500"
+            (click)="addComment(post)"
+          ></p-button>
+        </div>
+      </div>
+
+      <!-- 🗳️ Encuesta -->
+      <div *ngIf="post.poll" class="mt-4 space-y-2">
+        <p class="font-semibold">{{ post.poll.question }}</p>
+        <div *ngFor="let option of post.poll.options" class="flex items-center gap-2">
+          <p-radioButton
+            name="poll_{{ post.id }}"
+            [(ngModel)]="post.poll.selected"
+          ></p-radioButton>
+          <label for="{{ option }}">{{ option }}</label>
+        </div>
+        <p-button label="Votar" class="p-button-sm mt-2" (click)="submitVote(post)"></p-button>
+      </div>
+
+    </div>
+
+    <!-- 🔄 Nuevas publicaciones -->
+    <div *ngIf="newPostsAvailable" class="text-center mt-6">
+      <p-button label="Hay nuevas publicaciones" icon="pi pi-refresh" class="p-button-info" (click)="loadNewPosts()"></p-button>
+    </div>
+
+  </div>
+
+  <!-- 📎 Columna derecha: Extra info -->
+  <div class="space-y-6">
+
+    <!-- 📌 Sugerencias -->
+    <div class=" p-4 rounded-lg shadow-md">
+      <h4 class="text-lg font-semibold mb-3">Usuarios sugeridos</h4>
+      <div class="flex flex-wrap gap-4">
+        <div *ngFor="let user of suggestedUsers" class="flex items-center gap-3  p-3 rounded-lg shadow-sm w-full sm:w-60">
+          <img [src]="user.avatar" class="w-10 h-10 rounded-full object-cover" />
+          <div>
+            <p class="text-sm font-semibold">{{ user.name }}</p>
+            <p-button icon="pi pi-user-plus" class="p-button-sm p-button-text text-blue-500" label="Seguir"></p-button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 📅 Eventos -->
+    <div class="bg-yellow-50 dark:bg-yellow-900 p-4 rounded-lg shadow-md">
+      <h4 class="text-lg font-semibold mb-3">Próximos eventos</h4>
+      <ul class="space-y-2">
+        <li *ngFor="let event of events" class="text-sm">
+          🎨 <strong>{{ event.title }}</strong> — {{ event.date | date:'mediumDate' }}
+          <a [routerLink]="'/event/' + event.id" class="text-blue-500 hover:underline ml-2">Ver</a>
+        </li>
+      </ul>
+    </div>
+
+    <!-- 🧾 Actividad reciente -->
+    <div class=" p-4 rounded-lg shadow-sm">
+      <h4 class="text-lg font-semibold mb-3">Actividad reciente</h4>
+      <ul class="text-sm space-y-1">
+        <li *ngFor="let log of activityLogs">
+          ✅ <strong>{{ log.user }}</strong> {{ log.action }} ({{ log.date | date:'shortTime' }})
+        </li>
+      </ul>
+    </div>
+
+  </div>
+</div>
