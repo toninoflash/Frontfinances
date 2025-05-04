@@ -24,7 +24,8 @@ import { Toast } from 'primeng/toast';
 import { Utils } from '../../core/utils';
 import { GalleryComponentComponent } from "../../shared/components/gallery-component/gallery-component.component";
 import { Subscription } from 'rxjs';
-import { ProgressSpinner } from 'primeng/progressspinner';
+
+import { TabsModule } from 'primeng/tabs';
 const endpoint: any = environment.baseUrlSpring + 'users';
 @Component({
   selector: 'app-profile',
@@ -43,6 +44,7 @@ const endpoint: any = environment.baseUrlSpring + 'users';
     DynamicFormComponent,
     Toast,
     GalleryComponentComponent,
+    TabsModule
 ],
   templateUrl: './profile.component.html',
   styleUrl: './profile.component.scss',

@@ -1,135 +1,88 @@
 <div class="card">
   <p-table
-    #dt2
+    #dt
     [value]="dataSource"
-    dataKey="id"
     [rows]="10"
-    [rowsPerPageOptions]="[10, 25, 50]"
-    [loading]="loading"
+    [columns]="columns"
     [paginator]="true"
-    [globalFilterFields]="getGlobalFilterFields()"
+    [globalFilterFields]="globalFilterFields"
     [tableStyle]="{ 'min-width': '75rem' }"
-    [(selection)]="selected" dataKey="code"
+    [(selection)]="selectedItems"
+    (selectionChange)="emitSelectedRows($event)"
+    [rowHover]="true"
+    dataKey="id"
+    currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+    [showCurrentPageReport]="true"
   >
-    <!-- Cabecera y búsqueda global (se mantienen igual) -->
-
-    <ng-template pTemplate="header">
+    <ng-template #caption>
+      <div class="flex items-center justify-between">
+        <h5 class="m-0">Manage Products</h5>
+        <p-iconfield>
+          <p-inputicon styleClass="pi pi-search" />
+          <input
+            pInputText
+            type="text"
+            (input)="filterGlobal($event, dt)"
+            placeholder="Search..."
+          />
+        </p-iconfield>
+      </div>
+    </ng-template>
+    <ng-template #header>
       <tr>
-        <th style="width: 4rem"><p-tableHeaderCheckbox /></th>
-        <th *ngFor="let col of columns" [style.width]="col.width">
+        <th style="width: 3rem">
+          <p-tableHeaderCheckbox />
+        </th>
+        <th
+          *ngFor="let col of columns"
+          pSortableColumn="{{ col.header }}"
+          style="min-width: 16rem"
+        >
           {{ col.header }}
         </th>
-      </tr>
-      <tr>
-        <th *ngFor="let col of columns">
-          <ng-container [ngSwitch]="col.filterType">
-            <!-- Filtro de texto estándar -->
-            <p-columnFilter
-              *ngSwitchCase="'text'"
-              type="text"
-              [field]="col.field"
-              [placeholder]="'Buscar por ' + col.header"
-            ></p-columnFilter>
-
-            <!-- Filtro para estado -->
-            <p-columnFilter
-              *ngSwitchCase="'status'"
-              [field]="col.field"
-              matchMode="equals"
-              [showMenu]="false"
-            >
-              <ng-template pTemplate="filter" let-value let-filter="filterCallback">
-                <p-select
-                  [options]="statusOptions"
-                  (onChange)="filter($event.value)"
-                  placeholder="Filtrar estado"
-                  [showClear]="true"
-                >
-                  <ng-template let-option pTemplate="item">
-                    <p-tag [value]="option" [severity]="getStatusSeverity(option)"></p-tag>
-                  </ng-template>
-                </p-select>
-              </ng-template>
-            </p-columnFilter>
-
-            <!-- Filtro booleano -->
-            <p-columnFilter
-              *ngSwitchCase="'boolean'"
-              type="boolean"
-              [field]="col.field"
-            ></p-columnFilter>
-
-            <!-- Filtro por defecto (para columnas sin filtro específico) -->
-            <p-columnFilter
-              *ngSwitchDefault
-              type="text"
-              [field]="col.field"
-              [placeholder]="'Buscar por ' + col.header"
-            ></p-columnFilter>
-          </ng-container>
-        </th>
+        <th style="min-width: 12rem"></th>
       </tr>
     </ng-template>
-
-    <ng-template pTemplate="body" let-item>
+    <ng-template #body let-product>
       <tr>
-        <td *ngFor="let col of columns">
-          <ng-container [ngSwitch]="col.type">
-            <!-- Texto simple -->
-            <ng-container *ngSwitchCase="'text'">
-              {{ item[col.field] }}
-            </ng-container>
-
-            <!-- Imagen -->
-            <ng-container *ngSwitchCase="'image'">
-              <img
-                [src]="item[col.field]"
-                [alt]="item['title'] || 'Imagen'"
-                class="w-20 h-20 object-cover rounded shadow"
-                (click)="openImagePreview(item[col.field])"
-                style="cursor: pointer"
-              >
-            </ng-container>
-
-            <!-- Estado con tag -->
-            <ng-container *ngSwitchCase="'status'">
-              <p-tag
-                [value]="item[col.field]"
-                [severity]="getStatusSeverity(item[col.field])"
-                class="uppercase"
-              ></p-tag>
-            </ng-container>
-
-            <!-- Categoría con tag -->
-            <ng-container *ngSwitchCase="'tag'">
-              <p-tag [value]="item[col.field]" severity="info"></p-tag>
-            </ng-container>
-
-            <!-- Booleano -->
-            <ng-container *ngSwitchCase="'boolean'">
-              <i
-                class="pi"
-                [ngClass]="{
-                  'text-green-500 pi-check-circle': item[col.field],
-                  'text-red-500 pi-times-circle': !item[col.field]
-                }"
-              ></i>
-            </ng-container>
-          </ng-container>
-        </td>
-      </tr>
-    </ng-template>
-
-    <ng-template pTemplate="emptymessage" let-product>
-      <tr>
-        <td>
+        <td style="width: 3rem">
           <p-tableCheckbox [value]="product" />
-      </td>
-        <td [attr.colspan]="columns.length" class="text-center py-8">
-          <i class="pi pi-image text-4xl text-gray-400 mb-2"></i>
-          <p class="text-gray-500">No se encontraron registros</p>
+        </td>
+        <td style="min-width: 12rem" *ngFor="let col of columns">
+          <ng-container [ngSwitch]="col.type">
+            <img
+              *ngSwitchCase="'image'"
+              [src]="product[col.field]"
+              alt="imagen"
+              style="width: 40px; height: 40px"
+            />
+            <p-tag *ngSwitchCase="'tag'" [value]="product[col.field]" />
+            <span *ngSwitchDefault>{{ product[col.field] }}</span>
+          </ng-container>
+        </td>
+
+        <td>
+          <p-button
+            icon="pi pi-pencil"
+            class="mr-2"
+            [rounded]="true"
+            [outlined]="true"
+            (click)="onEdit(product)"
+          />
+          <p-button
+            icon="pi pi-trash"
+            severity="danger"
+            [rounded]="true"
+            [outlined]="true"
+            (click)="onDelete(product)"
+          />
         </td>
       </tr>
+    </ng-template>
+    <ng-template #summary>
+      <div class="flex items-center justify-between">
+        In total there are products.
+      </div>
     </ng-template>
   </p-table>
 </div>

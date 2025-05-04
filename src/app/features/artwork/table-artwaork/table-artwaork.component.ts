@@ -24,6 +24,7 @@ import { FileUpload, UploadEvent } from 'primeng/fileupload';
 import { CommonModule } from '@angular/common';
 import { FormsArtwork } from '../models/forms';
 import { Toast } from 'primeng/toast';
+import { ToolbarModule } from 'primeng/toolbar';
 const endpoint: any = environment.baseUrlSpring + 'users';
 
 @Component({
@@ -38,7 +39,8 @@ const endpoint: any = environment.baseUrlSpring + 'users';
     FileUpload,
     CommonModule,
     ProgressSpinner,
-    Toast
+    Toast,
+    ToolbarModule,
   ],
   providers: [UserService, BaseServiceService, MessageService],
   templateUrl: './table-artwaork.component.html',
@@ -64,7 +66,7 @@ export class TableArtwaorkComponent {
   dynamicForm: any;
 
   artworks: any[] = [];
-
+  selected: any[] = [];
   artworkColumns: ColumnConfig[] = [
     { field: 'imageUrl', header: 'Imagen', width: '1px', type: 'image' },
     { field: 'title', header: 'Título', type: 'text', filterType: 'text' },
@@ -209,7 +211,11 @@ export class TableArtwaorkComponent {
 
   onUpload() {
     if (!this.selectedFile) {
-      this.messageService.add({ severity: 'error', summary: 'Error', detail: 'No file selected' });
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Error',
+        detail: 'No file selected',
+      });
       return;
     }
 
@@ -230,11 +236,9 @@ export class TableArtwaorkComponent {
             summary: 'Error',
             detail: 'Error al subir imagen',
           });
-        this.isLoading = false;
-
+          this.isLoading = false;
         }
       );
-
   }
   previewImage: string | ArrayBuffer | null = null;
 
@@ -249,45 +253,55 @@ export class TableArtwaorkComponent {
       };
       reader.readAsDataURL(file); // lo convierte a base64 para mostrar en el <img>
     }
-    this.selectedFile=file
+    this.selectedFile = file;
   }
 
   clearPreview() {
     this.previewImage = null;
   }
 
-
   createArtwork(imageUrl: string) {
     if (this.dynamicForm.valid) {
-    const url = `${environment.baseUrlSpring}artwork`;
-    this.isLoading = true;
-    let artwork:any = null;
-    artwork= this.dynamicForm.value;
-    artwork.imageUrl = imageUrl;
-    artwork.uid = this.userLogin.id;
+      const url = `${environment.baseUrlSpring}artwork`;
+      this.isLoading = true;
+      let artwork: any = null;
+      artwork = this.dynamicForm.value;
+      artwork.imageUrl = imageUrl;
+      artwork.uid = this.userLogin.id;
 
-    this.baseService.postItem(url, artwork).subscribe(
-      (resp) => {
-        Utils.showMessage(
-          this.messageService,
-          'info',
-          'Info',
-          'Obra creada correctamente'
-        );
-        this.visible = false;
-        this.isLoading = false;
-        this.getUser();
-      },
-      (error) => {
-        Utils.showMessage(
-          this.messageService,
-          'error',
-          'Error',
-          'No se ha podido crear la obra'
-        );
-        this.isLoading = false;
-      }
-    );
+      this.baseService.postItem(url, artwork).subscribe(
+        (resp) => {
+          Utils.showMessage(
+            this.messageService,
+            'info',
+            'Info',
+            'Obra creada correctamente'
+          );
+          this.visible = false;
+          this.isLoading = false;
+          this.getUser();
+        },
+        (error) => {
+          Utils.showMessage(
+            this.messageService,
+            'error',
+            'Error',
+            'No se ha podido crear la obra'
+          );
+          this.isLoading = false;
+        }
+      );
+    }
   }
-}
+
+  onSelectedChange(data: any[]) {
+    this.selected = data;
+  }
+
+  onEditChange(data: any[]) {
+    this.visible = true;
+  }
+  onDeleteChange(data: any[]) {
+    this.selected = data;
+  }
 }

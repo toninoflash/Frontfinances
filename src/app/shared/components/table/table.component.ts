@@ -1,14 +1,24 @@
-import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
 import { Table } from 'primeng/table';
 import { CommonModule } from '@angular/common';
 import { TableModule } from 'primeng/table';
-import { TagModule } from 'primeng/tag';
+import { Tag, TagModule } from 'primeng/tag';
 import { InputTextModule } from 'primeng/inputtext';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { FormsModule } from '@angular/forms';
 import { IconFieldModule } from 'primeng/iconfield';
 import { InputIconModule } from 'primeng/inputicon';
-import { Select } from 'primeng/select';
+import { Select, SelectModule } from 'primeng/select';
+import { ButtonModule } from 'primeng/button';
+import { Toast, ToastModule } from 'primeng/toast';
+import { Dialog } from 'primeng/dialog';
+import { Ripple } from 'primeng/ripple';
+import { TextareaModule } from 'primeng/textarea';
+import { FileUpload } from 'primeng/fileupload';
+import { DropdownModule } from 'primeng/dropdown';
+import { RadioButton } from 'primeng/radiobutton';
+import { InputNumber } from 'primeng/inputnumber';
+import { ToolbarModule } from 'primeng/toolbar';
 type SeverityType = 'success' | 'secondary' | 'info' | 'warn' | 'danger' | 'contrast' | undefined;
 
 export interface ColumnConfig {
@@ -22,17 +32,7 @@ export interface ColumnConfig {
 @Component({
   selector: 'app-table',
   standalone: true,
-  imports: [
-    CommonModule,
-    TableModule,
-    TagModule,
-    InputTextModule,
-    MultiSelectModule,
-    FormsModule,
-    IconFieldModule,
-    InputIconModule,
-    Select
-  ],
+  imports: [TableModule, ButtonModule, Ripple, SelectModule, ToastModule, ToolbarModule, InputTextModule, TextareaModule, CommonModule, FileUpload, DropdownModule, Tag, RadioButton, InputTextModule, FormsModule, InputNumber, IconFieldModule, InputIconModule],
   templateUrl: './table.component.html',
   styleUrls: ['./table.component.scss']
 })
@@ -42,7 +42,10 @@ export class TableComponent implements OnChanges{
   @Input() label: any[] = [];
   @Input() statuses: any[] = [];
   @Input() columns: ColumnConfig[] = [];
-  selected!: any[];
+  @Output() selectedChange = new EventEmitter<any[]>();
+  @Output() editChange = new EventEmitter<any>();
+  @Output() deleteChange = new EventEmitter<any>();
+  selectedItems: any[] = [];
   get globalFilterFields(): string[] {
     return this.label.map(col => col.field);
   }
@@ -82,20 +85,9 @@ export class TableComponent implements OnChanges{
     console.log('Abrir imagen:', imageUrl);
   }
 
-  // Limpiar filtros
-  clearFilters(table: Table) {
-    table.clear();
-  }
-
-  getGlobalFilterFields(): string[] {
-
-    const resp:string[] = this.columns ? this.columns.map(col => col.field) : [];
-    console.table('getGlobalFilterFields', this.dataSource);
-    return resp
-  }
   filterGlobal(event: Event, table: Table): void {
     const input = event.target as HTMLInputElement;
-    table.filterGlobal(input.value, 'contains');
+  table.filterGlobal(input.value, 'contains');
   }
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['dataSource']) {
@@ -103,4 +95,17 @@ export class TableComponent implements OnChanges{
     }
 
   }
+  emitSelectedRows(selected: any[]) {
+    this.selectedItems = selected;
+    this.selectedChange.emit(selected);
+  }
+
+  onEdit(rowData: any) {
+    this.editChange.emit(rowData);
+
+  }
+  onDelete(rowData: any) {
+    this.deleteChange.emit(rowData);
+  }
+
 }
